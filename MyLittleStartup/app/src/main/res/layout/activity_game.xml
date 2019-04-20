@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_shop"
+            android:text="@string/shop"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/currency"
+            android:textSize="30sp"
+            android:layout_marginStart="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:id="@+id/money_val"
+            android:text = "0"
+            android:textSize="30sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/workers"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@android:color/holo_blue_light" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_launcher_background"
+            android:contentDescription="@string/click_location" />
+
+        <Button
+            android:id="@+id/click_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:background="@android:color/transparent"
+            android:textSize="40sp"
+            android:textColor="@color/colorAccent"/>
+
+    </FrameLayout>
+
+</LinearLayout>
