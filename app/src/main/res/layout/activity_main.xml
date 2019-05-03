@@ -1,60 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_activity"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal"
     tools:context=".main.MainActivity">
 
-    <Button
-        android:id="@+id/button_settings"
-        android:text="@string/settings"
-        android:layout_width="wrap_content"
+    <!--<fragment
+        android:name="com.example.mylittlestartup.main.MainFragment"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="30dp"/>
+        android:id="@+id/menu">
+    </fragment>-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/name_game"
-        android:textSize="56sp" />
-
-    <Button
-        android:id="@+id/button_start_game"
-        android:text="@string/start"
-        android:textSize="40sp"
-        android:layout_gravity="center"
-        android:layout_width="250dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="70dp"/>
-
-    <LinearLayout
-        android:layout_width="250dp"
-        android:layout_height="100dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button_login"
-            android:text="@string/login"
-            android:layout_width="130dp"
-            android:layout_height="70dp"
-            android:layout_gravity="start"/>
-
-        <Button
-            android:id="@+id/button_signUp"
-            android:text="@string/signup"
-            android:layout_width="130dp"
-            android:layout_height="70dp"
-            android:layout_gravity="end"/>
-    </LinearLayout>
-
-    <!--TODO achievements img logo-->
-    <Button
-        android:id="@+id/achievements_button"
-        android:text="achievements"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!--TODO blurb-->
 
 </LinearLayout>

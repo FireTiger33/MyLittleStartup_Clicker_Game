@@ -1,4 +1,4 @@
-package com.example.mylittlestartup.achievements;
+package com.example.mylittlestartup.game;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,15 +10,28 @@ import android.view.ViewGroup;
 
 import com.example.mylittlestartup.R;
 
-public class AchievementsView extends Fragment implements AchievementsContract.View {
+
+public class GameView extends Fragment implements GameContract.View{
+    private GamePresenter presenter;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        presenter = new GamePresenter(this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.achievements_container, container, false);
+        View view = inflater.inflate(R.layout.fragment_game, container, false);
 
         return view;
     }
-    // TODO AchievementsContract, AchievementsView methods
-    // TODO other implementation details achievements
-    // TODO use achievements_container, achievement_element, achievement_zoom
+
+    @Override
+    public void showShopScreen() {
+        // TODO
+    }
 }

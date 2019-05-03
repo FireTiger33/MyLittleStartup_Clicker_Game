@@ -1,10 +1,13 @@
 package com.example.mylittlestartup.authorization;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -13,10 +16,10 @@ import android.widget.TextView;
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.main.MainActivity;
 
-public class AuthActivity extends Activity implements AuthContract.View {
-    public static final String authMethodKey = "AUTH_METHOD";
-    public static final String authMethodLogin = "LOGIN";
-    public static final String authMethodSignUp = "SIGN_UP";
+import java.util.Objects;
+
+public class AuthView extends Fragment implements AuthContract.View {
+    private String authMethod;
 
     private TextView titleText;
     private EditText loginField;
@@ -27,17 +30,27 @@ public class AuthActivity extends Activity implements AuthContract.View {
     private AuthContract.Presenter presenter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
 
         presenter = new AuthPresenter(this);
 
-        progressBar = findViewById(R.id.progress);
-        titleText = findViewById(R.id.text_authorization_title);
-        loginField = findViewById(R.id.login);
-        passField = findViewById(R.id.pass);
-        authButton = findViewById(R.id.button_authorization);
+        Bundle args = this.getArguments();
+        assert args != null;
+
+        authMethod = args.getString(AuthContract.authMethodKey);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_auth, container,false);
+
+        progressBar = view.findViewById(R.id.progress);
+        titleText = view.findViewById(R.id.text_authorization_title);
+        loginField = view.findViewById(R.id.login);
+        passField = view.findViewById(R.id.pass);
+
+        authButton = view.findViewById(R.id.button_authorization);
         authButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,14 +61,13 @@ public class AuthActivity extends Activity implements AuthContract.View {
             }
         });
 
-        Intent intent = getIntent();
-        String authMethod = intent.getStringExtra(authMethodKey);
-        if (authMethod.equals(authMethodLogin)) {
+        if (authMethod.equals(AuthContract.authMethodLogin)) {
             this.showLoginScreen();
-        } else if (authMethod.equals(authMethodSignUp)) {
+        } else if (authMethod.equals(AuthContract.authMethodSignUp)) {
             this.showSignUpScreen();
         }
 
+        return view;
     }
 
     @Override
@@ -82,9 +94,8 @@ public class AuthActivity extends Activity implements AuthContract.View {
 
     @Override
     public void showMainScreen() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(Objects.requireNonNull(getActivity()).getApplicationContext(), MainActivity.class);
         startActivity(intent);
         /*Instrumentation inst = new Instrumentation();
         inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);*/
-    }
-}
+    }}

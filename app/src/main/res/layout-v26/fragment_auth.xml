@@ -15,7 +15,9 @@
         android:layout_height="wrap_content"
         android:hint="@string/login"
         android:padding="5dp"
-        android:id="@+id/login">
+        android:id="@+id/login"
+        android:autofillHints="@string/login"
+        android:inputType="text">
     </EditText>
 
     <EditText
@@ -24,7 +26,9 @@
         android:padding="5dp"
         android:hint="@string/password"
         android:layout_height="wrap_content"
-        android:id="@+id/pass">
+        android:id="@+id/pass"
+        android:autofillHints="@string/password"
+        android:inputType="text">
     </EditText>
 
     <ProgressBar

@@ -1,6 +1,10 @@
 package com.example.mylittlestartup.authorization;
 
 public interface AuthContract {
+    String authMethodKey = "AUTH_METHOD";
+    String authMethodLogin = "LOGIN";
+    String authMethodSignUp = "SIGN_UP";
+
 
     interface View {
         void showLoginScreen();

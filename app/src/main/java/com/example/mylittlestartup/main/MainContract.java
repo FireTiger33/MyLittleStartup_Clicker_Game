@@ -8,7 +8,7 @@ public interface MainContract {
         void showLoginScreen();
         void showSignUpScreen();
         void showSettingsScreen();
-        void showAchievementsView();
+        void showAchievementsScreen();
     }
 
     interface Presenter {

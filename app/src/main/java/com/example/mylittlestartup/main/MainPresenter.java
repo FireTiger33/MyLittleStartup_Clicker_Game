@@ -3,9 +3,9 @@ package com.example.mylittlestartup.main;
 
 public class MainPresenter implements MainContract.Presenter{
 
-    MainContract.View view;
+    private MainContract.View view;
 
-    public MainPresenter(MainContract.View view) {
+    MainPresenter(MainContract.View view) {
         this.view = view;
         // TODO check logged, if true call hideAuthorizationButtons
     }
@@ -32,7 +32,7 @@ public class MainPresenter implements MainContract.Presenter{
 
     @Override
     public void onAchievementsButtonClicked() {
-        view.showAchievementsView();
+        view.showAchievementsScreen();
     }
 
 }
