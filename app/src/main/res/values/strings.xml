@@ -12,4 +12,6 @@
     <string name="touch_area">touch_area</string>
     <string name="touch_location">touch_location</string>
     <string name="workers">workers</string>
+    <string name="your_money">Your money:</string>
+    <string name="now">now:</string>
 </resources>
