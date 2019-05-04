@@ -14,6 +14,8 @@ public interface AuthContract {
         void hideProgress();
 
         void showMainScreen();
+
+        String getAuthMethod();
     }
 
     interface Presenter {

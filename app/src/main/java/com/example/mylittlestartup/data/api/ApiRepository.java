@@ -3,6 +3,7 @@ package com.example.mylittlestartup.data.api;
 import android.content.Context;
 
 import com.example.mylittlestartup.ClickerApplication;
+import com.example.mylittlestartup.game.GameContract;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -12,6 +13,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 public class ApiRepository {
     private final UserApi mUserApi;
     private final SessionApi mSessionApi;
+    private final GameApi mGameApi;
 
     private final OkHttpClient mOkHttpClient;
 
@@ -32,6 +34,7 @@ public class ApiRepository {
 
         mUserApi = retrofit.create(UserApi.class);
         mSessionApi = retrofit.create(SessionApi.class);
+        mGameApi = retrofit.create(GameApi.class);
     }
 
     public static ApiRepository from(Context context) {
@@ -44,6 +47,10 @@ public class ApiRepository {
 
     public SessionApi getSessionApi() {
         return mSessionApi;
+    }
+
+    public GameApi getGameApi() {
+        return mGameApi;
     }
 }
 

@@ -1,54 +1,33 @@
 package com.example.mylittlestartup.data;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+
+import com.example.mylittlestartup.authorization.AuthContract;
+import com.example.mylittlestartup.data.api.ApiRepository;
 import com.example.mylittlestartup.data.api.SessionApi;
 import com.example.mylittlestartup.data.api.UserApi;
 import com.example.mylittlestartup.data.executors.AppExecutors;
+import com.example.mylittlestartup.main.MainContract;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl implements AuthContract.Repository, MainContract.Repository {
     private UserApi mUserApi;
+    private Context mContext;
     private SessionApi mSessionApi;
 
-    public UserRepositoryImpl(UserApi userApi, SessionApi sessionApi) {
-        mUserApi = userApi;
-        mSessionApi = sessionApi;
+    public UserRepositoryImpl(@NonNull Context context) {
+        mContext = context;
+
+        mUserApi = ApiRepository.from(mContext).getUserApi();
+        mSessionApi = ApiRepository.from(mContext).getSessionApi();
     }
 
     @Override
-    public void authorize(String login, String pass, final BaseCallback authorizeCallback) {
-        mSessionApi.login(new UserApi.User(login, pass)).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, final Response<Void> response) {
-                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.code() == 200) {
-                            authorizeCallback.onSuccess();
-                        } else {
-                            authorizeCallback.onError();
-                        }
-                    }
-                });
-
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        authorizeCallback.onError();
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
-    public void register(String login, String pass, final BaseCallback authorizeCallback) {
+    public void registerNewUser(String login, String pass, final ValidationCallback callback) {
 
         mUserApi.register(new UserApi.User(login, pass)).enqueue(new Callback<Void>() {
             @Override
@@ -57,9 +36,9 @@ class UserRepositoryImpl implements UserRepository {
                     @Override
                     public void run() {
                         if (response.code() == 200) {
-                            authorizeCallback.onSuccess();
+                            callback.onSuccess();
                         } else {
-                            authorizeCallback.onError();
+                            callback.onError();
                         }
                     }
                 });
@@ -70,7 +49,37 @@ class UserRepositoryImpl implements UserRepository {
                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        authorizeCallback.onError();
+                        callback.onError();
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void authUser(String login, String pass, final ValidationCallback callback) {
+        mSessionApi.login(new UserApi.User(login, pass)).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, final Response<Void> response) {
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.code() == 200) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError();
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onError();
                     }
                 });
             }
@@ -79,7 +88,7 @@ class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void checkAuthorize(final BaseCallback authorizeCallback) {
+    public void wasAuthorized(final BaseCallback authorizeCallback) {
         mSessionApi.checkLogin().enqueue(new Callback<SessionApi.SessionResponse>() {
             @Override
             public void onResponse(Call<SessionApi.SessionResponse> call, final Response<SessionApi.SessionResponse> response) {

@@ -1,11 +1,15 @@
 package com.example.mylittlestartup.data;
 
+import android.content.Context;
+
+import com.example.mylittlestartup.data.api.ApiRepository;
 import com.example.mylittlestartup.data.api.GameApi;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Achievement;
 import com.example.mylittlestartup.data.sqlite.AchievementDao;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.data.sqlite.UpgradeDao;
+import com.example.mylittlestartup.game.GameContract;
 
 import java.util.List;
 
@@ -13,10 +17,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-class GameRepositoryImpl implements GameRepository {
+public class GameRepositoryImpl implements GameContract.Repository {
     private GameApi mGameApi;
     private UpgradeDao mUpgradeDao;
     private AchievementDao mAchievementDao;
+    private Context mContext;
+
+    public GameRepositoryImpl(Context context) {
+        mContext = context;
+        mGameApi = ApiRepository.from(context).getGameApi();
+    }
 
     @Override
     public void getAchievements(final AchievementCallback callback) {

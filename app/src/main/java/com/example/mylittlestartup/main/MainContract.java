@@ -1,5 +1,7 @@
 package com.example.mylittlestartup.main;
 
+import com.example.mylittlestartup.data.BaseCallback;
+
 public interface MainContract {
 
     interface View {
@@ -20,7 +22,7 @@ public interface MainContract {
     }
 
     interface Repository {
-        void wasAuthorized();
+        void wasAuthorized(final BaseCallback callback);
     }
 
 }

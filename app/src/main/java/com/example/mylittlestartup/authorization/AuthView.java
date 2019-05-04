@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.data.UserRepositoryImpl;
 import com.example.mylittlestartup.main.MainActivity;
 
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class AuthView extends Fragment implements AuthContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        presenter = new AuthPresenter(this);
+        presenter = new AuthPresenter(this, new UserRepositoryImpl(getContext().getApplicationContext()));
 
         Bundle args = this.getArguments();
         assert args != null;
@@ -98,4 +99,10 @@ public class AuthView extends Fragment implements AuthContract.View {
         startActivity(intent);
         /*Instrumentation inst = new Instrumentation();
         inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);*/
-    }}
+    }
+
+    @Override
+    public String getAuthMethod() {
+        return authMethod;
+    }
+}

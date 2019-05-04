@@ -1,4 +1,4 @@
-package com.example.mylittlestartup.data;
+package com.example.mylittlestartup.leaderboard;
 
 import com.example.mylittlestartup.data.api.UserApi;
 
