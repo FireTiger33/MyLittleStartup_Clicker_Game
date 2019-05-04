@@ -6,4 +6,5 @@ public interface Router {
     void openSettingsScreen();
     void openAchievementsScreen();
     void openGameScreen();
+    void openShopScreen();
 }

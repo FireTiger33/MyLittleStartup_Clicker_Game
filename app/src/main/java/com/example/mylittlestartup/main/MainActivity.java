@@ -10,6 +10,7 @@ import com.example.mylittlestartup.authorization.AuthContract;
 import com.example.mylittlestartup.authorization.AuthView;
 import com.example.mylittlestartup.game.GameView;
 import com.example.mylittlestartup.settings.SettingsView;
+import com.example.mylittlestartup.shop.ShopView;
 
 public class MainActivity extends AppCompatActivity implements Router {
     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -74,6 +75,14 @@ public class MainActivity extends AppCompatActivity implements Router {
         fragmentManager.beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.main_activity, new GameView())
+                .commit();
+    }
+
+    @Override
+    public void openShopScreen() {
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_activity, new ShopView())
                 .commit();
     }
 }

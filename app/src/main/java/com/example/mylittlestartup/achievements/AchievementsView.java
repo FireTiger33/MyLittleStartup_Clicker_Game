@@ -18,6 +18,11 @@ public class AchievementsView extends Fragment implements AchievementsContract.V
 
         return view;
     }
+
+    @Override
+    public void showAchievementMoreInfo() {
+
+    }
     // TODO AchievementsContract, AchievementsView methods
     // TODO other implementation details achievements
     // TODO use achievements_container, achievement_element, achievement_zoom

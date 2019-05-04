@@ -9,4 +9,7 @@
     <string name="settings">Settings</string>
     <string name="shop">Shop</string>
     <string name="currency">$</string>
+    <string name="touch_area">touch_area</string>
+    <string name="touch_location">touch_location</string>
+    <string name="workers">workers</string>
 </resources>

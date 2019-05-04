@@ -1,5 +1,6 @@
 package com.example.mylittlestartup.main;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,9 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
+
+import java.util.Objects;
 
 public class MainFragment extends Fragment implements MainContract.View {
     private String logTag = MainActivity.class.getName();
@@ -22,7 +27,7 @@ public class MainFragment extends Fragment implements MainContract.View {
     private Button signUpButton;
     private Button gameStartButton;
     private Button settingsButton;
-    private Button achievementsButton;
+    private ImageButton achievementsButton;
 
 
     @Override
@@ -36,6 +41,12 @@ public class MainFragment extends Fragment implements MainContract.View {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        TextView nameGame = view.findViewById(R.id.game_name);
+        Typeface customFont = Typeface.createFromAsset(
+                Objects.requireNonNull(getActivity()).getAssets(), "fonts/Equestria.ttf"
+        );
+        nameGame.setTypeface(customFont);
 
         gameStartButton = view.findViewById(R.id.button_start_game);
         gameStartButton.setOnClickListener(new View.OnClickListener() {
