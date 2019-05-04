@@ -19,6 +19,7 @@ public interface MainContract {
         void onSignUpButtonClicked();
         void onSettingsButtonClicked();
         void onAchievementsButtonClicked();
+        void checkIsLoggedIn();
     }
 
     interface Repository {

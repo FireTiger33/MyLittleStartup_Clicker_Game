@@ -3,8 +3,11 @@ package com.example.mylittlestartup.data.api;
 import android.content.Context;
 
 import com.example.mylittlestartup.ClickerApplication;
-import com.example.mylittlestartup.game.GameContract;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -17,13 +20,14 @@ public class ApiRepository {
 
     private final OkHttpClient mOkHttpClient;
 
-    public ApiRepository() {
+    public ApiRepository(Context context) {
+        CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
         mOkHttpClient = new OkHttpClient()
                 .newBuilder()
+                .cookieJar(cookieJar)
                 .build();
 
-        // todo вытащить из shared pref куки и сунуть в клиент
-
+        // todo https
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(MoshiConverterFactory.create())
                 .baseUrl(new HttpUrl.Builder().scheme("http")

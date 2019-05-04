@@ -15,7 +15,7 @@ public class ClickerApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mApiRepository = new ApiRepository();
+        mApiRepository = new ApiRepository(getApplicationContext());
         mDbRepository = Room.databaseBuilder(this, DBRepository.class, "main_db")
                 .allowMainThreadQueries() // TODO() don't forget to remove this line in release! Only for debug purpose!
                 .fallbackToDestructiveMigration()

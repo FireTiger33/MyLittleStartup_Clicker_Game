@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
+import com.example.mylittlestartup.data.UserRepositoryImpl;
 
 public class MainFragment extends Fragment implements MainContract.View {
     private String logTag = MainActivity.class.getName();
@@ -29,7 +30,7 @@ public class MainFragment extends Fragment implements MainContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        presenter = new MainPresenter(this);
+        presenter = new MainPresenter(this, new UserRepositoryImpl(getContext().getApplicationContext()));
     }
 
     @Nullable
@@ -76,6 +77,8 @@ public class MainFragment extends Fragment implements MainContract.View {
                 presenter.onAchievementsButtonClicked();
             }
         });
+
+        presenter.checkIsLoggedIn();
 
         return view;
     }
