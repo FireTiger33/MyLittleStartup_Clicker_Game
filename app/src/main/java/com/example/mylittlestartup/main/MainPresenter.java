@@ -1,38 +1,58 @@
 package com.example.mylittlestartup.main;
 
 
-public class MainPresenter implements MainContract.Presenter{
+import com.example.mylittlestartup.data.BaseCallback;
 
-    private MainContract.View view;
+import java.util.logging.Logger;
 
-    MainPresenter(MainContract.View view) {
-        this.view = view;
-        // TODO check logged, if true call hideAuthorizationButtons
+public class MainPresenter implements MainContract.Presenter {
+
+    private MainContract.View mView;
+    private MainContract.Repository mRepository;
+
+    MainPresenter(MainContract.View view, MainContract.Repository repository) {
+        this.mView = view;
+        this.mRepository = repository;
     }
 
     @Override
     public void onStartGameButtonClicked() {
-        view.showScreenGame();
+        mView.showScreenGame();
     }
 
     @Override
     public void onLoginButtonClicked() {
-        view.showLoginScreen();
+        mView.showLoginScreen();
     }
 
     @Override
     public void onSignUpButtonClicked() {
-        view.showSignUpScreen();
+        mView.showSignUpScreen();
     }
 
     @Override
     public void onSettingsButtonClicked() {
-        view.showSettingsScreen();
+        mView.showSettingsScreen();
     }
 
     @Override
     public void onAchievementsButtonClicked() {
-        view.showAchievementsScreen();
+        mView.showAchievementsScreen();
     }
 
+    @Override
+    public void checkIsLoggedIn() {
+        mRepository.wasAuthorized(new BaseCallback() {
+            @Override
+            public void onSuccess() {
+                mView.hideAuthorizationButtons();
+            }
+
+            @Override
+            public void onError() {
+                // todo idk maybe highlight singup/login?
+                String hello  = "hello";
+            }
+        });
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.mylittlestartup.main;
 
+import com.example.mylittlestartup.data.BaseCallback;
+
 public interface MainContract {
 
     interface View {
@@ -17,10 +19,11 @@ public interface MainContract {
         void onSignUpButtonClicked();
         void onSettingsButtonClicked();
         void onAchievementsButtonClicked();
+        void checkIsLoggedIn();
     }
 
     interface Repository {
-        void wasAuthorized();
+        void wasAuthorized(final BaseCallback callback);
     }
 
 }
