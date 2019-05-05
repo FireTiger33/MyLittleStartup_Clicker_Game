@@ -12,47 +12,56 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.data.GameRepositoryImpl;
+import com.example.mylittlestartup.data.sqlite.Upgrade;
 
-public class ShopView extends Fragment {
+import java.util.List;
+
+public class ShopView extends Fragment implements ShopContract.View {
     private TextView moneyValView;
 
     private RecyclerView shopView;
     private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView.Adapter shopElementsAdapter;
+    private ShopElementsAdapter shopElementsAdapter;
+
+    private ShopContract.Presenter mPresenter;
+
+    private View mView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int[] logos = {
-                R.drawable.shop_coffe,
-                R.drawable.shop_man
-        };
-        String[] descriptions = {
-                "10$ / 2s",
-                "100$ / 5s"
-        };
-        int[] prices  = {  // TODO price change depending on the quantity that is taken from DB
-                1000,
-                10000
-        };
 
-        shopElementsAdapter = new ShopElementsAdapter(2, logos, descriptions, prices);
+        mPresenter = new ShopPresenter(this, new GameRepositoryImpl(getContext().getApplicationContext()));
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.shop_container, container, false);
+        mView = inflater.inflate(R.layout.shop_container, container, false);
 
-        moneyValView = view.findViewById(R.id.money_val);
+        moneyValView = mView.findViewById(R.id.money_val);
         moneyValView.setText(String.valueOf(100000));
 
         layoutManager = new LinearLayoutManager(this.getContext());
 
-        shopView = view.findViewById(R.id.shop_view);
+        mPresenter.fetchUpgrades();
+
+        return mView;
+    }
+
+    @Override
+    public void showUpgradeList(List<Upgrade> upgrades) {
+        shopElementsAdapter = new ShopElementsAdapter(upgrades, mPresenter);
+
+        shopView = mView.findViewById(R.id.shop_view);
         shopView.setAdapter(shopElementsAdapter);
         shopView.setLayoutManager(layoutManager);
+    }
 
-        return view;
+    @Override
+    public void incrementUpgradeCounter(int upgradeID) {
+        shopElementsAdapter.incrementUpgradeCounter(upgradeID);
     }
 }

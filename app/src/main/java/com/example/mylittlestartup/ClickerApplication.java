@@ -6,6 +6,7 @@ import android.content.Context;
 
 
 import com.example.mylittlestartup.data.api.ApiRepository;
+import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.DBRepository;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.data.sqlite.UpgradeDao;
@@ -22,11 +23,15 @@ public class ClickerApplication extends Application {
         super.onCreate();
         mApiRepository = new ApiRepository(getApplicationContext());
         mDbRepository = Room.databaseBuilder(this, DBRepository.class, "main_db")
-                .allowMainThreadQueries() // TODO() don't forget to remove this line in release! Only for debug purpose!
                 .fallbackToDestructiveMigration()
                 .build();
 
-        addBasicUpgrades();
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                addBasicUpgrades();
+            }
+        });
     }
 
     public void addBasicUpgrades() {
@@ -34,8 +39,12 @@ public class ClickerApplication extends Application {
         List<Upgrade> upgrades = dao.all();
         if (upgrades.isEmpty()) {
             Upgrade[] basicUpgrades = {
-                    new Upgrade(1, 100, "hello", "world", 0, 1000, R.drawable.ic_launcher_background),
-                    new Upgrade(2, 1000, "manager", "", 0, 10000, R.drawable.ic_launcher_foreground)
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 1000, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 10000, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 1000, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 10000, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 1000, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 10000, R.drawable.shop_man),
             };
 
             dao.insert(basicUpgrades);

@@ -7,9 +7,11 @@ import com.example.mylittlestartup.data.api.GameApi;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Achievement;
 import com.example.mylittlestartup.data.sqlite.AchievementDao;
+import com.example.mylittlestartup.data.sqlite.DBRepository;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.data.sqlite.UpgradeDao;
 import com.example.mylittlestartup.game.GameContract;
+import com.example.mylittlestartup.shop.ShopContract;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GameRepositoryImpl implements GameContract.Repository {
+public class GameRepositoryImpl implements GameContract.Repository, ShopContract.Repository {
     private GameApi mGameApi;
     private UpgradeDao mUpgradeDao;
     private AchievementDao mAchievementDao;
@@ -25,7 +27,9 @@ public class GameRepositoryImpl implements GameContract.Repository {
 
     public GameRepositoryImpl(Context context) {
         mContext = context;
-        mGameApi = ApiRepository.from(context).getGameApi();
+        mGameApi = ApiRepository.from(mContext).getGameApi();
+        mUpgradeDao = DBRepository.from(mContext).getUpgradeDao();
+        mAchievementDao = DBRepository.from(mContext).geAchievementDao();
     }
 
     @Override
@@ -80,7 +84,7 @@ public class GameRepositoryImpl implements GameContract.Repository {
     }
 
     @Override
-    public void getUpgrades(final UpgradeCallback callback) {
+    public void fetchUpgrades(final FetchCallback callback) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -102,6 +106,7 @@ public class GameRepositoryImpl implements GameContract.Repository {
             @Override
             public void run() {
                 mUpgradeDao.increaseCounter(upgradeID);
+                // todo player repository - count
 
                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
                     @Override
@@ -109,6 +114,8 @@ public class GameRepositoryImpl implements GameContract.Repository {
                         callback.onSuccess();
                     }
                 });
+
+                // todo onError if not enough money
             }
         });
 

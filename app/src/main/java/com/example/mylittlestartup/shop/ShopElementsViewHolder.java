@@ -7,22 +7,38 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.data.sqlite.Upgrade;
 
 class ShopElementsViewHolder extends RecyclerView.ViewHolder {
-    private ImageView logo;
-    private TextView descriptionView;
-    private TextView priceView;
+    private ImageView mLogo;
+    private TextView mDescriptionView;
+    private TextView mPriceView;
+    private TextView mGoodsQuantity;
 
-    ShopElementsViewHolder(@NonNull View itemView) {
+    private int mId = 0; // logic ID stored in database, not adapter ID
+
+    ShopElementsViewHolder(@NonNull View itemView, final ShopContract.Presenter presenter) {
         super(itemView);
-        logo = itemView.findViewById(R.id.logo);
-        descriptionView = itemView.findViewById(R.id.description);
-        priceView = itemView.findViewById(R.id.price);
+
+        mLogo = itemView.findViewById(R.id.logo);
+        mDescriptionView = itemView.findViewById(R.id.description);
+        mPriceView = itemView.findViewById(R.id.price);
+        mGoodsQuantity = itemView.findViewById(R.id.goods_quantity);
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onBuyUpgrade(mId);
+            }
+        });
     }
 
-    void bind(int resIdLogo, String description, int price) {
-        logo.setImageResource(resIdLogo);
-        descriptionView.setText(description);
-        priceView.setText(String.valueOf(price));
+    void bind(Upgrade upgrade) {
+        mLogo.setImageResource(upgrade.getPicID());
+        mDescriptionView.setText(upgrade.getDescription());
+        mPriceView.setText(String.valueOf(upgrade.getPrice()));
+        mGoodsQuantity.setText(String.valueOf(upgrade.getCount()));
+
+        mId = upgrade.getId();
     }
 }

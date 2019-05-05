@@ -7,19 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.data.sqlite.Upgrade;
+
+import java.util.List;
 
 
 public class ShopElementsAdapter extends RecyclerView.Adapter<ShopElementsViewHolder> {
-    private int numElements;
-    private int[] logos;
-    private String[] descriptions;
-    private int[] prices;
+    private List<Upgrade> mUpgrades;
+    private ShopContract.Presenter mPresenter;
 
-    ShopElementsAdapter(int numElements, int[] logos, String[] descriptions, int[] prices) {
-        this.numElements = numElements;
-        this.logos = logos;
-        this.descriptions = descriptions;
-        this.prices = prices;
+    ShopElementsAdapter(List<Upgrade> upgrades, ShopContract.Presenter presenter) {
+        mUpgrades = upgrades;
+        mPresenter = presenter;
     }
 
     @NonNull
@@ -28,16 +27,28 @@ public class ShopElementsAdapter extends RecyclerView.Adapter<ShopElementsViewHo
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View view = inflater.inflate(R.layout.shop_element, viewGroup, false);
 
-        return new ShopElementsViewHolder(view);
+        return new ShopElementsViewHolder(view, mPresenter);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ShopElementsViewHolder shopElementsViewHolder, int i) {
-        shopElementsViewHolder.bind(logos[i], descriptions[i], prices[i]);
+        shopElementsViewHolder.bind(mUpgrades.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return numElements;
+        return mUpgrades.size();
+    }
+
+    public void incrementUpgradeCounter(int upgradeID) {
+        for (int i = 0; i < mUpgrades.size(); i++) {
+            Upgrade upgrade = mUpgrades.get(i);
+
+            if (upgrade.getId() == upgradeID) {
+                upgrade.setCount(upgrade.getCount() + 1);
+                super.notifyItemChanged(i);
+                break;
+            }
+        }
     }
 }

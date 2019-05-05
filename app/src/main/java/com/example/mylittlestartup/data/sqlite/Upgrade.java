@@ -1,6 +1,7 @@
 package com.example.mylittlestartup.data.sqlite;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 
@@ -17,8 +18,9 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class Upgrade {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int mId;
+
     private int mPrice;
     private String mName;
     private String mDescription;
@@ -26,8 +28,8 @@ public class Upgrade {
     private int mInterval;
     private int mPicID;
 
-    public Upgrade(int mId, int mPrice, String mName, String mDescription, int mCount, int mInterval, int mPicID) {
-        this.mId = mId;
+    @Ignore
+    public Upgrade(int mPrice, String mName, String mDescription, int mCount, int mInterval, int mPicID) {
         this.mPrice = mPrice;
         this.mName = mName;
         this.mDescription = mDescription;

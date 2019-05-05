@@ -15,6 +15,7 @@ public interface GameContract {
 
     interface Presenter {
         void onShopButtonClicked();
+
         void checkMoneyVal();
     }
 
@@ -25,18 +26,9 @@ public interface GameContract {
             void onError();
         }
 
-        interface UpgradeCallback {
-            void onSuccess(List<Upgrade> upgradeList);
-
-            void onError();
-        }
-
         void getAchievements(AchievementCallback callback);
 
         void postScore(int score, BaseCallback callback);
 
-        void getUpgrades(UpgradeCallback callback);
-
-        void buyUpgrade(int upgradeID, BaseCallback callback);
     }
 }
