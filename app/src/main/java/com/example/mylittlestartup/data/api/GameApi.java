@@ -11,6 +11,12 @@ public interface GameApi {
 
     class ScorePlain {
         public int score;
+
+        public ScorePlain() {}
+
+        public ScorePlain(int score) {
+            this.score = score;
+        }
     }
 
 //    class AchievementPlain {

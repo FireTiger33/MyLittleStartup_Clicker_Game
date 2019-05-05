@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
+import com.example.mylittlestartup.data.GameRepositoryImpl;
 
 
 public class GameView extends Fragment implements GameContract.View {
@@ -25,14 +26,13 @@ public class GameView extends Fragment implements GameContract.View {
     private ImageButton clickLocation;
     private Button touchLocation;
     private TextView moneyValView;
-    private int money;
     private int k;  // coefficient up money on click
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        presenter = new GamePresenter(this);
+        presenter = new GamePresenter(this, new GameRepositoryImpl(getContext().getApplicationContext()));
 
         workTime = new CountDownTimer(5000, 1000) {
             @Override
@@ -47,7 +47,6 @@ public class GameView extends Fragment implements GameContract.View {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
 
-        money = 0;  // TODO DB
         k = 1;  // TODO DB
 
         shopButton = view.findViewById(R.id.button_shop);
@@ -61,12 +60,13 @@ public class GameView extends Fragment implements GameContract.View {
         moneyValView = view.findViewById(R.id.money_val);
         moneyValView.setText("0");
 
+        presenter.getMoney();
+
         clickLocation = view.findViewById(R.id.click_location);
         clickLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  // TODO move to presenter
-                money += k;
-                moneyValView.setText(String.valueOf(money));
+                presenter.addMoney(k);
             }
         });
 
@@ -86,8 +86,18 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     private void isDoneWork() {
-        money += 10;
-        moneyValView.setText(String.valueOf(money));
+        presenter.addMoney(10);
         workTime.start();
+    }
+
+    @Override
+    public void setMoney(int delta) {
+        moneyValView.setText(String.valueOf(delta));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.saveMoney();
     }
 }

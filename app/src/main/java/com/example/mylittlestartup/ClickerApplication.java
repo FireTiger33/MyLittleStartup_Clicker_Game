@@ -5,6 +5,8 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 
 
+import com.example.mylittlestartup.data.PlayerRepository;
+import com.example.mylittlestartup.data.PlayerRepositoryImpl;
 import com.example.mylittlestartup.data.api.ApiRepository;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.DBRepository;
@@ -17,6 +19,7 @@ import java.util.List;
 public class ClickerApplication extends Application {
     private ApiRepository mApiRepository;
     private DBRepository mDbRepository;
+    private PlayerRepository mPlayerRepository;
 
     @Override
     public void onCreate() {
@@ -25,6 +28,7 @@ public class ClickerApplication extends Application {
         mDbRepository = Room.databaseBuilder(this, DBRepository.class, "main_db")
                 .fallbackToDestructiveMigration()
                 .build();
+        mPlayerRepository = new PlayerRepositoryImpl(this);
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -57,6 +61,10 @@ public class ClickerApplication extends Application {
 
     public DBRepository getDb() {
         return mDbRepository;
+    }
+
+    public PlayerRepository getPlayerRepository() {
+        return mPlayerRepository;
     }
 
     public static ClickerApplication from(Context context) {

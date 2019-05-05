@@ -2,6 +2,8 @@ package com.example.mylittlestartup.data;
 
 import android.content.Context;
 
+import com.example.mylittlestartup.ClickerApplication;
+import com.example.mylittlestartup.achievements.AchievementsContract;
 import com.example.mylittlestartup.data.api.ApiRepository;
 import com.example.mylittlestartup.data.api.GameApi;
 import com.example.mylittlestartup.data.executors.AppExecutors;
@@ -19,17 +21,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GameRepositoryImpl implements GameContract.Repository, ShopContract.Repository {
+public class GameRepositoryImpl implements GameContract.Repository, ShopContract.Repository, AchievementsContract.Repository {
     private GameApi mGameApi;
     private UpgradeDao mUpgradeDao;
     private AchievementDao mAchievementDao;
-    private Context mContext;
+    private PlayerRepository mPlayerRepository;
 
     public GameRepositoryImpl(Context context) {
-        mContext = context;
-        mGameApi = ApiRepository.from(mContext).getGameApi();
-        mUpgradeDao = DBRepository.from(mContext).getUpgradeDao();
-        mAchievementDao = DBRepository.from(mContext).geAchievementDao();
+        mGameApi = ApiRepository.from(context).getGameApi();
+        mUpgradeDao = DBRepository.from(context).getUpgradeDao();
+        mAchievementDao = DBRepository.from(context).geAchievementDao();
+        mPlayerRepository = ClickerApplication.from(context).getPlayerRepository();
     }
 
     @Override
@@ -49,7 +51,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
         });
     }
 
-    @Override
+    /*@Override
     public void postScore(final int score, final BaseCallback callback) {
         GameApi.ScorePlain scorePlain = new GameApi.ScorePlain();
         scorePlain.score = score;
@@ -81,6 +83,26 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                 });
             }
         });
+    }*/
+
+    @Override
+    public void setScore(int score, BaseCallback callback) {
+        mPlayerRepository.setScore(score, callback);
+    }
+
+    @Override
+    public void incrementScore(int delta, BaseCallback callback) {
+        mPlayerRepository.incrementScore(delta, callback);
+    }
+
+    @Override
+    public void getScore(ScoreCallback callback) {
+        mPlayerRepository.getScore(callback);
+    }
+
+    @Override
+    public void saveScore(BaseCallback callback) {
+        mPlayerRepository.saveScore(callback);
     }
 
     @Override
