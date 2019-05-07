@@ -1,26 +1,34 @@
 package com.example.mylittlestartup.shop;
 
+import android.util.Log;
+
+import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
+import com.example.mylittlestartup.data.PlayerRepository;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
+import com.example.mylittlestartup.game.GameContract;
 
 import java.util.List;
 
 class ShopPresenter implements ShopContract.Presenter {
     private ShopContract.View mView;
     private ShopContract.Repository mRepository;
+    private PlayerRepository mPlayerRepository;
 
     public ShopPresenter(ShopContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
+        mPlayerRepository = ClickerApplication.from(view.getAppContext()).getPlayerRepository();
     }
 
     @Override
-    public void onBuyUpgrade(final int upgradeID) {
-        mRepository.buyUpgrade(upgradeID, new BaseCallback() {
+    public void onBuyUpgrade(final Upgrade upgrade) {
+        mRepository.buyUpgrade(upgrade, new BaseCallback() {
             @Override
             public void onSuccess() {
-                mView.incrementUpgradeCounter(upgradeID - 1);  // difference of array and database indexing
+                mView.incrementUpgradeCounter(upgrade.getId() - 1);  // difference of array and database indexing
+                getMoney();
             }
 
             @Override
@@ -32,7 +40,17 @@ class ShopPresenter implements ShopContract.Presenter {
 
     @Override
     public void getMoney() {  // TODO get from DB
-        mView.showMoney(1000);
+        mPlayerRepository.getScore(new GameContract.Repository.ScoreCallback() {
+            @Override
+            public void onSuccess(int score) {
+                mView.showMoney(score);
+            }
+
+            @Override
+            public void onError() {
+                Log.e("ShopPresenter", "onError: getMoney getScore callback");
+            }
+        });
     }
 
     @Override

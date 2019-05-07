@@ -26,16 +26,18 @@ public class Upgrade {
     private String mDescription;
     private int mCount;
     private int mInterval;
+    private int mValue;
     private int mPicID;
 
     @Ignore
-    public Upgrade(int mPrice, String mName, String mDescription, int mCount, int mInterval, int mPicID) {
-        this.mPrice = mPrice;
-        this.mName = mName;
-        this.mDescription = mDescription;
-        this.mCount = mCount;
-        this.mInterval = mInterval;
-        this.mPicID = mPicID;
+    public Upgrade(int price, String name, String description, int count, int interval, int value, int picID) {
+        mPrice = price;
+        mName = name;
+        mDescription = description;
+        mCount = count;
+        mInterval = interval;
+        mPicID = picID;
+        mValue = value;
     }
 
     public Upgrade() {}
@@ -94,5 +96,13 @@ public class Upgrade {
 
     public void setPicID(int picID) {
         mPicID = picID;
+    }
+
+    public int getValue() {
+        return mValue;
+    }
+
+    public void setValue(int value) {
+        mValue = value;
     }
 }

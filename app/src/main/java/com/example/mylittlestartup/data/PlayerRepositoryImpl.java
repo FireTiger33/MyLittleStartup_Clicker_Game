@@ -99,7 +99,7 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }
 
     @Override
-    public void saveScore(final BaseCallback callback) {
+    public void saveScore(final ScoreCallback callback) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -108,7 +108,7 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
                         .putInt(KEY_PREF_SCORE, getRuntimeScore())
                         .apply();
 
-                callback.onSuccess();
+                callback.onSuccess(getRuntimeScore());
             }
         });
     }

@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 
 
+import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.PlayerRepository;
 import com.example.mylittlestartup.data.PlayerRepositoryImpl;
 import com.example.mylittlestartup.data.api.ApiRepository;
@@ -29,6 +30,19 @@ public class ClickerApplication extends Application {
                 .build();
         mPlayerRepository = new PlayerRepositoryImpl(this);
 
+        // TODO: Only for debug!
+        mPlayerRepository.setNotLoggedIn(new BaseCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -39,15 +53,19 @@ public class ClickerApplication extends Application {
 
     public void addBasicUpgrades() {
         UpgradeDao dao = mDbRepository.getUpgradeDao();
+
+        // TODO: Only for debug!
+        mDbRepository.clearAllTables();
+
         List<Upgrade> upgrades = dao.all();
         if (upgrades.isEmpty()) {
             Upgrade[] basicUpgrades = {
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, R.drawable.shop_man),
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, R.drawable.shop_man),
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, 10, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, 20, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, 30, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, 40, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, 50, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, 60, R.drawable.shop_man),
             };
 
             dao.insert(basicUpgrades);

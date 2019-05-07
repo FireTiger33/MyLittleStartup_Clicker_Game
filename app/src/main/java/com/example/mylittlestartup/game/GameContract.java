@@ -63,6 +63,6 @@ public interface GameContract {
          *
          * @param callback
          */
-        void saveScore(BaseCallback callback);
+        void saveScore(ScoreCallback callback);
     }
 }

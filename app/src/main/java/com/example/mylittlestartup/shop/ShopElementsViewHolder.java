@@ -15,7 +15,7 @@ class ShopElementsViewHolder extends RecyclerView.ViewHolder {
     private TextView mPriceView;
     private TextView mGoodsQuantity;
 
-    private int mId = 0; // logic ID stored in database, not adapter ID
+    private Upgrade mUpgrade;
 
     ShopElementsViewHolder(@NonNull View itemView, final ShopContract.Presenter presenter) {
         super(itemView);
@@ -28,17 +28,17 @@ class ShopElementsViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.onBuyUpgrade(mId);
+                presenter.onBuyUpgrade(mUpgrade);
             }
         });
     }
 
     void bind(Upgrade upgrade) {
+        mUpgrade = upgrade;
+
         mLogo.setImageResource(upgrade.getPicID());
         mDescriptionView.setText(upgrade.getDescription());
         mPriceView.setText(String.valueOf(upgrade.getPrice()));
         mGoodsQuantity.setText(String.valueOf(upgrade.getCount()));
-
-        mId = upgrade.getId();
     }
 }

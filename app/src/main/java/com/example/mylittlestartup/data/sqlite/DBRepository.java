@@ -8,7 +8,7 @@ import android.content.Context;
 
 import com.example.mylittlestartup.ClickerApplication;
 
-@Database(entities = {Achievement.class, Upgrade.class}, version = 2)
+@Database(entities = {Achievement.class, Upgrade.class}, version = 3)
 public abstract class DBRepository extends RoomDatabase {
     public abstract UpgradeDao getUpgradeDao();
     public abstract AchievementDao geAchievementDao();

@@ -82,9 +82,9 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     private void saveMoney() {
-        mRepository.saveScore(new BaseCallback() {
+        mRepository.saveScore(new GameContract.Repository.ScoreCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(int score) {
                 Log.d(TAG, "onSuccess: successfully saved money");
             }
 

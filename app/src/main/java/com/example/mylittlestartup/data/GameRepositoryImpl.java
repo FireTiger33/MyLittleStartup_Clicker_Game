@@ -1,6 +1,7 @@
 package com.example.mylittlestartup.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.achievements.AchievementsContract;
@@ -101,8 +102,49 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     }
 
     @Override
-    public void saveScore(BaseCallback callback) {
-        mPlayerRepository.saveScore(callback);
+    public void saveScore(final ScoreCallback callback) {
+        mPlayerRepository.saveScore(new ScoreCallback() {
+            @Override
+            public void onSuccess(final int score) {
+                mGameApi.sync(new GameApi.ScorePlain(score)).enqueue(new Callback<GameApi.ScorePlain>() {
+                    @Override
+                    public void onResponse(Call<GameApi.ScorePlain> call, Response<GameApi.ScorePlain> response) {
+                        if (response.isSuccessful() && response.code() == 200) {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onSuccess(score);
+                                }
+                            });
+                        } else {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onError();
+                                }
+                            });
+                            Log.e("GameRepositoryImpl", "run: saveScore: on api sync onResponse");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<GameApi.ScorePlain> call, final Throwable t) {
+                        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onError();
+                            }
+                        });
+                        Log.e("GameRepositoryImpl", "run: saveScore: on api sync onFailure", t);
+                    }
+                });
+            }
+
+            @Override
+            public void onError() {
+                Log.wtf("GameRepositoryImpl", "onError: mPlayerRepository saveScore callback");
+            }
+        });
     }
 
     @Override
@@ -123,24 +165,49 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     }
 
     @Override
-    public void buyUpgrade(final int upgradeID, final BaseCallback callback) {
-        // TODO check score
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+    public void buyUpgrade(final Upgrade upgrade, final BaseCallback callback) {
+        mPlayerRepository.getScore(new ScoreCallback() {
             @Override
-            public void run() {
-                mUpgradeDao.increaseCounter(upgradeID);
-                // todo player repository - count
-
-                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+            public void onSuccess(final int score) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onSuccess();
+                        if (score >= upgrade.getPrice()) {
+                            mUpgradeDao.increaseCounter(upgrade.getId());
+                            mPlayerRepository.setScore(score - upgrade.getPrice(), new BaseCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            callback.onSuccess();
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError() {
+                                    Log.e("GameRepositoryImpl", "buyUpgrade: onError when setScore");
+                                }
+                            });
+                        } else {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onError();
+                                    Log.d("GameRepositoryImpl", "not enough money");
+                                }
+                            });
+                        }
                     }
                 });
 
-                // todo onError if not enough money
+            }
+
+            @Override
+            public void onError() {
+                Log.e("GameRepositoryImpl", "buyUpgrade: onError when getScore");
             }
         });
-
     }
 }

@@ -18,7 +18,7 @@ public interface ShopContract {
 
 
     interface Presenter {
-        void onBuyUpgrade(int upgradeID);
+        void onBuyUpgrade(Upgrade upgrade);
         void getMoney();
         void fetchUpgrades();
     }
@@ -39,6 +39,6 @@ public interface ShopContract {
          */
         void fetchUpgrades(FetchCallback callback);
 
-        void buyUpgrade(int upgradeID, BaseCallback callback);
+        void buyUpgrade(Upgrade upgrade, BaseCallback callback);
     }
 }

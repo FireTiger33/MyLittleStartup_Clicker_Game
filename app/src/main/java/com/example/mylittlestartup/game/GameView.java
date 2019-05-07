@@ -2,7 +2,6 @@ package com.example.mylittlestartup.game;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
-import com.example.mylittlestartup.data.GameRepositoryImpl;
 
 
 public class GameView extends Fragment implements GameContract.View {
@@ -85,9 +83,9 @@ public class GameView extends Fragment implements GameContract.View {
 
 
     @Override
-    public void setMoney(int delta) {
-        moneyValView.setText(String.valueOf(delta));
-    }  // TODO why delta?
+    public void setMoney(int money) {
+        moneyValView.setText(String.valueOf(money));
+    }
 
     @Override
     public void onPause() {
