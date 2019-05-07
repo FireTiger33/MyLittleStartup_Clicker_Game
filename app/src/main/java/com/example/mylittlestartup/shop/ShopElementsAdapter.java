@@ -40,15 +40,10 @@ public class ShopElementsAdapter extends RecyclerView.Adapter<ShopElementsViewHo
         return mUpgrades.size();
     }
 
-    public void incrementUpgradeCounter(int upgradeID) {
-        for (int i = 0; i < mUpgrades.size(); i++) {
-            Upgrade upgrade = mUpgrades.get(i);
+    void incrementUpgradeCounter(int upgradeID) {
+        Upgrade upgrade = mUpgrades.get(upgradeID);
 
-            if (upgrade.getId() == upgradeID) {
-                upgrade.setCount(upgrade.getCount() + 1);
-                super.notifyItemChanged(i);
-                break;
-            }
-        }
+        upgrade.setCount(upgrade.getCount() + 1);
+        super.notifyItemChanged(upgradeID);
     }
 }

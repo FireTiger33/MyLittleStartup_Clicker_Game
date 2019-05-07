@@ -1,5 +1,7 @@
 package com.example.mylittlestartup.shop;
 
+import android.content.Context;
+
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 
@@ -8,6 +10,8 @@ import java.util.List;
 public interface ShopContract {
     interface View {
         void showUpgradeList(List<Upgrade> upgrades);
+        Context getAppContext();
+        void showMoney(int money);
 
         void incrementUpgradeCounter(int upgradeID);
     }
@@ -15,6 +19,7 @@ public interface ShopContract {
 
     interface Presenter {
         void onBuyUpgrade(int upgradeID);
+        void getMoney();
         void fetchUpgrades();
     }
 

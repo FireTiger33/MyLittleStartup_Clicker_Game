@@ -1,25 +1,26 @@
 package com.example.mylittlestartup.game;
 
+import android.content.Context;
+
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Achievement;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 
-import java.util.List;
 
 public interface GameContract {
 
     interface View {
         void showShopScreen();
+        Context getAppContext();
         void setMoney(int delta);
         // TODO add methods for added game entities
     }
 
     interface Presenter {
         void onShopButtonClicked();
-
         void addMoney(int delta);
-        void saveMoney();
-        void getMoney();
+        void onGameStart();
+        void onGamePause();
 
         void onKeyboardClick();
 
@@ -27,6 +28,7 @@ public interface GameContract {
     }
 
     interface Repository {
+
         interface ScoreCallback {
             void onSuccess(int score);
 

@@ -1,5 +1,6 @@
 package com.example.mylittlestartup.game;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
@@ -20,34 +21,35 @@ import com.example.mylittlestartup.data.GameRepositoryImpl;
 
 public class GameView extends Fragment implements GameContract.View {
     private GamePresenter presenter;
-    private CountDownTimer workTime;
 
     private Button shopButton;
     private ImageButton clickLocation;
-    private Button touchLocation;
+    private Button touchLocation;  // TODO for busted in osu style
     private TextView moneyValView;
+    private View view;
     private int k;  // coefficient up money on click
+
+    @Nullable
+    @Override
+    public Context getAppContext() {
+        return getContext().getApplicationContext();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        presenter = new GamePresenter(this, new GameRepositoryImpl(getContext().getApplicationContext()));
-
-        workTime = new CountDownTimer(5000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) { }
-            @Override
-            public void onFinish() { isDoneWork(); }
-        };
+        presenter = new GamePresenter(this);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_game, container, false);
+        presenter.onGameStart();
 
-        k = 1;  // TODO DB
+        view = inflater.inflate(R.layout.fragment_game, container, false);
+
+        k = 100;  // TODO DB
 
         shopButton = view.findViewById(R.id.button_shop);
         shopButton.setOnClickListener(new View.OnClickListener() {
@@ -60,17 +62,13 @@ public class GameView extends Fragment implements GameContract.View {
         moneyValView = view.findViewById(R.id.money_val);
         moneyValView.setText("0");
 
-        presenter.getMoney();
-
         clickLocation = view.findViewById(R.id.click_location);
         clickLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {  // TODO move to presenter
+            public void onClick(View v) {
                 presenter.addMoney(k);
             }
         });
-
-        workTime.start();
 
         return view;
     }
@@ -85,19 +83,21 @@ public class GameView extends Fragment implements GameContract.View {
         }
     }
 
-    private void isDoneWork() {
-        presenter.addMoney(10);
-        workTime.start();
-    }
 
     @Override
     public void setMoney(int delta) {
         moneyValView.setText(String.valueOf(delta));
+    }  // TODO why delta?
+
+    @Override
+    public void onPause() {
+        presenter.onGamePause();
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
+        presenter.onGamePause();
         super.onDestroy();
-        presenter.saveMoney();
     }
 }

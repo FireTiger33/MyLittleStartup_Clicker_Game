@@ -13,7 +13,6 @@ import com.example.mylittlestartup.data.sqlite.DBRepository;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.data.sqlite.UpgradeDao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClickerApplication extends Application {
@@ -43,12 +42,12 @@ public class ClickerApplication extends Application {
         List<Upgrade> upgrades = dao.all();
         if (upgrades.isEmpty()) {
             Upgrade[] basicUpgrades = {
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 1000, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 10000, R.drawable.shop_man),
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 1000, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 10000, R.drawable.shop_man),
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 1000, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 10000, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, R.drawable.shop_man),
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, R.drawable.shop_coffe),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, R.drawable.shop_man),
             };
 
             dao.insert(basicUpgrades);

@@ -1,6 +1,7 @@
 package com.example.mylittlestartup.shop;
 
 import com.example.mylittlestartup.data.BaseCallback;
+import com.example.mylittlestartup.data.GameRepositoryImpl;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 
 import java.util.List;
@@ -9,9 +10,9 @@ class ShopPresenter implements ShopContract.Presenter {
     private ShopContract.View mView;
     private ShopContract.Repository mRepository;
 
-    public ShopPresenter(ShopContract.View view, ShopContract.Repository repository) {
+    public ShopPresenter(ShopContract.View view) {
         mView = view;
-        mRepository = repository;
+        mRepository = new GameRepositoryImpl(view.getAppContext());
     }
 
     @Override
@@ -19,7 +20,7 @@ class ShopPresenter implements ShopContract.Presenter {
         mRepository.buyUpgrade(upgradeID, new BaseCallback() {
             @Override
             public void onSuccess() {
-                mView.incrementUpgradeCounter(upgradeID);
+                mView.incrementUpgradeCounter(upgradeID - 1);  // difference of array and database indexing
             }
 
             @Override
@@ -27,6 +28,11 @@ class ShopPresenter implements ShopContract.Presenter {
                 // todo show some errors?
             }
         });
+    }
+
+    @Override
+    public void getMoney() {  // TODO get from DB
+        mView.showMoney(1000);
     }
 
     @Override

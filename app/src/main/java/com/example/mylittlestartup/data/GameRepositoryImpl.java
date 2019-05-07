@@ -124,6 +124,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
 
     @Override
     public void buyUpgrade(final int upgradeID, final BaseCallback callback) {
+        // TODO check score
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {

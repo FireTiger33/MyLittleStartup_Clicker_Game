@@ -1,5 +1,6 @@
 package com.example.mylittlestartup.shop;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
-import com.example.mylittlestartup.data.GameRepositoryImpl;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class ShopView extends Fragment implements ShopContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPresenter = new ShopPresenter(this, new GameRepositoryImpl(getContext().getApplicationContext()));
+        mPresenter = new ShopPresenter(this);
 
     }
 
@@ -42,7 +42,7 @@ public class ShopView extends Fragment implements ShopContract.View {
         mView = inflater.inflate(R.layout.shop_container, container, false);
 
         moneyValView = mView.findViewById(R.id.money_val);
-        moneyValView.setText(String.valueOf(100000));
+        mPresenter.getMoney();
 
         layoutManager = new LinearLayoutManager(this.getContext());
 
@@ -58,6 +58,16 @@ public class ShopView extends Fragment implements ShopContract.View {
         shopView = mView.findViewById(R.id.shop_view);
         shopView.setAdapter(shopElementsAdapter);
         shopView.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public Context getAppContext() {
+        return getContext().getApplicationContext();
+    }
+
+    @Override
+    public void showMoney(int money) {
+        moneyValView.setText(String.valueOf(money));
     }
 
     @Override
