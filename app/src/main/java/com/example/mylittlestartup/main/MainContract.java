@@ -11,6 +11,7 @@ public interface MainContract {
         void showSignUpScreen();
         void showSettingsScreen();
         void showAchievementsScreen();
+        void showLeaderboardScreen();
     }
 
     interface Presenter {
@@ -19,6 +20,7 @@ public interface MainContract {
         void onSignUpButtonClicked();
         void onSettingsButtonClicked();
         void onAchievementsButtonClicked();
+        void onLeaderboardButtonClicked();
         void checkIsLoggedIn();
     }
 

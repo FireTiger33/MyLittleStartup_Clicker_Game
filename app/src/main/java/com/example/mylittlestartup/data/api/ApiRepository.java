@@ -7,6 +7,8 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -25,6 +27,8 @@ public class ApiRepository {
         mOkHttpClient = new OkHttpClient()
                 .newBuilder()
                 .cookieJar(cookieJar)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
                 .build();
 
         // todo https

@@ -29,6 +29,7 @@ public class MainFragment extends Fragment implements MainContract.View {
     private Button gameStartButton;
     private Button settingsButton;
     private ImageButton achievementsButton;
+    private Button leaderboardButton;
 
 
     @Override
@@ -89,6 +90,14 @@ public class MainFragment extends Fragment implements MainContract.View {
             }
         });
 
+        leaderboardButton = view.findViewById(R.id.leaderboard_button);
+        leaderboardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onLeaderboardButtonClicked();
+            }
+        });
+
         presenter.checkIsLoggedIn();
 
         return view;
@@ -145,6 +154,16 @@ public class MainFragment extends Fragment implements MainContract.View {
         Router router = (Router) getActivity();
         if (router != null) {
             router.openAchievementsScreen();
+        } else {
+            Log.e(logTag, "This activity is not a Router");
+        }
+    }
+
+    @Override
+    public void showLeaderboardScreen() {
+        Router router = (Router) getActivity();
+        if (router != null) {
+            router.openLeaderboardScreen();
         } else {
             Log.e(logTag, "This activity is not a Router");
         }
