@@ -39,7 +39,8 @@ class ShopPresenter implements ShopContract.Presenter {
 
             @Override
             public void onError() {
-                new Toast(mView.getViewContext()).setText("Не достаточно средств");
+                Toast toast = Toast.makeText(mView.getViewContext(), "Недостаточно средств", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
     }
