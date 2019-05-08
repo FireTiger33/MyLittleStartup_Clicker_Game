@@ -14,4 +14,6 @@
     <string name="workers">workers</string>
     <string name="your_money">Your money:</string>
     <string name="now">now:</string>
+    <string name="leaderboard_title">Leaderboard</string>
+    <string name="connection_problem_please_restart_page">Connection problem, please restart page</string>
 </resources>

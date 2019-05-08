@@ -41,6 +41,11 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
+    public void onLeaderboardButtonClicked() {
+        mView.showLeaderboardScreen();
+    }
+
+    @Override
     public void checkIsLoggedIn() {
         mRepository.wasAuthorized(new BaseCallback() {
             @Override

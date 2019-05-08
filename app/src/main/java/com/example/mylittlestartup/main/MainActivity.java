@@ -9,6 +9,7 @@ import com.example.mylittlestartup.achievements.AchievementsView;
 import com.example.mylittlestartup.authorization.AuthContract;
 import com.example.mylittlestartup.authorization.AuthView;
 import com.example.mylittlestartup.game.GameView;
+import com.example.mylittlestartup.leaderboard.LeaderboardView;
 import com.example.mylittlestartup.settings.SettingsView;
 import com.example.mylittlestartup.shop.ShopView;
 
@@ -67,6 +68,14 @@ public class MainActivity extends AppCompatActivity implements Router {
         fragmentManager.beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.main_activity, new AchievementsView())
+                .commit();
+    }
+
+    @Override
+    public void openLeaderboardScreen() {
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_activity, new LeaderboardView())
                 .commit();
     }
 

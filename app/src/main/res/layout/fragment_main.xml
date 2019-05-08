@@ -65,6 +65,15 @@
             app:srcCompat = "@drawable/achievements_logo"
             android:scaleType="fitXY"/>
 
+        <Button
+            android:id="@+id/leaderboard_button"
+            android:layout_width="140dp"
+            android:layout_height="70dp"
+            android:layout_gravity="end"
+            android:layout_marginStart="140dp"
+            android:contentDescription="@string/touch_area"
+            android:text="Leaderboard" />
+
     </LinearLayout>
 
 </LinearLayout>

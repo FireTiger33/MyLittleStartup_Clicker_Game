@@ -1,5 +1,6 @@
 package com.example.mylittlestartup.data.api;
 
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -13,6 +14,31 @@ public interface UserApi {
         public int id;
         public String username;
         public String score;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getScore() {
+            return score;
+        }
+
+        public UserPlain(int id, String username, String score) {
+            this.id = id;
+            this.username = username;
+            this.score = score;
+        }
+    }
+
+    class SortByScore implements Comparator<UserPlain> {
+        @Override
+        public int compare(UserPlain o1, UserPlain o2) {
+
+            int score1 = Integer.parseInt(o1.score);
+            int score2 = Integer.parseInt(o2.score);
+
+            return score2 - score1;
+        }
     }
 
     class User {
@@ -25,7 +51,7 @@ public interface UserApi {
         }
     }
 
-    @GET("/user")
+    @GET("/user?limit=99&offset=0")
     Call<List<UserPlain>> getAll();
 
     @GET("/user/{id}")
