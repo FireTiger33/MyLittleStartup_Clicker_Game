@@ -66,6 +66,17 @@ public class ShopView extends Fragment implements ShopContract.View {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.onViewClosed();
+    }
+
+    @Override
+    public Context getViewContext() {
+        return getContext();
+    }
+
+    @Override
     public void showMoney(int money) {
         moneyValView.setText(String.valueOf(money));
     }

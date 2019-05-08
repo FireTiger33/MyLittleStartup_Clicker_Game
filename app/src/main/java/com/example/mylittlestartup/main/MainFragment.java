@@ -1,5 +1,6 @@
 package com.example.mylittlestartup.main;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +38,18 @@ public class MainFragment extends Fragment implements MainContract.View {
         super.onCreate(savedInstanceState);
 
         presenter = new MainPresenter(this, new UserRepositoryImpl(getContext().getApplicationContext()));
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        presenter.onViewShowed();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        presenter.onViewClosed();
     }
 
     @Nullable
@@ -167,5 +180,10 @@ public class MainFragment extends Fragment implements MainContract.View {
         } else {
             Log.e(logTag, "This activity is not a Router");
         }
+    }
+
+    @Override
+    public Context getViewContext() {
+        return getContext();
     }
 }

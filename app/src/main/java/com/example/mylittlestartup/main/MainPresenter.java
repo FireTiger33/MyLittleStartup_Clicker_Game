@@ -1,18 +1,23 @@
 package com.example.mylittlestartup.main;
 
 
+import android.media.MediaPlayer;
+
+import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 
 import java.util.logging.Logger;
 
 public class MainPresenter implements MainContract.Presenter {
-
     private MainContract.View mView;
     private MainContract.Repository mRepository;
+
+    private MediaPlayer player;
 
     MainPresenter(MainContract.View view, MainContract.Repository repository) {
         this.mView = view;
         this.mRepository = repository;
+        player = MediaPlayer.create(view.getViewContext(), R.raw.main_sound);
     }
 
     @Override
@@ -60,4 +65,15 @@ public class MainPresenter implements MainContract.Presenter {
             }
         });
     }
+
+    @Override
+    public void onViewShowed() {
+        player.start();
+    }
+
+    @Override
+    public void onViewClosed() {
+        player.pause();
+    }
+
 }

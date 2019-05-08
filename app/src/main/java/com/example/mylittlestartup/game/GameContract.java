@@ -12,6 +12,7 @@ public interface GameContract {
     interface View {
         void showShopScreen();
         Context getAppContext();
+        Context getViewContext();
         void setMoney(int delta);
         // TODO add methods for added game entities
     }

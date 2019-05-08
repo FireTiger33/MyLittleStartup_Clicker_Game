@@ -34,6 +34,11 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
+    public Context getViewContext() {
+        return getContext();
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

@@ -1,5 +1,7 @@
 package com.example.mylittlestartup.main;
 
+import android.content.Context;
+
 import com.example.mylittlestartup.data.BaseCallback;
 
 public interface MainContract {
@@ -12,6 +14,7 @@ public interface MainContract {
         void showSettingsScreen();
         void showAchievementsScreen();
         void showLeaderboardScreen();
+        Context getViewContext();
     }
 
     interface Presenter {
@@ -22,6 +25,8 @@ public interface MainContract {
         void onAchievementsButtonClicked();
         void onLeaderboardButtonClicked();
         void checkIsLoggedIn();
+        void onViewShowed();
+        void onViewClosed();
     }
 
     interface Repository {

@@ -1,8 +1,10 @@
 package com.example.mylittlestartup.game;
 
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 
+import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
 import com.example.mylittlestartup.data.executors.AppExecutors;
@@ -20,14 +22,19 @@ public class GamePresenter implements GameContract.Presenter {
     private GameContract.View mView;
     private GameRepositoryImpl mRepository;
 
+    private List<Integer> itemsIds;
     private List<CountDownTimer> workTimers;
     private List<Upgrade> upgradeItems;
+
+    private MediaPlayer gamePlayer;
 
 
     public GamePresenter(GameContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
         workTimers = new ArrayList<>();
+        itemsIds = new ArrayList<>();
+        gamePlayer = MediaPlayer.create(view.getViewContext(), R.raw.game_sound);
     }
 
 
@@ -35,6 +42,7 @@ public class GamePresenter implements GameContract.Presenter {
         upgradeItems = upgrades;
         for (Upgrade item: upgradeItems) {
             addWorkTimer(item);
+            itemsIds.add(item.getId());
         }
         startWorkTimers();
     }
@@ -46,8 +54,13 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     private void isDoneWork(Upgrade item) {
-        addMoney(item.getId()*10*item.getCount());  // TODO replace to item.get
-        workTimers.get(item.getId()-1).start();
+        addMoney(item.getValue()*item.getCount());  // TODO replace to item.get
+        int itemId = item.getId();
+        for (int i = 0; i < itemsIds.size(); i++) {
+            if (itemsIds.get(i) == itemId) {
+                workTimers.get(i).start();
+            }
+        }
     }
 
     private void addWorkTimer(final Upgrade upgradeItem) {
@@ -113,15 +126,18 @@ public class GamePresenter implements GameContract.Presenter {
         Log.d(mTAG, "onGameStart");
         getMoney();
         gameFetchUpgrades();
+        gamePlayer.start();
     }
 
     @Override
     public void onGamePause() {
+        gamePlayer.pause();
         Log.d(mTAG, "onGamePause");
         for (CountDownTimer timer: workTimers) {
             timer.cancel();
         }
         workTimers.clear();
+        itemsIds.clear();
         saveMoney();
     }
 

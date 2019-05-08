@@ -11,6 +11,7 @@ public interface ShopContract {
     interface View {
         void showUpgradeList(List<Upgrade> upgrades);
         Context getAppContext();
+        Context getViewContext();
         void showMoney(int money);
 
         void incrementUpgradeCounter(int upgradeID);
@@ -21,6 +22,7 @@ public interface ShopContract {
         void onBuyUpgrade(Upgrade upgrade);
         void getMoney();
         void fetchUpgrades();
+        void onViewClosed();
     }
 
     interface Repository {

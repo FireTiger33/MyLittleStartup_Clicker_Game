@@ -1,8 +1,10 @@
 package com.example.mylittlestartup.shop;
 
+import android.media.MediaPlayer;
 import android.util.Log;
 
 import com.example.mylittlestartup.ClickerApplication;
+import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
 import com.example.mylittlestartup.data.PlayerRepository;
@@ -12,6 +14,7 @@ import com.example.mylittlestartup.game.GameContract;
 import java.util.List;
 
 class ShopPresenter implements ShopContract.Presenter {
+    private MediaPlayer player;
     private ShopContract.View mView;
     private ShopContract.Repository mRepository;
     private PlayerRepository mPlayerRepository;
@@ -29,6 +32,8 @@ class ShopPresenter implements ShopContract.Presenter {
             public void onSuccess() {
                 mView.incrementUpgradeCounter(upgrade.getId() - 1);  // difference of array and database indexing
                 getMoney();
+                player = MediaPlayer.create(mView.getViewContext(), R.raw.on_buy_upgrade_sound);
+                player.start();
             }
 
             @Override
@@ -66,5 +71,10 @@ class ShopPresenter implements ShopContract.Presenter {
                 // todo show some errors?
             }
         });
+    }
+
+    @Override
+    public void onViewClosed() {
+        player.stop();
     }
 }
