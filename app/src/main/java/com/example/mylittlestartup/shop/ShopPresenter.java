@@ -2,6 +2,7 @@ package com.example.mylittlestartup.shop;
 
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.R;
@@ -38,7 +39,7 @@ class ShopPresenter implements ShopContract.Presenter {
 
             @Override
             public void onError() {
-                // todo show some errors?
+                new Toast(mView.getViewContext()).setText("Не достаточно средств");
             }
         });
     }
@@ -75,6 +76,6 @@ class ShopPresenter implements ShopContract.Presenter {
 
     @Override
     public void onViewClosed() {
-        player.stop();
+        // player.stop();
     }
 }
