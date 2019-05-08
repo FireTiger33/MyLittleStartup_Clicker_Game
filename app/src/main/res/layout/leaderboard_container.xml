@@ -9,7 +9,15 @@
         android:text="@string/leaderboard_title"
         android:layout_width="match_parent"
         android:layout_height="60sp"
+        android:textAlignment="center"
         android:textSize="40sp"/>
+
+    <View
+        android:id="@+id/delimeter_view"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="1dp"
+        android:background="#9F5A5353"/>
 
     <TextView
         android:id="@+id/connection_error"

@@ -51,7 +51,7 @@ public interface UserApi {
         }
     }
 
-    @GET("/user")
+    @GET("/user?limit=99&offset=0")
     Call<List<UserPlain>> getAll();
 
     @GET("/user/{id}")

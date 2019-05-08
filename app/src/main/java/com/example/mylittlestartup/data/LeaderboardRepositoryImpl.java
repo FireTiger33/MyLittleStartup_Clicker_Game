@@ -35,7 +35,7 @@ public class LeaderboardRepositoryImpl implements LeaderboardContract.Repository
                         if (response.code() == 200) {
                             List<UserApi.UserPlain> responseUsers = response.body();
                             Collections.sort(responseUsers, new UserApi.SortByScore());
-
+                            
                             callback.onSuccess(responseUsers);
                         } else {
                             AppExecutors.getInstance().mainThread().execute(new Runnable() {
