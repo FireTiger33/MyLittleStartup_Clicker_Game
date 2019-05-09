@@ -3,8 +3,6 @@ package com.example.mylittlestartup.game;
 import android.content.Context;
 
 import com.example.mylittlestartup.data.BaseCallback;
-import com.example.mylittlestartup.data.sqlite.Achievement;
-import com.example.mylittlestartup.data.sqlite.Upgrade;
 
 
 public interface GameContract {
@@ -19,13 +17,11 @@ public interface GameContract {
 
     interface Presenter {
         void onShopButtonClicked();
-        void addMoney(int delta);
         void onGameStart();
         void onGamePause();
-
-        void onKeyboardClick();
-
-        void checkMoneyVal();
+        void onTouchLocationTouched(float x, float y, int action);
+        void onCommonClickLocationClicked();
+        void onSpecClickAreaClicked();
     }
 
     interface Repository {

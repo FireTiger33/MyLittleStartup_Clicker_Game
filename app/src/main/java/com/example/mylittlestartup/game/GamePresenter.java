@@ -4,9 +4,11 @@ import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 
+import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
+import com.example.mylittlestartup.data.PlayerRepository;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.shop.ShopContract;
@@ -28,16 +30,31 @@ public class GamePresenter implements GameContract.Presenter {
 
     private MediaPlayer gamePlayer;
 
+    private int k;  // clickMultiplier
+    private int spec_k;
 
-    public GamePresenter(GameContract.View view) {
+
+    GamePresenter(GameContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
+        k = 1;  // TODO achievement increasing multiplier
+        spec_k = 100;
         workTimers = new ArrayList<>();
         itemsIds = new ArrayList<>();
-        gamePlayer = MediaPlayer.create(view.getViewContext(), R.raw.game_sound);
-        gamePlayer.isLooping();
+        if (isMusicSoundState()) {
+            musicOn();
+        }
     }
 
+    private boolean isMusicSoundState() {
+        PlayerRepository playerRepository = ClickerApplication.from(mView.getAppContext()).getPlayerRepository();
+        return playerRepository.isMusicSoundState();
+    }
+
+    private void musicOn() {
+        gamePlayer = MediaPlayer.create(mView.getViewContext(), R.raw.game_sound);
+        gamePlayer.setLooping(true);
+    }
 
     private void startWorkers(List<Upgrade> upgrades) {
         upgradeItems = upgrades;
@@ -127,12 +144,16 @@ public class GamePresenter implements GameContract.Presenter {
         Log.d(mTAG, "onGameStart");
         getMoney();
         gameFetchUpgrades();
-        gamePlayer.start();
+        if (gamePlayer != null) {
+            gamePlayer.start();
+        }
     }
 
     @Override
     public void onGamePause() {
-        gamePlayer.pause();
+        if (gamePlayer != null) {
+            gamePlayer.pause();
+        }
         Log.d(mTAG, "onGamePause");
         for (CountDownTimer timer: workTimers) {
             timer.cancel();
@@ -143,18 +164,17 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
+    public void onTouchLocationTouched(float x, float y, int action) {
+
+    }
+
+    @Override
     public void onShopButtonClicked() {
         mView.showShopScreen();
 
     }
 
-    @Override
-    public void checkMoneyVal() {
-        // TODO sync with server and DB and edit
-    }
-
-    @Override
-    public void addMoney(int delta) {
+    private void addMoney(int delta) {
         mRepository.incrementScore(delta, new BaseCallback() {
             @Override
             public void onSuccess() {
@@ -169,7 +189,12 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
-    public void onKeyboardClick() {
-        // todo - when k will be stored in storage
+    public void onCommonClickLocationClicked() {
+        addMoney(k);
+    }
+
+    @Override
+    public void onSpecClickAreaClicked() {
+        addMoney(spec_k);
     }
 }

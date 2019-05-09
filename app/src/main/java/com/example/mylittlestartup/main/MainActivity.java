@@ -1,25 +1,39 @@
 package com.example.mylittlestartup.main;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.example.mylittlestartup.AppActions;
+import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
 import com.example.mylittlestartup.achievements.AchievementsView;
 import com.example.mylittlestartup.authorization.AuthContract;
 import com.example.mylittlestartup.authorization.AuthView;
+import com.example.mylittlestartup.data.PlayerRepository;
 import com.example.mylittlestartup.game.GameView;
 import com.example.mylittlestartup.leaderboard.LeaderboardView;
 import com.example.mylittlestartup.settings.SettingsView;
 import com.example.mylittlestartup.shop.ShopView;
 
-public class MainActivity extends AppCompatActivity implements Router {
-    FragmentManager fragmentManager = getSupportFragmentManager();
+public class MainActivity extends AppCompatActivity implements Router, AppActions {
+    String tag = MainActivity.class.getName();
+
+    private PlayerRepository playerRepository;
+
+    private FragmentManager fragmentManager = getSupportFragmentManager();
+
+    public static String MUSIC_VOLUME_STATE = "musicSoundState";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        playerRepository = ClickerApplication.from(getApplicationContext()).getPlayerRepository();
 
         fragmentManager.beginTransaction()
                 .replace(R.id.main_activity, new MainFragment())
@@ -93,5 +107,17 @@ public class MainActivity extends AppCompatActivity implements Router {
                 .addToBackStack(null)
                 .replace(R.id.main_activity, new ShopView())
                 .commit();
+    }
+
+    @Override
+    public void musicSoundOff() {
+        Log.d(tag, "Music Off");
+        playerRepository.setMusicSoundStateOff();
+    }
+
+    @Override
+    public void musicSoundOn() {
+        Log.d(tag, "Music On");
+        playerRepository.setMusicSoundStateOn();
     }
 }

@@ -15,6 +15,7 @@ public interface MainContract {
         void showAchievementsScreen();
         void showLeaderboardScreen();
         Context getViewContext();
+        Context getAppContext();
     }
 
     interface Presenter {

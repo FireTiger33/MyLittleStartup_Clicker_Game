@@ -3,8 +3,10 @@ package com.example.mylittlestartup.main;
 
 import android.media.MediaPlayer;
 
+import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
+import com.example.mylittlestartup.data.PlayerRepository;
 
 
 public class MainPresenter implements MainContract.Presenter {
@@ -16,7 +18,17 @@ public class MainPresenter implements MainContract.Presenter {
     MainPresenter(MainContract.View view, MainContract.Repository repository) {
         this.mView = view;
         this.mRepository = repository;
-        player = MediaPlayer.create(view.getViewContext(), R.raw.main_sound_128kbit);
+    }
+
+
+    private boolean isMusicSoundState() {
+        PlayerRepository playerRepository = ClickerApplication.from(mView.getAppContext()).getPlayerRepository();
+        return playerRepository.isMusicSoundState();
+    }
+
+    private void musicOn() {
+        player = MediaPlayer.create(mView.getViewContext(), R.raw.main_sound_128kbit);
+        player.start();
     }
 
     @Override
@@ -67,12 +79,16 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void onViewShowed() {
-        player.start();
+        if (isMusicSoundState()) {
+            musicOn();
+        }
     }
 
     @Override
     public void onViewClosed() {
-        player.pause();
+        if (player != null) {
+            player.pause();
+        }
     }
 
 }

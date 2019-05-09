@@ -186,4 +186,9 @@ public class MainFragment extends Fragment implements MainContract.View {
     public Context getViewContext() {
         return getContext();
     }
+
+    @Override
+    public Context getAppContext() {
+        return getContext().getApplicationContext();
+    }
 }

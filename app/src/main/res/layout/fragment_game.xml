@@ -46,7 +46,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@android:color/white">
         <ImageView
             android:id="@+id/touch_location"
             android:layout_width="match_parent"
@@ -55,14 +57,29 @@
             app:srcCompat = "@drawable/monitor"
             android:background="@android:color/white"
             android:contentDescription="@string/touch_location"/>
-        <ImageButton
-            android:id="@+id/click_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/keyboard"
-            android:background="@android:color/white"
-            android:contentDescription="@string/click_location"
-            />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/touch_area"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/touch_area"
+                android:alpha="0.7"
+                />
+
+            <ImageButton
+                android:id="@+id/click_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/keyboard"
+                android:background="@android:color/white"
+                android:contentDescription="@string/click_location"
+                />
+
+        </FrameLayout>
 
     </LinearLayout>
 
