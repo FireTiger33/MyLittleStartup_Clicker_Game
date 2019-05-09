@@ -83,12 +83,12 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void onViewShowed() {
         Log.d(tag, "onViewShowed");
-        if (player == null) {
-            if (isMusicSoundState()) {
+        if (isMusicSoundState()) {
+            if (player == null) {
                 musicOn();
+            } else {
+                player.start();
             }
-        } else {
-            player.start();
         }
     }
 
