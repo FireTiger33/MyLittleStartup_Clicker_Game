@@ -30,7 +30,7 @@ public class MainFragment extends Fragment implements MainContract.View {
     private Button gameStartButton;
     private Button settingsButton;
     private ImageButton achievementsButton;
-    private Button leaderboardButton;
+    private ImageButton leaderboardButton;
 
 
     @Override

@@ -35,6 +35,7 @@ public class GamePresenter implements GameContract.Presenter {
         workTimers = new ArrayList<>();
         itemsIds = new ArrayList<>();
         gamePlayer = MediaPlayer.create(view.getViewContext(), R.raw.game_sound);
+        gamePlayer.isLooping();
     }
 
 
@@ -54,7 +55,7 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     private void isDoneWork(Upgrade item) {
-        addMoney(item.getValue()*item.getCount());  // TODO replace to item.get
+        addMoney(item.getValue()*item.getCount());
         int itemId = item.getId();
         for (int i = 0; i < itemsIds.size(); i++) {
             if (itemsIds.get(i) == itemId) {

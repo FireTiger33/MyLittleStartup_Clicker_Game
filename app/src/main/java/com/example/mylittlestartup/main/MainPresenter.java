@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 
-import java.util.logging.Logger;
 
 public class MainPresenter implements MainContract.Presenter {
     private MainContract.View mView;
@@ -17,7 +16,7 @@ public class MainPresenter implements MainContract.Presenter {
     MainPresenter(MainContract.View view, MainContract.Repository repository) {
         this.mView = view;
         this.mRepository = repository;
-        player = MediaPlayer.create(view.getViewContext(), R.raw.main_sound);
+        player = MediaPlayer.create(view.getViewContext(), R.raw.main_sound_128kbit);
     }
 
     @Override
