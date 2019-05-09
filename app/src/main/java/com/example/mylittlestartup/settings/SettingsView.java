@@ -35,6 +35,7 @@ public class SettingsView extends Fragment implements SettingsContract.View {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         soundButton = view.findViewById(R.id.sound_button);
+        soundButton.setBackgroundResource(R.color.holo_red_dark);
         presenter.checkMusicSoundState();
         soundButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,10 +60,13 @@ public class SettingsView extends Fragment implements SettingsContract.View {
     @Override
     public void setMusicSoundButtonStateOn() {
         soundButton.setChecked(true);
+        soundButton.setBackgroundResource(R.color.holo_green_dark);
     }
 
     @Override
     public void musicSoundOff() {
+        soundButton.setBackgroundResource(R.color.holo_red_dark);
+
         AppActions actions = (AppActions) getActivity();
         if (actions != null) {
             actions.musicSoundOff();
@@ -73,6 +77,8 @@ public class SettingsView extends Fragment implements SettingsContract.View {
 
     @Override
     public void musicSoundOn() {
+        soundButton.setBackgroundResource(R.color.holo_green_dark);
+
         AppActions actions = (AppActions) getActivity();
         if (actions != null) {
             actions.musicSoundOn();

@@ -30,6 +30,8 @@
 
         <ToggleButton
             android:id="@+id/sound_button"
+            android:textOn="@string/on"
+            android:textOff="@string/off"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
