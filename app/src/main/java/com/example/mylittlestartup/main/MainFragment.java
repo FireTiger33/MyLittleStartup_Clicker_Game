@@ -48,8 +48,14 @@ public class MainFragment extends Fragment implements MainContract.View {
 
     @Override
     public void onPause() {
-        super.onPause();
         presenter.onViewClosed();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.onViewShowed();
     }
 
     @Nullable

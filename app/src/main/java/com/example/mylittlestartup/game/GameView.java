@@ -140,6 +140,12 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        presenter.onGameStart();
+    }
+
+    @Override
     public void onDestroy() {
         presenter.onGamePause();
         super.onDestroy();

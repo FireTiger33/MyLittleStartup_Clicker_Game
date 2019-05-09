@@ -2,6 +2,7 @@ package com.example.mylittlestartup.main;
 
 
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.R;
@@ -10,6 +11,8 @@ import com.example.mylittlestartup.data.PlayerRepository;
 
 
 public class MainPresenter implements MainContract.Presenter {
+    String tag = MainPresenter.class.getName();
+
     private MainContract.View mView;
     private MainContract.Repository mRepository;
 
@@ -79,8 +82,13 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void onViewShowed() {
-        if (isMusicSoundState()) {
-            musicOn();
+        Log.d(tag, "onViewShowed");
+        if (player == null) {
+            if (isMusicSoundState()) {
+                musicOn();
+            }
+        } else {
+            player.start();
         }
     }
 
