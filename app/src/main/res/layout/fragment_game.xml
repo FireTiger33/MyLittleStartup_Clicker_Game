@@ -7,30 +7,32 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@android:color/white">
 
         <Button
             android:id="@+id/button_shop"
-            android:text="@string/shop"
             android:layout_marginStart="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/shop"/>
 
-        <TextView
+        <!--<TextView
             android:text="@string/currency"
             android:textSize="30sp"
             android:layout_marginStart="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"/>-->
         <TextView
             android:id="@+id/money_val"
             android:textSize="30sp"
+            android:textColor="#50CE30"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="20dp"/>
+            android:gravity="center"/>
 
     </LinearLayout>
 
@@ -38,7 +40,6 @@
         android:id="@+id/workers"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:layout_marginTop="10dp"
         android:background="@android:color/white"
         android:contentDescription="@string/workers"
         app:srcCompat="@drawable/workers" />

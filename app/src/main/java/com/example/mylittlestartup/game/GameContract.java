@@ -13,6 +13,7 @@ public interface GameContract {
         Context getViewContext();
         void setMoney(int delta);
         void showAddedMoney(float x, float y, int val);
+        void showMoneyPulsAnim();
 
         // TODO add methods for added game entities
     }

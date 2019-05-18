@@ -1,5 +1,8 @@
 package com.example.mylittlestartup.game;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -34,6 +37,7 @@ public class GameView extends Fragment implements GameContract.View {
     private Button shopButton;
     private FrameLayout touchLocation;  // container for Objects
     private TextView moneyValView;
+    private ValueAnimator moneyViewAnimator;
     private ViewFlipper monitorView;
     private final int[] monitorImagesId = {
             R.drawable.monitor_step_0,
@@ -116,6 +120,25 @@ public class GameView extends Fragment implements GameContract.View {
         createBugButton();
     }
 
+    @Override
+    public void showMoneyPulsAnim() {
+        final float defTextSize = moneyValView.getTextSize()/3;
+        moneyViewAnimator = ValueAnimator.ofFloat(defTextSize, defTextSize+10).setDuration(150L);
+        moneyViewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                moneyValView.setTextSize((float)animation.getAnimatedValue());
+            }
+        });
+        moneyViewAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                moneyValView.setTextSize(defTextSize);
+            }
+        });
+        moneyViewAnimator.start();
+    }
+
     private void createIssueButton() {
         gameClickableObj = new GameClickableObj(monitorView, presenter,
                 mView.findViewById(R.id.issue), 120);
@@ -131,7 +154,7 @@ public class GameView extends Fragment implements GameContract.View {
                 Color.argb(80, 255, 0, 0)
         };
         runningGameClickableObj = new RunningGameClickableObj(monitorView, presenter,
-                mView.findViewById(R.id.bug), 60, 5, colorSet);
+                mView.findViewById(R.id.bug), 5, 5, colorSet);
         runningGameClickableObj.run();
     }
 
@@ -157,7 +180,7 @@ public class GameView extends Fragment implements GameContract.View {
 
     @Override
     public void setMoney(int money) {
-        moneyValView.setText(String.valueOf(money));
+        moneyValView.setText("$ " + money);
     }
 
     @Override
@@ -202,6 +225,7 @@ public class GameView extends Fragment implements GameContract.View {
     @Override
     public void onDestroy() {
         presenter.onGamePause();
+        moneyViewAnimator.cancel();
         super.onDestroy();
     }
 }
