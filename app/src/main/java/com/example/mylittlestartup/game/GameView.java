@@ -141,7 +141,7 @@ public class GameView extends Fragment implements GameContract.View {
 
     private void createIssueButton() {
         gameClickableObj = new GameClickableObj(monitorView, presenter,
-                mView.findViewById(R.id.issue), 120);
+                mView.findViewById(R.id.issue), 60);
         gameClickableObj.run();
     }
 
@@ -154,7 +154,7 @@ public class GameView extends Fragment implements GameContract.View {
                 Color.argb(80, 255, 0, 0)
         };
         runningGameClickableObj = new RunningGameClickableObj(monitorView, presenter,
-                mView.findViewById(R.id.bug), 5, 5, colorSet);
+                mView.findViewById(R.id.bug), 60, 5, colorSet);
         runningGameClickableObj.run();
     }
 

@@ -55,7 +55,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
 
             @Override
             public void onFinish() {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 50*hp; i++) {
                     presenter.onBugIsAlive();
                 }
                 stop();

@@ -207,7 +207,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-k*10);
+        addMoney(-k*20);
         mView.showMoneyPulsAnim();
     }
 
