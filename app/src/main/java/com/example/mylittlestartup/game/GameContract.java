@@ -12,6 +12,8 @@ public interface GameContract {
         Context getAppContext();
         Context getViewContext();
         void setMoney(int delta);
+        void showAddedMoney(float x, float y, int val);
+
         // TODO add methods for added game entities
     }
 
@@ -20,8 +22,12 @@ public interface GameContract {
         void onGameStart();
         void onGamePause();
         void onTouchLocationTouched(float x, float y, int action);
-        void onCommonClickLocationClicked();
-        void onSpecClickAreaClicked();
+        void onTouchLocationActionUP();
+        void onCommonClickLocationClicked(float x, float y);
+        void onSpecClickAreaClicked(float x, float y);
+        void onBugIsAlive();
+
+        void onFollowingObjDisappeared(int score);
     }
 
     interface Repository {

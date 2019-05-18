@@ -20,4 +20,6 @@
     <string name="sound">Sound</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
+    <string name="issue">issue</string>
+    <string name="bug">bug</string>
 </resources>

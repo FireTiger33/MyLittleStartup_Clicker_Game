@@ -169,6 +169,11 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
+    public void onTouchLocationActionUP() {
+        addMoney(1000);
+    }
+
+    @Override
     public void onShopButtonClicked() {
         mView.showShopScreen();
 
@@ -189,12 +194,24 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
-    public void onCommonClickLocationClicked() {
+    public void onCommonClickLocationClicked(float x, float y) {
+        mView.showAddedMoney(x, y, k);
         addMoney(k);
     }
 
     @Override
-    public void onSpecClickAreaClicked() {
+    public void onSpecClickAreaClicked(float x, float y) {
+        mView.showAddedMoney(x, y, spec_k);
         addMoney(spec_k);
+    }
+
+    @Override
+    public void onBugIsAlive() {
+        addMoney(-k*10);
+    }
+
+    @Override
+    public void onFollowingObjDisappeared(int score) {
+        addMoney(score*10);
     }
 }

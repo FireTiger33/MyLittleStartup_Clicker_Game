@@ -2,7 +2,9 @@ package com.example.mylittlestartup.game;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,26 +14,36 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
-
-import java.util.Random;
+import com.example.mylittlestartup.game.objects.GameClickableObj;
+import com.example.mylittlestartup.game.objects.RunningGameClickableObj;
+//import com.example.mylittlestartup.game.objects.GameFollowingObj;
 
 
 public class GameView extends Fragment implements GameContract.View {
     String tag = GameView.class.getName();
 
+    private View mView;
     private GamePresenter presenter;
-
     private Button shopButton;
-    private ImageButton clickLocation;
-    private ImageView touchLocation;  // TODO for buster in osu style
-    private Button touchArea;
+    private FrameLayout touchLocation;  // container for Objects
     private TextView moneyValView;
+    private ViewFlipper monitorView;
+    private final int[] monitorImagesId = {
+            R.drawable.monitor_step_0,
+            R.drawable.monitor_step_1,
+            R.drawable.monitor_step_2
+    };
+
+    private GameClickableObj gameClickableObj;
+    private RunningGameClickableObj runningGameClickableObj;
+//    private GameFollowingObj followingObj;
 
     @Nullable
     @Override
@@ -57,9 +69,9 @@ public class GameView extends Fragment implements GameContract.View {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         presenter.onGameStart();
 
-        View view = inflater.inflate(R.layout.fragment_game, container, false);
+        mView = inflater.inflate(R.layout.fragment_game, container, false);
 
-        shopButton = view.findViewById(R.id.button_shop);
+        shopButton = mView.findViewById(R.id.button_shop);
         shopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,54 +79,69 @@ public class GameView extends Fragment implements GameContract.View {
             }
         });
 
-        moneyValView = view.findViewById(R.id.money_val);
+        moneyValView = mView.findViewById(R.id.money_val);
         moneyValView.setText("0");
 
-        touchArea = view.findViewById(R.id.touch_area);
-        touchArea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presenter.onSpecClickAreaClicked();
-                refreshTouchAreaPos();
-            }
-        });
+        touchLocation = mView.findViewById(R.id.touch_location);
 
-        touchLocation = view.findViewById(R.id.touch_location);
-        touchLocation.setOnTouchListener(new View.OnTouchListener() {
+        monitorView = mView.findViewById(R.id.monitor);
+        monitorView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                presenter.onTouchLocationTouched(motionEvent.getX(),
-                        motionEvent.getY(),
-                        motionEvent.getAction());
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    presenter.onCommonClickLocationClicked(event.getX(), event.getY());
+                }
 
                 return true;
             }
         });
 
-        clickLocation = view.findViewById(R.id.click_location);
-        clickLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { presenter.onCommonClickLocationClicked();
-            }
-        });
+        // Add images with code on monitor
+        for (int i: monitorImagesId) {
+            ImageView imageView = new ImageView(getContext());
+            imageView.setImageResource(i);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            monitorView.addView(imageView);
+        }
+        monitorView.startFlipping();
 
-
-        return view;
+        return mView;
     }
 
-    private void refreshTouchAreaPos() {
-        int numHorizontalStates = 13;
-        int numVerticalStates = 6;
-        int locationWidth = clickLocation.getWidth();
-        int locationHeight = clickLocation.getHeight();
-        Random random = new Random();
-        int newPosHorizontal = locationWidth / numHorizontalStates
-                * (random.nextInt(numHorizontalStates));
-        int newPosVertical = locationHeight / numVerticalStates
-                * (random.nextInt(numVerticalStates));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        touchArea.setX(newPosHorizontal);
-        touchArea.setY(newPosVertical);
+        createIssueButton();
+        createBugButton();
+    }
+
+    private void createIssueButton() {
+        gameClickableObj = new GameClickableObj(monitorView, presenter,
+                mView.findViewById(R.id.issue), 120);
+        gameClickableObj.run();
+    }
+
+    private void createBugButton() {
+        int[] colorSet = {
+                Color.argb(80, 0, 255, 0),
+                Color.argb(80, 160, 214, 0),
+                Color.argb(80, 215, 167, 0),
+                Color.argb(80, 246, 109, 0),
+                Color.argb(80, 255, 0, 0)
+        };
+        runningGameClickableObj = new RunningGameClickableObj(monitorView, presenter,
+                mView.findViewById(R.id.bug), 60, 5, colorSet);
+        runningGameClickableObj.run();
+    }
+
+    private TextView getRunningMoneyView() {
+        TextView view = new TextView(touchLocation.getContext());
+        view.setZ(10);
+        view.setTextColor(Color.argb(255, 0, 130, 47));
+        view.setTextSize(25);
+
+        return view;
     }
 
     @Override
@@ -134,8 +161,35 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
+    public void showAddedMoney(float x, float y, int val) {
+        final TextView view = getRunningMoneyView();
+        view.setX(x-70);
+        view.setY(y-50);
+        view.setText("$ " + val);
+        touchLocation.addView(view);
+
+        CountDownTimer timer = new CountDownTimer(2000, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                view.setX(view.getX() - 8);
+                view.setY(view.getY() - 12);
+                view.setAlpha(view.getAlpha() - 0.05f);
+            }
+
+            @Override
+            public void onFinish() {
+                view.setVisibility(View.INVISIBLE);
+                touchLocation.removeView(view);
+            }
+        };
+        timer.start();
+    }
+
+    @Override
     public void onPause() {
         presenter.onGamePause();
+        runningGameClickableObj.destroy();
+        gameClickableObj.destroy();
         super.onPause();
     }
 
