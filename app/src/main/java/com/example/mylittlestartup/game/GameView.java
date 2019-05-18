@@ -225,7 +225,6 @@ public class GameView extends Fragment implements GameContract.View {
     @Override
     public void onDestroy() {
         presenter.onGamePause();
-        moneyViewAnimator.cancel();
         super.onDestroy();
     }
 }
