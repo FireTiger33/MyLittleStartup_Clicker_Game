@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.GameContract;
+import com.example.mylittlestartup.shop.ShopContract;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -155,9 +156,15 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }
 
     @Override
-    public void buyWorkerUpgrade(Upgrade upgrade, BaseCallback callback) {
+    public void fetchWorkers(ShopContract.Repository.FetchCallback callback) {
         // TODO ???
     }
+
+    @Override
+    public void buyWorkerUpgrade(Upgrade worker, WorkerUpgradeCallback callback) {
+        // TODO ???
+    }
+
 
     @Override
     public void isLoggedIn(BaseCallback callback) {

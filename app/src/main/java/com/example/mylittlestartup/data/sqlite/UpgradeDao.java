@@ -16,6 +16,22 @@ public interface UpgradeDao {
     @Query("update Upgrade set mCount = mCount + 1 where mId = :id")
     public void increaseCounter(int id);
 
+    @Query("update Upgrade set mCount = mCount + 1," +
+            "mValue = mValue * 2, " +
+            "mInterval = mInterval + 10, " +
+            "mPrice = (mPrice * 5)," +
+            "mPicID = :picId where mId = :workerId")
+    void upgradeWorker(int workerId, int picId);
+
     @Query("select * from Upgrade order by mId")
     public List<Upgrade> all();
+
+    @Query("select * from Upgrade where mName != 'worker' order by mId")  // TODO
+    public List<Upgrade> allUpgrades();
+
+    @Query("select * from Upgrade where mId = :id")
+    public Upgrade worker(int id);
+
+    @Query("select * from Upgrade where mName == 'worker' order by mId")
+    public List<Upgrade> allWorkers();
 }

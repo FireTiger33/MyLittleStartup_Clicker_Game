@@ -25,8 +25,13 @@ import android.widget.ViewFlipper;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
+import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.objects.GameClickableObj;
+import com.example.mylittlestartup.game.objects.GameObjWorker;
 import com.example.mylittlestartup.game.objects.RunningGameClickableObj;
+
+import java.util.ArrayList;
+import java.util.List;
 //import com.example.mylittlestartup.game.objects.GameFollowingObj;
 
 
@@ -36,6 +41,14 @@ public class GameView extends Fragment implements GameContract.View {
     private View mView;
     private GamePresenter presenter;
     private Button shopButton;
+    final private int[] workerViewIds = {
+            R.id.worker_1,
+            R.id.worker_2,
+            R.id.worker_3,
+            R.id.worker_4,
+            R.id.worker_5
+    };
+    private List<GameObjWorker> workers;
     private FrameLayout touchLocation;  // container for Objects
     private TextView moneyValView;
     private RelativeLayout workersContainer;
@@ -67,6 +80,8 @@ public class GameView extends Fragment implements GameContract.View {
         super.onCreate(savedInstanceState);
 
         presenter = new GamePresenter(this);
+        workers = new ArrayList<>();
+        presenter.fetchWorkers();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -147,8 +162,20 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showAddWorker() {
+    public void showWorkers(List<Upgrade> workers) {
+        int i = 0;
+        for (Upgrade worker: workers) {
+            this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]), worker, presenter));
+        }
+    }
 
+    @Override
+    public void showUpgradeWorker(Upgrade upgradedWorker) {
+        for (GameObjWorker worker: workers) {
+            if (worker.getWorkerId() == upgradedWorker.getId()) {
+                worker.onWorkerUpgraded(upgradedWorker);
+            }
+        }
     }
 
     @Override
@@ -232,8 +259,6 @@ public class GameView extends Fragment implements GameContract.View {
         presenter.onGamePause();
         runningGameClickableObj.pause();
         gameClickableObj.pause();
-        /*runningGameClickableObj.destroy();
-        gameClickableObj.destroy();*/
         super.onPause();
     }
 

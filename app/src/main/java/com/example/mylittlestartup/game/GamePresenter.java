@@ -32,8 +32,8 @@ public class GamePresenter implements GameContract.Presenter {
 
     private MediaPlayer gamePlayer;
 
-    private int k;  // clickMultiplier
-    private int spec_k;
+    private int k;  // clickMultiplier  // TODO add to PlayerRepository
+    private int spec_k;  // TODO add to PlayerRepository
 
 
     GamePresenter(GameContract.View view) {
@@ -210,8 +210,23 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-k*20);
+        addMoney(k*20);  // TODO -
         mView.showMoneyPulseAnim();
+    }
+
+    @Override
+    public void fetchWorkers() {
+        mRepository.fetchWorkers(new ShopContract.Repository.FetchCallback() {
+            @Override
+            public void onSuccess(List<Upgrade> upgrades) {
+                mView.showWorkers(upgrades);
+            }
+
+            @Override
+            public void onError() {
+                // todo show some errors?
+            }
+        });
     }
 
     @Override
@@ -221,23 +236,25 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onUpgradeWorker(final Upgrade upgrade) {
-        int lvl = upgrade.getCount();
-        /*mPlayerRepository.getScore(new GameContract.Repository.ScoreCallback() {
+        final int oldLVL = upgrade.getCount();
+        mRepository.buyWorkerUpgrade(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
             @Override
-            public void onSuccess(int score) {
-                if (score >= upgrade.getPrice()) {
-                    mPlayerRepository.setScore();
+            public void onSuccess(Upgrade upgradedWorker) {
+                mView.showUpgradeWorker(upgrade);  // difference of array and database indexing
+                getMoney();
+                if (oldLVL == 0) {
+                    k++;
                 }
+                Toast toast = Toast.makeText(mView.getViewContext(), "Заебися", Toast.LENGTH_SHORT);
+                toast.show();
             }
 
             @Override
-            public void onError() {  // TODO
-                Toast toast = Toast.makeText(mView.getViewContext(), "Всё плохо", Toast.LENGTH_SHORT);
+            public void onError() {
+                Toast toast = Toast.makeText(mView.getViewContext(), "Недостаточно средств", Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
-        upgrade.setCount(lvl+1);*/
-        // TODO
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.mylittlestartup.ClickerApplication;
+import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.achievements.AchievementsContract;
 import com.example.mylittlestartup.data.api.ApiRepository;
 import com.example.mylittlestartup.data.api.GameApi;
@@ -148,11 +149,28 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     }
 
     @Override
+    public void fetchWorkers(final FetchCallback callback) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<Upgrade> workers = mUpgradeDao.allWorkers();
+
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(workers);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
     public void fetchUpgrades(final FetchCallback callback) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                final List<Upgrade> all = mUpgradeDao.all();
+                final List<Upgrade> all = mUpgradeDao.allUpgrades();
 
                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
                     @Override
@@ -163,6 +181,8 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
             }
         });
     }
+
+
 
     @Override
     public void buyUpgrade(final Upgrade upgrade, final BaseCallback callback) {
@@ -212,7 +232,72 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     }
 
     @Override
-    public void buyWorkerUpgrade(Upgrade upgrade, BaseCallback callback) {
+    public void buyWorkerUpgrade(final Upgrade worker, final WorkerUpgradeCallback callback) {
+        final int[] picIds = {
+                R.drawable.worker_avatar,
+                R.drawable.programmer_lvl1,
+                R.drawable.programmer_lvl2
+        };
+        mPlayerRepository.getScore(new ScoreCallback() {
+            @Override
+            public void onSuccess(final int score) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (score >= worker.getPrice()) {
+                            int workerPrice = worker.getPrice();
+                            mUpgradeDao.upgradeWorker(worker.getId(), picIds[worker.getCount()]);
+                            final Upgrade upgradedWorker = mUpgradeDao.worker(worker.getId());
+                            mPlayerRepository.setScore(score - workerPrice, new BaseCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            callback.onSuccess(upgradedWorker);
+                                        }
+                                    });
+                                }
 
+                                @Override
+                                public void onError() {
+                                    Log.e("GameRepositoryImpl", "buyUpgrade: onError when setScore");
+                                }
+                            });
+                        } else {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onError();
+                                    Log.d("GameRepositoryImpl", "not enough money");
+                                }
+                            });
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onError() {
+                Log.e("GameRepositoryImpl", "buyUpgrade: onError when getScore");
+            }
+        });
+        /*buyUpgrade(worker, new BaseCallback() {
+            @Override
+            public void onSuccess() {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                    }
+                });
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError() {
+                callback.onError();
+            }
+        });*/
     }
 }
