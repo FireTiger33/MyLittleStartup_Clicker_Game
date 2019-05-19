@@ -3,6 +3,7 @@ package com.example.mylittlestartup.game;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.R;
@@ -23,6 +24,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     private GameContract.View mView;
     private GameRepositoryImpl mRepository;
+    private PlayerRepository mPlayerRepository;
 
     private List<Integer> itemsIds;
     private List<CountDownTimer> workTimers;
@@ -37,6 +39,7 @@ public class GamePresenter implements GameContract.Presenter {
     GamePresenter(GameContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
+        mPlayerRepository = ClickerApplication.from(view.getAppContext()).getPlayerRepository();
         k = 1;  // TODO achievement increasing multiplier
         spec_k = 100;
         workTimers = new ArrayList<>();
@@ -208,7 +211,33 @@ public class GamePresenter implements GameContract.Presenter {
     @Override
     public void onBugIsAlive() {
         addMoney(-k*20);
-        mView.showMoneyPulsAnim();
+        mView.showMoneyPulseAnim();
+    }
+
+    @Override
+    public void onWorkerPushed(Upgrade upgrade) {
+        // TODO
+    }
+
+    @Override
+    public void onUpgradeWorker(final Upgrade upgrade) {
+        int lvl = upgrade.getCount();
+        /*mPlayerRepository.getScore(new GameContract.Repository.ScoreCallback() {
+            @Override
+            public void onSuccess(int score) {
+                if (score >= upgrade.getPrice()) {
+                    mPlayerRepository.setScore();
+                }
+            }
+
+            @Override
+            public void onError() {  // TODO
+                Toast toast = Toast.makeText(mView.getViewContext(), "Всё плохо", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+        upgrade.setCount(lvl+1);*/
+        // TODO
     }
 
     @Override

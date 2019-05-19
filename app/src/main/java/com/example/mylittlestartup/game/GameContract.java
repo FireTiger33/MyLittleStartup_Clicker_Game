@@ -3,6 +3,7 @@ package com.example.mylittlestartup.game;
 import android.content.Context;
 
 import com.example.mylittlestartup.data.BaseCallback;
+import com.example.mylittlestartup.data.sqlite.Upgrade;
 
 
 public interface GameContract {
@@ -13,7 +14,9 @@ public interface GameContract {
         Context getViewContext();
         void setMoney(int delta);
         void showAddedMoney(float x, float y, int val);
-        void showMoneyPulsAnim();
+        void showMoneyPulseAnim();
+        void showAddWorker();
+        void showUpgradeWorkerWindow();
 
         // TODO add methods for added game entities
     }
@@ -27,6 +30,8 @@ public interface GameContract {
         void onCommonClickLocationClicked(float x, float y);
         void onSpecClickAreaClicked(float x, float y);
         void onBugIsAlive();
+        void onWorkerPushed(Upgrade upgrade);
+        void onUpgradeWorker(Upgrade upgrade);
 
         void onFollowingObjDisappeared(int score);
     }
@@ -68,5 +73,6 @@ public interface GameContract {
          * @param callback
          */
         void saveScore(ScoreCallback callback);
+        void buyWorkerUpgrade(Upgrade upgrade, BaseCallback callback);
     }
 }

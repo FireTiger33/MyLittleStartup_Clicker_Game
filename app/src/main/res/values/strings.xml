@@ -22,4 +22,5 @@
     <string name="off">OFF</string>
     <string name="issue">issue</string>
     <string name="bug">bug</string>
+    <string name="push">push</string>
 </resources>

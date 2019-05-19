@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -37,6 +38,7 @@ public class GameView extends Fragment implements GameContract.View {
     private Button shopButton;
     private FrameLayout touchLocation;  // container for Objects
     private TextView moneyValView;
+    private RelativeLayout workersContainer;
     private ValueAnimator moneyViewAnimator;
     private ViewFlipper monitorView;
     private final int[] monitorImagesId = {
@@ -71,6 +73,7 @@ public class GameView extends Fragment implements GameContract.View {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(tag, "onCreateView");
         presenter.onGameStart();
 
         mView = inflater.inflate(R.layout.fragment_game, container, false);
@@ -85,6 +88,10 @@ public class GameView extends Fragment implements GameContract.View {
 
         moneyValView = mView.findViewById(R.id.money_val);
         moneyValView.setText("0");
+
+        workersContainer = mView.findViewById(R.id.workers_container);
+
+//        workersContainer.addView(inflater.inflate(R.layout.game_element_worker, null, false));
 
         touchLocation = mView.findViewById(R.id.touch_location);
 
@@ -115,28 +122,38 @@ public class GameView extends Fragment implements GameContract.View {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.d(tag, "onViewCreated");
         createIssueButton();
         createBugButton();
     }
 
     @Override
-    public void showMoneyPulsAnim() {
-        final float defTextSize = moneyValView.getTextSize()/3;
-        moneyViewAnimator = ValueAnimator.ofFloat(defTextSize, defTextSize+10).setDuration(150L);
+    public void showMoneyPulseAnim() {
+        final int defTextSize = (int)(moneyValView.getTextSize()/3);
+        moneyViewAnimator = ValueAnimator.ofInt(defTextSize, defTextSize+10).setDuration(150L);
         moneyViewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                moneyValView.setTextSize((float)animation.getAnimatedValue());
+                moneyValView.setTextSize((int)animation.getAnimatedValue());
             }
         });
         moneyViewAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                moneyValView.setTextSize(defTextSize);
+                moneyValView.setTextSize(30);
             }
         });
         moneyViewAnimator.start();
+    }
+
+    @Override
+    public void showAddWorker() {
+
+    }
+
+    @Override
+    public void showUpgradeWorkerWindow() {
+        //  TODO
     }
 
     private void createIssueButton() {
@@ -154,7 +171,7 @@ public class GameView extends Fragment implements GameContract.View {
                 Color.argb(80, 255, 0, 0)
         };
         runningGameClickableObj = new RunningGameClickableObj(monitorView, presenter,
-                mView.findViewById(R.id.bug), 60, 5, colorSet);
+                mView.findViewById(R.id.bug), 30, 5, 10, colorSet);
         runningGameClickableObj.run();
     }
 
@@ -190,6 +207,7 @@ public class GameView extends Fragment implements GameContract.View {
         view.setY(y-50);
         view.setText("$ " + val);
         touchLocation.addView(view);
+//        moneyValView.setTextSize(30);
 
         CountDownTimer timer = new CountDownTimer(2000, 100) {
             @Override
@@ -210,21 +228,30 @@ public class GameView extends Fragment implements GameContract.View {
 
     @Override
     public void onPause() {
+        Log.d(tag, "onPause");
         presenter.onGamePause();
-        runningGameClickableObj.destroy();
-        gameClickableObj.destroy();
+        runningGameClickableObj.pause();
+        gameClickableObj.pause();
+        /*runningGameClickableObj.destroy();
+        gameClickableObj.destroy();*/
         super.onPause();
     }
 
     @Override
     public void onResume() {
+        Log.d(tag, "onResume");
         super.onResume();
+        runningGameClickableObj.resume();
+        gameClickableObj.resume();
         presenter.onGameStart();
     }
 
     @Override
     public void onDestroy() {
+        Log.d(tag, "onDestroy");
         presenter.onGamePause();
+        runningGameClickableObj.destroy();
+        gameClickableObj.destroy();
         super.onDestroy();
     }
 }

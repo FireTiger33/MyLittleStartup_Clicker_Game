@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.mylittlestartup.data.executors.AppExecutors;
+import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.GameContract;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -151,6 +152,11 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
                 callback.onSuccess(getRuntimeScore());
             }
         });
+    }
+
+    @Override
+    public void buyWorkerUpgrade(Upgrade upgrade, BaseCallback callback) {
+        // TODO ???
     }
 
     @Override

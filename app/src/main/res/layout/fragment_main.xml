@@ -78,7 +78,7 @@
             android:background="@null"
             android:contentDescription="@string/leaderboard"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/leaderboard_logo" />
+            app:srcCompat="@drawable/leaderboard_icon" />
 
     </LinearLayout>
 

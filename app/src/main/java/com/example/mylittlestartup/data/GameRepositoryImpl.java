@@ -210,4 +210,9 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
             }
         });
     }
+
+    @Override
+    public void buyWorkerUpgrade(Upgrade upgrade, BaseCallback callback) {
+
+    }
 }

@@ -51,6 +51,15 @@ public class GameClickableObj extends BaseGameObj implements Runnable{
         timer = null;
     }
 
+    public void pause() {
+        timer.cancel();
+    }
+
+    public void resume() {
+        timer.cancel();
+        timer.start();
+    }
+
     private void stop() {
         mView.setVisibility(View.INVISIBLE);
         timer.cancel();

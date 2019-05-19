@@ -46,7 +46,7 @@ class ShopPresenter implements ShopContract.Presenter {
     }
 
     @Override
-    public void getMoney() {  // TODO get from DB
+    public void getMoney() {
         mPlayerRepository.getScore(new GameContract.Repository.ScoreCallback() {
             @Override
             public void onSuccess(int score) {
