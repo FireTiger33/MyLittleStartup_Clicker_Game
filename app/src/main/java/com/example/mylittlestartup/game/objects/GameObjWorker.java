@@ -43,7 +43,7 @@ public class GameObjWorker extends Upgrade {
         onUpgraded(mUpgrade);
     }
 
-    public void onUpgraded(Upgrade upgrade) {  // TODO
+    public void onUpgraded(Upgrade upgrade) {
         mUpgrade = upgrade;
         Log.d(tag, "onUpgraded");
         workTimer = new CountDownTimer(mUpgrade.getInterval(), mUpgrade.getInterval()) {
