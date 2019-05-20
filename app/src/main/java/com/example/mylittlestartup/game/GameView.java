@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -32,12 +33,13 @@ import com.example.mylittlestartup.game.objects.RunningGameClickableObj;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 //import com.example.mylittlestartup.game.objects.GameFollowingObj;
 
 
 public class GameView extends Fragment implements GameContract.View {
     String tag = GameView.class.getName();
-
+    final private Random random = new Random();
     private View mView;
     private GamePresenter presenter;
     private Button shopButton;
@@ -54,6 +56,7 @@ public class GameView extends Fragment implements GameContract.View {
     private RelativeLayout workersContainer;
     private ValueAnimator moneyViewAnimator;
     private ViewFlipper monitorView;
+//    private WebView monitorView;
     private final int[] monitorImagesId = {
             R.drawable.monitor_step_0,
             R.drawable.monitor_step_1,
@@ -81,7 +84,6 @@ public class GameView extends Fragment implements GameContract.View {
 
         presenter = new GamePresenter(this);
         workers = new ArrayList<>();
-        presenter.fetchWorkers();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -90,6 +92,7 @@ public class GameView extends Fragment implements GameContract.View {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(tag, "onCreateView");
 
+        presenter.fetchWorkers();
         mView = inflater.inflate(R.layout.fragment_game, container, false);
 
         shopButton = mView.findViewById(R.id.button_shop);
@@ -120,6 +123,9 @@ public class GameView extends Fragment implements GameContract.View {
                 return true;
             }
         });
+
+//        monitorView.getSettings().setJavaScriptEnabled(true);
+//        monitorView.loadUrl("file:///android_asset/monitor_view.html");
 
         // Add images with code on monitor
         for (int i: monitorImagesId) {
@@ -192,7 +198,7 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     private void createIssueButton() {
-        gameClickableObj = new GameClickableObj(monitorView, presenter,
+        gameClickableObj = new GameClickableObj(touchLocation/*monitorView*/, presenter,
                 mView.findViewById(R.id.issue), 60);
         gameClickableObj.run();
     }
@@ -205,7 +211,7 @@ public class GameView extends Fragment implements GameContract.View {
                 Color.argb(80, 246, 109, 0),
                 Color.argb(80, 255, 0, 0)
         };
-        runningGameClickableObj = new RunningGameClickableObj(monitorView, presenter,
+        runningGameClickableObj = new RunningGameClickableObj(touchLocation/*monitorView*/, presenter,
                 mView.findViewById(R.id.bug), 30, 5, 10, colorSet);
         runningGameClickableObj.run();
     }
@@ -238,8 +244,10 @@ public class GameView extends Fragment implements GameContract.View {
     @Override
     public void showAddedMoney(float x, float y, int val) {
         final TextView view = getRunningMoneyView();
-        view.setX(x-70);
-        view.setY(y-50);
+        int k_x = random.nextBoolean()? 1: -1;
+        int k_y = random.nextBoolean()? 1: -1;
+        view.setX(x+k_x*70);
+        view.setY(y+k_y*50);
         view.setText("$ " + val);
         touchLocation.addView(view);
 //        moneyValView.setTextSize(30);

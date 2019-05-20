@@ -211,7 +211,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-k*20);
+        addMoney(k*20);
         mView.showMoneyPulseAnim();
     }
 
@@ -246,7 +246,7 @@ public class GamePresenter implements GameContract.Presenter {
                 getMoney();
                 k++;
                 final Toast toast = Toast.makeText(mView.getViewContext(), "LVL: " + upgradedWorker.getCount(), Toast.LENGTH_SHORT);
-                new CountDownTimer(200, 100) {
+                new CountDownTimer(400, 100) {
                     public void onTick(long millisUntilFinished) {
                         toast.show();
                     } public void onFinish() {

@@ -108,6 +108,12 @@
                 android:outAnimation="@anim/monitor_flipout">
 
             </ViewFlipper>
+            <!--<WebView
+                android:id="@+id/monitor"
+                android:layout_width="match_parent"
+                android:layout_height="400dp">
+
+            </WebView>-->
             <ImageButton
                 android:id="@+id/issue"
                 android:layout_width="30dp"

@@ -41,14 +41,15 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
                         new CountDownTimer(1000,1000 / maxHP) {
                             @Override
                             public void onTick(long millisUntilFinished) {
-                                presenter.onSpecClickAreaClicked(v.getX(), v.getY());
+                                Log.d(tag, "onKill: x = " + mView.getX() + " y = " + mView.getY());
+                                presenter.onSpecClickAreaClicked(mView.getX(), mView.getY());
                             }
 
                             @Override
                             public void onFinish() {
 
                             }
-                        };
+                        }.start();
                     }
                     stop();
                     run();

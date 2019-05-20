@@ -17,26 +17,18 @@ public class GameObjWorker extends Upgrade {
     private ImageButton mLogo;
     private View mItemView;
     private CountDownTimer workTimer;
-    private GameContract.Presenter mPresenter;
 
     public GameObjWorker(View itemView, Upgrade upgrade, final GameContract.Presenter presenter) {
-        mPresenter = presenter;
         mItemView = itemView;
         mUpgrade = upgrade;
         mLogo = itemView.findViewById(R.id.worker_preview);
         pushButton = itemView.findViewById(R.id.push_button);
-
-        onUpgraded(mUpgrade);
-    }
-
-    public void onUpgraded(Upgrade upgrade) {  // TODO
-        mUpgrade = upgrade;
-        Log.d(tag, "onUpgraded");
         pushButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pushButton.setVisibility(View.INVISIBLE);
-                mPresenter.onWorkerPushed(mUpgrade);
+                Log.d(tag, "pushButtonClicked");
+                presenter.onWorkerPushed(getUpgrade());
                 show();
             }
         });
@@ -44,9 +36,16 @@ public class GameObjWorker extends Upgrade {
             @Override
             public void onClick(View v) {
                 Log.d(tag, "onClickItemView");
-                mPresenter.onUpgradeWorker(mUpgrade);
+                presenter.onUpgradeWorker(getUpgrade());
             }
         });
+
+        onUpgraded(mUpgrade);
+    }
+
+    public void onUpgraded(Upgrade upgrade) {  // TODO
+        mUpgrade = upgrade;
+        Log.d(tag, "onUpgraded");
         workTimer = new CountDownTimer(mUpgrade.getInterval(), mUpgrade.getInterval()) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -55,7 +54,9 @@ public class GameObjWorker extends Upgrade {
 
             @Override
             public void onFinish() {
-                pushButton.setVisibility(View.VISIBLE);
+                if (mUpgrade.getCount() > 0) {
+                    pushButton.setVisibility(View.VISIBLE);
+                }
             }
         };
         show();
@@ -65,6 +66,9 @@ public class GameObjWorker extends Upgrade {
         Log.d(tag, "show: " + mUpgrade.getCount());
         mLogo.setImageResource(mUpgrade.getPicID());
         workTimer.start();
+    }
+    private Upgrade getUpgrade() {
+        return mUpgrade;
     }
     public int getWorkerId() {
         return mUpgrade.getId();
