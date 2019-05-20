@@ -34,13 +34,23 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
         mView.setVisibility(View.INVISIBLE);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 hp--;
                 if (hp == 0) {
-                    stop();
                     for (int i = 0; i < maxHP; i++) {
-                        presenter.onSpecClickAreaClicked(v.getX(), v.getY());
+                        new CountDownTimer(1000,1000 / maxHP) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                presenter.onSpecClickAreaClicked(v.getX(), v.getY());
+                            }
+
+                            @Override
+                            public void onFinish() {
+
+                            }
+                        };
                     }
+                    stop();
                     run();
                 } else {
                     mView.setForeground(new ColorDrawable(foregroundColorSet[hp - 1]));

@@ -24,6 +24,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GameRepositoryImpl implements GameContract.Repository, ShopContract.Repository, AchievementsContract.Repository {
+    final private String tag = GameRepositoryImpl.class.getName();
+
     private GameApi mGameApi;
     private UpgradeDao mUpgradeDao;
     private AchievementDao mAchievementDao;
@@ -207,7 +209,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
 
                                 @Override
                                 public void onError() {
-                                    Log.e("GameRepositoryImpl", "buyUpgrade: onError when setScore");
+                                    Log.e(tag, "buyUpgrade: onError when setScore");
                                 }
                             });
                         } else {
@@ -215,7 +217,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                                 @Override
                                 public void run() {
                                     callback.onError();
-                                    Log.d("GameRepositoryImpl", "not enough money");
+                                    Log.d(tag, "not enough money");
                                 }
                             });
                         }
@@ -246,22 +248,24 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                     public void run() {
                         if (score >= worker.getPrice()) {
                             int workerPrice = worker.getPrice();
-                            mUpgradeDao.upgradeWorker(worker.getId(), picIds[worker.getCount()]);
-                            final Upgrade upgradedWorker = mUpgradeDao.worker(worker.getId());
+                            int nextPicId = worker.getCount() >= picIds.length-1? picIds.length-1: worker.getCount()+1;
+                            mUpgradeDao.upgradeWorker(worker.getId(), picIds[nextPicId]);
+                            final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
+                            Log.d(tag, "buyWorkerUpgrade: UpgradedWorkerLVL = " + upgradedWorker.get(0).getCount());
                             mPlayerRepository.setScore(score - workerPrice, new BaseCallback() {
                                 @Override
                                 public void onSuccess() {
                                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            callback.onSuccess(upgradedWorker);
+                                            callback.onSuccess(upgradedWorker.get(0));
                                         }
                                     });
                                 }
 
                                 @Override
                                 public void onError() {
-                                    Log.e("GameRepositoryImpl", "buyUpgrade: onError when setScore");
+                                    Log.e(tag, "buyUpgrade: onError when setScore");
                                 }
                             });
                         } else {
@@ -269,7 +273,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                                 @Override
                                 public void run() {
                                     callback.onError();
-                                    Log.d("GameRepositoryImpl", "not enough money");
+                                    Log.d(tag, "not enough money");
                                 }
                             });
                         }
@@ -289,6 +293,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
+                        mUpgradeDao.upgradeWorker(worker.getId(), picIds[worker.getCount()]);
                     }
                 });
                 callback.onSuccess();

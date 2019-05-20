@@ -18,7 +18,8 @@ public interface GameContract {
         void setMoney(int delta);
         void showAddedMoney(float x, float y, int val);
         void showMoneyPulseAnim();
-        void showWorkers(List<Upgrade> upgrades);
+        void createWorkers(List<Upgrade> upgrades);
+        void showWorkers();
         void showUpgradeWorker(Upgrade upgradedWorker);
         void showUpgradeWorkerWindow();
 

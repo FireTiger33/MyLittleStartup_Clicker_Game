@@ -89,7 +89,6 @@ public class GameView extends Fragment implements GameContract.View {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(tag, "onCreateView");
-        presenter.onGameStart();
 
         mView = inflater.inflate(R.layout.fragment_game, container, false);
 
@@ -138,6 +137,7 @@ public class GameView extends Fragment implements GameContract.View {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(tag, "onViewCreated");
+        presenter.onGameStart();
         createIssueButton();
         createBugButton();
     }
@@ -162,10 +162,18 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showWorkers(List<Upgrade> workers) {
+    public void createWorkers(List<Upgrade> upgrades) {
+        Log.d(tag, "createWorkers");
         int i = 0;
-        for (Upgrade worker: workers) {
+        for (Upgrade worker: upgrades) {
             this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]), worker, presenter));
+        }
+    }
+
+    @Override
+    public void showWorkers() {
+        for (GameObjWorker worker : workers) {
+            worker.show();
         }
     }
 
@@ -173,7 +181,7 @@ public class GameView extends Fragment implements GameContract.View {
     public void showUpgradeWorker(Upgrade upgradedWorker) {
         for (GameObjWorker worker: workers) {
             if (worker.getWorkerId() == upgradedWorker.getId()) {
-                worker.onWorkerUpgraded(upgradedWorker);
+                worker.onUpgraded(upgradedWorker);
             }
         }
     }

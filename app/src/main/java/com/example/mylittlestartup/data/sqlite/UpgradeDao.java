@@ -30,7 +30,7 @@ public interface UpgradeDao {
     public List<Upgrade> allUpgrades();
 
     @Query("select * from Upgrade where mId = :id")
-    public Upgrade worker(int id);
+    public List<Upgrade> worker(int id);
 
     @Query("select * from Upgrade where mName == 'worker' order by mId")
     public List<Upgrade> allWorkers();

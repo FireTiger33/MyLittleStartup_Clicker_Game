@@ -20,14 +20,14 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class GamePresenter implements GameContract.Presenter {
-    private String mTAG = GamePresenter.class.getName();
+    private String tag = GamePresenter.class.getName();
 
     private GameContract.View mView;
     private GameRepositoryImpl mRepository;
     private PlayerRepository mPlayerRepository;
 
     private List<Integer> itemsIds;
-    private List<CountDownTimer> workTimers;
+    private List<CountDownTimer> workTimers;  // TODO manager
     private List<Upgrade> upgradeItems;
 
     private MediaPlayer gamePlayer;
@@ -144,12 +144,13 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onGameStart() {
-        Log.d(mTAG, "onGameStart");
+        Log.d(tag, "onGameStart");
         getMoney();
         gameFetchUpgrades();
         if (gamePlayer != null) {
             gamePlayer.start();
         }
+        mView.showWorkers();
     }
 
     @Override
@@ -157,7 +158,7 @@ public class GamePresenter implements GameContract.Presenter {
         if (gamePlayer != null) {
             gamePlayer.pause();
         }
-        Log.d(mTAG, "onGamePause");
+        Log.d(tag, "onGamePause");
         for (CountDownTimer timer: workTimers) {
             timer.cancel();
         }
@@ -210,16 +211,17 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onBugIsAlive() {
-        addMoney(k*20);  // TODO -
+        addMoney(-k*20);
         mView.showMoneyPulseAnim();
     }
 
     @Override
     public void fetchWorkers() {
+        Log.d(tag, "fetchWorkers");
         mRepository.fetchWorkers(new ShopContract.Repository.FetchCallback() {
             @Override
             public void onSuccess(List<Upgrade> upgrades) {
-                mView.showWorkers(upgrades);
+                mView.createWorkers(upgrades);
             }
 
             @Override
@@ -231,27 +233,32 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onWorkerPushed(Upgrade upgrade) {
-        // TODO
+        Log.d(tag, "onWorkerPushed: " + "value = " + upgrade.getValue());
+        addMoney(upgrade.getValue());
     }
 
     @Override
     public void onUpgradeWorker(final Upgrade upgrade) {
-        final int oldLVL = upgrade.getCount();
         mRepository.buyWorkerUpgrade(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
             @Override
             public void onSuccess(Upgrade upgradedWorker) {
-                mView.showUpgradeWorker(upgrade);  // difference of array and database indexing
+                mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
                 getMoney();
-                if (oldLVL == 0) {
-                    k++;
-                }
-                Toast toast = Toast.makeText(mView.getViewContext(), "Заебися", Toast.LENGTH_SHORT);
-                toast.show();
+                k++;
+                final Toast toast = Toast.makeText(mView.getViewContext(), "LVL: " + upgradedWorker.getCount(), Toast.LENGTH_SHORT);
+                new CountDownTimer(200, 100) {
+                    public void onTick(long millisUntilFinished) {
+                        toast.show();
+                    } public void onFinish() {
+                        toast.cancel();
+                    }
+                }.start();
             }
 
             @Override
             public void onError() {
-                Toast toast = Toast.makeText(mView.getViewContext(), "Недостаточно средств", Toast.LENGTH_SHORT);
+                final Toast toast = Toast.makeText(mView.getViewContext(), "Недостаточно средств.\n Стоимость: "
+                        + upgrade.getPrice(), Toast.LENGTH_SHORT);
                 toast.show();
             }
         });

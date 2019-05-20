@@ -1,5 +1,6 @@
 package com.example.mylittlestartup.game.objects;
 
+import android.animation.ValueAnimator;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
