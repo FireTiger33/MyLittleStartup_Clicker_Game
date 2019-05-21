@@ -142,7 +142,7 @@ public class GameView extends Fragment implements GameContract.View {
                     presenter.onCommonClickLocationClicked(event.getX(), event.getY());
                 }
 
-                return false;
+                return (event.getAction() == MotionEvent.ACTION_MOVE);
             }
         });
         
