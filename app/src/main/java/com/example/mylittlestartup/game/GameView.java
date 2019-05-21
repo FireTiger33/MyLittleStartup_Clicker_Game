@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -55,8 +56,8 @@ public class GameView extends Fragment implements GameContract.View {
     private TextView moneyValView;
     private RelativeLayout workersContainer;
     private ValueAnimator moneyViewAnimator;
-    private ViewFlipper monitorView;
-//    private WebView monitorView;
+//    private ViewFlipper monitorView;
+    private WebView monitorView;
     private final int[] monitorImagesId = {
             R.drawable.monitor_step_0,
             R.drawable.monitor_step_1,
@@ -113,7 +114,7 @@ public class GameView extends Fragment implements GameContract.View {
         touchLocation = mView.findViewById(R.id.touch_location);
 
         monitorView = mView.findViewById(R.id.monitor);
-        monitorView.setOnTouchListener(new View.OnTouchListener() {
+        /*monitorView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -122,19 +123,20 @@ public class GameView extends Fragment implements GameContract.View {
 
                 return true;
             }
-        });
-
-//        monitorView.getSettings().setJavaScriptEnabled(true);
-//        monitorView.loadUrl("file:///android_asset/monitor_view.html");
+        });*/
+        InputMethodManager imm = (InputMethodManager) monitorView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInputFromWindow(monitorView.getWindowToken() , InputMethodManager.SHOW_FORCED, 0);
+        monitorView.getSettings().setJavaScriptEnabled(true);
+        monitorView.loadUrl(/*"http://geektyper.com/studio/"*/"file:///android_asset/monitor_view.html");
 
         // Add images with code on monitor
-        for (int i: monitorImagesId) {
+        /*for (int i: monitorImagesId) {
             ImageView imageView = new ImageView(getContext());
             imageView.setImageResource(i);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             monitorView.addView(imageView);
         }
-        monitorView.startFlipping();
+        monitorView.startFlipping();*/
 
         return mView;
     }
