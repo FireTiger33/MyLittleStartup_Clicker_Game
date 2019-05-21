@@ -18,7 +18,7 @@ background-size: cover;
 z-index:0;
 overflow:hidden;
 color:#fff;
-font-size:14pt;
+font-size:8px;
 font-family:Consolas, monospace;
 font-weight:bold;
 }
@@ -31,7 +31,6 @@ margin-bottom:10%;
 
 
     .stage {
-background: url('surface03.png') #000000 no-repeat left top fixed;
 -moz-user-select:none;
 -webkit-user-select:none;
 -ms-user-select:none;

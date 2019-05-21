@@ -127,6 +127,25 @@ public class GameView extends Fragment implements GameContract.View {
         InputMethodManager imm = (InputMethodManager) monitorView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInputFromWindow(monitorView.getWindowToken() , InputMethodManager.SHOW_FORCED, 0);
         monitorView.getSettings().setJavaScriptEnabled(true);
+        monitorView.getSettings().setAllowFileAccess(true);
+        monitorView.getSettings().setAllowContentAccess(true);
+        monitorView.getSettings().setAllowFileAccessFromFileURLs(true);
+        monitorView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        monitorView.getSettings().setUseWideViewPort(true);
+        monitorView.setVerticalScrollBarEnabled(false);
+        monitorView.setHorizontalScrollBarEnabled(false);
+
+        monitorView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    presenter.onCommonClickLocationClicked(event.getX(), event.getY());
+                }
+
+                return (event.getAction() == MotionEvent.ACTION_MOVE);
+            }
+        });
+        
         monitorView.loadUrl(/*"http://geektyper.com/studio/"*/"file:///android_asset/monitor_view.html");
 
         // Add images with code on monitor
