@@ -5,11 +5,10 @@
 
 $(
     function () {
-        $(document).click(
-            function (event) {
-                Typer.addText(event);
-            }
-        );
+        document.getElementById("console").addEventListener("touchstart", (event) => {
+                        Typer.addText(event);
+        })
+
     }
 );
 
