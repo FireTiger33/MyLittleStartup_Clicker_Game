@@ -32,16 +32,11 @@ public class GamePresenter implements GameContract.Presenter {
 
     private MediaPlayer gamePlayer;
 
-    private int k;  // clickMultiplier  // TODO add to PlayerRepository
-    private int spec_k;  // TODO add to PlayerRepository
-
-
     GamePresenter(GameContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
         mPlayerRepository = ClickerApplication.from(view.getAppContext()).getPlayerRepository();
-        k = 1;  // TODO achievement increasing multiplier
-        spec_k = 100;
+
         workTimers = new ArrayList<>();
         itemsIds = new ArrayList<>();
         if (isMusicSoundState()) {
@@ -199,19 +194,19 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onCommonClickLocationClicked(float x, float y) {
-        mView.showAddedMoney(x, y, k);
-        addMoney(k);
+        mView.showAddedMoney(x, y, mPlayerRepository.getK());
+        addMoney(mPlayerRepository.getK());
     }
 
     @Override
     public void onSpecClickAreaClicked(float x, float y) {
-        mView.showAddedMoney(x, y, spec_k);
-        addMoney(spec_k);
+        mView.showAddedMoney(x, y, mPlayerRepository.getKSpec());
+        addMoney(mPlayerRepository.getKSpec());
     }
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-k*20);
+        addMoney(-mPlayerRepository.getK()*20);
         mView.showMoneyPulseAnim();
     }
 
@@ -244,7 +239,7 @@ public class GamePresenter implements GameContract.Presenter {
             public void onSuccess(Upgrade upgradedWorker) {
                 mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
                 getMoney();
-                k++;
+                mPlayerRepository.setK(mPlayerRepository.getK() + 1);
                 final Toast toast = Toast.makeText(mView.getViewContext(), "LVL: " + upgradedWorker.getCount(), Toast.LENGTH_SHORT);
                 new CountDownTimer(400, 100) {
                     public void onTick(long millisUntilFinished) {

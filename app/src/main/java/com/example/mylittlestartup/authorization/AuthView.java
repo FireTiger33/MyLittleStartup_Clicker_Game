@@ -74,12 +74,14 @@ public class AuthView extends Fragment implements AuthContract.View {
     @Override
     public void showLoginScreen() {
         // TODO edit titleText
+        authMethod = AuthContract.authMethodLogin;
         authButton.setText(R.string.login);
     }
 
     @Override
     public void showSignUpScreen() {
         // TODO edit titleText
+        authMethod = AuthContract.authMethodSignUp;
         authButton.setText(R.string.signup);
     }
 

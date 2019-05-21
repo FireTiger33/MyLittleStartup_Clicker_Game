@@ -104,7 +104,7 @@ public class UserRepositoryImpl implements AuthContract.Repository, MainContract
                             @Override
                             public void run() {
                                 if (response.code() == 200) {
-                                    mPlayerRepository.setLoggedIn(new BaseCallback() {
+                                    mPlayerRepository.setLoggedIn(response.body().id, new BaseCallback() {
                                         @Override
                                         public void onSuccess() {
                                             AppExecutors.getInstance().mainThread().execute(new Runnable() {

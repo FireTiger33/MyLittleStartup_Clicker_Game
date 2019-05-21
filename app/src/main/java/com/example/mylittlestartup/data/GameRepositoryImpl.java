@@ -8,6 +8,7 @@ import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.achievements.AchievementsContract;
 import com.example.mylittlestartup.data.api.ApiRepository;
 import com.example.mylittlestartup.data.api.GameApi;
+import com.example.mylittlestartup.data.api.UserApi;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Achievement;
 import com.example.mylittlestartup.data.sqlite.AchievementDao;
@@ -27,12 +28,16 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     final private String tag = GameRepositoryImpl.class.getName();
 
     private GameApi mGameApi;
+    private UserApi mUserApi;
     private UpgradeDao mUpgradeDao;
     private AchievementDao mAchievementDao;
     private PlayerRepository mPlayerRepository;
 
+    private boolean noApiSyncYet = true; // scores
+
     public GameRepositoryImpl(Context context) {
         mGameApi = ApiRepository.from(context).getGameApi();
+        mUserApi = ApiRepository.from(context).getUserApi();
         mUpgradeDao = DBRepository.from(context).getUpgradeDao();
         mAchievementDao = DBRepository.from(context).geAchievementDao();
         mPlayerRepository = ClickerApplication.from(context).getPlayerRepository();
@@ -100,8 +105,57 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     }
 
     @Override
-    public void getScore(ScoreCallback callback) {
-        mPlayerRepository.getScore(callback);
+    public void getScore(final ScoreCallback callback) {
+        mPlayerRepository.getScore(new ScoreCallback() {
+            @Override
+            public void onSuccess(int score) {
+                if (score == 0 && noApiSyncYet) {
+                    mUserApi.get(mPlayerRepository.getUserID()).enqueue(new Callback<UserApi.UserPlain>() {
+                        @Override
+                        public void onResponse(Call<UserApi.UserPlain> call, Response<UserApi.UserPlain> response) {
+                            final UserApi.UserPlain user = response.body();
+
+                            mPlayerRepository.setScore(user.score, new BaseCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            callback.onSuccess(user.score);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError() {
+                                    Log.wtf("GameRepositoryImpl", "getScore: ScoreCallback onSuccess: mUserApi.get: onResponse: setScore: onError");
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserApi.UserPlain> call, Throwable t) {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onError();
+                                }
+                            });
+                        }
+                    });
+
+                    noApiSyncYet = false;
+                } else {
+                    callback.onSuccess(score);
+                }
+            }
+
+            @Override
+            public void onError() {
+                // never get here
+                Log.wtf("GameRepositoryImpl", "getScore: ScoreCallback: onError");
+            }
+        });
     }
 
     @Override
