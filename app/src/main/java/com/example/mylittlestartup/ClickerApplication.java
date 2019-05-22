@@ -55,7 +55,7 @@ public class ClickerApplication extends Application {
         UpgradeDao dao = mDbRepository.getUpgradeDao();
 
         // TODO: Only for debug!
-//        mDbRepository.clearAllTables();
+        mDbRepository.clearAllTables();
 
         List<Upgrade> upgrades = dao.all();
         if (upgrades.isEmpty()) {

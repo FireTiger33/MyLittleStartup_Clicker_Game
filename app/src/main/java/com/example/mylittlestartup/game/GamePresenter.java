@@ -206,7 +206,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-mPlayerRepository.getK()*20);
+        addMoney(-mPlayerRepository.getK()*10);
         mView.showMoneyPulseAnim();
     }
 
@@ -216,6 +216,7 @@ public class GamePresenter implements GameContract.Presenter {
         mRepository.fetchWorkers(new ShopContract.Repository.FetchCallback() {
             @Override
             public void onSuccess(List<Upgrade> upgrades) {
+                Log.d(tag, "fetchedWorkersSuccess: " + upgrades.size());
                 mView.createWorkers(upgrades);
             }
 
@@ -240,6 +241,7 @@ public class GamePresenter implements GameContract.Presenter {
                 mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
                 getMoney();
                 mPlayerRepository.setK(mPlayerRepository.getK() + 1);
+                mPlayerRepository.setKSpec(100  + (mPlayerRepository.getK()-1) * 150);
                 final Toast toast = Toast.makeText(mView.getViewContext(), "LVL: " + upgradedWorker.getCount(), Toast.LENGTH_SHORT);
                 new CountDownTimer(400, 100) {
                     public void onTick(long millisUntilFinished) {

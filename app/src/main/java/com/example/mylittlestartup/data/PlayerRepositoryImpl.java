@@ -60,7 +60,9 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }
 
     private synchronized void setRuntimeScore(int runtimeScore) {
-        mRuntimeScore = runtimeScore;
+        if (runtimeScore >= 0) {
+            mRuntimeScore = runtimeScore;
+        }
     }
 
     private synchronized boolean isLoggedIn() {
