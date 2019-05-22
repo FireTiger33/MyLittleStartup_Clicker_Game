@@ -115,22 +115,31 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                         public void onResponse(Call<UserApi.UserPlain> call, Response<UserApi.UserPlain> response) {
                             final UserApi.UserPlain user = response.body();
 
-                            mPlayerRepository.setScore(user.score, new BaseCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            callback.onSuccess(user.score);
-                                        }
-                                    });
-                                }
+                            if (response.code() == 200 && user != null) { // if user is logged in
+                                mPlayerRepository.setScore(user.score, new BaseCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                callback.onSuccess(user.score);
+                                            }
+                                        });
+                                    }
 
-                                @Override
-                                public void onError() {
-                                    Log.wtf("GameRepositoryImpl", "getScore: ScoreCallback onSuccess: mUserApi.get: onResponse: setScore: onError");
-                                }
-                            });
+                                    @Override
+                                    public void onError() {
+                                        Log.wtf("GameRepositoryImpl", "getScore: ScoreCallback onSuccess: mUserApi.get: onResponse: setScore: onError");
+                                    }
+                                });
+                            } else { // if no login
+                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onError();
+                                    }
+                                });
+                            }
                         }
 
                         @Override
