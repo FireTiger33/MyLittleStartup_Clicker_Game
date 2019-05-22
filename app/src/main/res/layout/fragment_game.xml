@@ -111,7 +111,7 @@
             <WebView
                 android:id="@+id/monitor"
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
+                android:layout_height="match_parent">
 
             </WebView>
             <ImageButton
@@ -125,8 +125,8 @@
 
             <ImageButton
                 android:id="@+id/bug"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:background="@null"
                 android:contentDescription="@string/bug"
                 android:foreground="#80FF0000"

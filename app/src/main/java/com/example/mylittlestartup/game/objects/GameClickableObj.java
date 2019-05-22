@@ -14,6 +14,7 @@ public class GameClickableObj extends BaseGameObj implements Runnable{
     private final String tag = GameClickableObj.class.getName();
 
     private CountDownTimer timer;
+    private ValueAnimator viewAnimator;
 
     public GameClickableObj(FrameLayout container, final GamePresenter presenter, View view, int maxIntervalSec) {
         super(container, presenter, view, maxIntervalSec);
@@ -48,7 +49,7 @@ public class GameClickableObj extends BaseGameObj implements Runnable{
     private void showAnimAppearance() {
         mView.setAlpha(0);
         mView.setVisibility(View.VISIBLE);
-        ValueAnimator viewAnimator = ValueAnimator.ofFloat(0, 1).setDuration(1000);
+        viewAnimator = ValueAnimator.ofFloat(0, 1).setDuration(1000);
         viewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -67,11 +68,19 @@ public class GameClickableObj extends BaseGameObj implements Runnable{
 
     public void pause() {
         timer.cancel();
+        if (viewAnimator != null) {
+            viewAnimator.pause();
+        }
     }
 
     public void resume() {
-        timer.cancel();
-        timer.start();
+        if (viewAnimator != null) {
+            viewAnimator.resume();
+        } else {
+            timer.cancel();
+            timer.start();
+        }
+
     }
 
     private void stop() {

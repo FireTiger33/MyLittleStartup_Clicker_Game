@@ -93,8 +93,8 @@ public class GameView extends Fragment implements GameContract.View {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(tag, "onCreateView");
 
-        presenter.fetchWorkers();
         mView = inflater.inflate(R.layout.fragment_game, container, false);
+        presenter.fetchWorkers();
 
         shopButton = mView.findViewById(R.id.button_shop);
         shopButton.setOnClickListener(new View.OnClickListener() {
@@ -114,18 +114,7 @@ public class GameView extends Fragment implements GameContract.View {
         touchLocation = mView.findViewById(R.id.touch_location);
 
         monitorView = mView.findViewById(R.id.monitor);
-        /*monitorView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    presenter.onCommonClickLocationClicked(event.getX(), event.getY());
-                }
-
-                return true;
-            }
-        });*/
-        InputMethodManager imm = (InputMethodManager) monitorView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInputFromWindow(monitorView.getWindowToken() , InputMethodManager.SHOW_FORCED, 0);
+        monitorView.loadUrl("file:///android_asset/monitor_view.html");
         monitorView.getSettings().setJavaScriptEnabled(true);
         monitorView.getSettings().setAllowFileAccess(true);
         monitorView.getSettings().setAllowContentAccess(true);
@@ -142,11 +131,9 @@ public class GameView extends Fragment implements GameContract.View {
                     presenter.onCommonClickLocationClicked(event.getX(), event.getY());
                 }
 
-                return false;
+                return (event.getAction() == MotionEvent.ACTION_MOVE);
             }
         });
-        
-        monitorView.loadUrl(/*"http://geektyper.com/studio/"*/"file:///android_asset/monitor_view.html");
 
         // Add images with code on monitor
         /*for (int i: monitorImagesId) {
@@ -190,9 +177,10 @@ public class GameView extends Fragment implements GameContract.View {
 
     @Override
     public void createWorkers(List<Upgrade> upgrades) {
-        Log.d(tag, "createWorkers");
+        Log.d(tag, "createWorkers: " + upgrades.size());
         int i = 0;
         for (Upgrade worker: upgrades) {
+            Log.d(tag, "Create worker");
             this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]), worker, presenter));
         }
     }

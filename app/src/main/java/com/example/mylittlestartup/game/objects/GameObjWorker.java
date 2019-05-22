@@ -21,6 +21,7 @@ public class GameObjWorker extends Upgrade {
     public GameObjWorker(View itemView, Upgrade upgrade, final GameContract.Presenter presenter) {
         mItemView = itemView;
         mUpgrade = upgrade;
+        Log.d(tag, "Create worker");
         mLogo = itemView.findViewById(R.id.worker_preview);
         pushButton = itemView.findViewById(R.id.push_button);
         pushButton.setOnClickListener(new View.OnClickListener() {
