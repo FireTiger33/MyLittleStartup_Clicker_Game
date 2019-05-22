@@ -9,8 +9,7 @@
         android:layout_height="120dp"
         android:background="@null"
         android:contentDescription="@string/workers"
-        android:scaleType="centerCrop"
-        android:src="@drawable/worker_avatar" />
+        android:scaleType="centerCrop" />
     <ImageButton
         android:id="@+id/push_button"
         android:visibility="invisible"

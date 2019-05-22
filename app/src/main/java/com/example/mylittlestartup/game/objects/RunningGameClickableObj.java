@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.example.mylittlestartup.game.GamePresenter;
 
-public class RunningGameClickableObj extends BaseGameObj implements Runnable{
+public class RunningGameClickableObj extends BaseGameObj implements Runnable {
     private final String tag = RunningGameClickableObj.class.getName();
 
     private CountDownTimer appearanceTimer;
@@ -34,13 +34,21 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
         mView.setVisibility(View.INVISIBLE);
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 hp--;
                 if (hp == 0) {
+                    new CountDownTimer(1000, 1000 / maxHP) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            presenter.onSpecClickAreaClicked(mView.getX(), mView.getY());
+                        }
+
+                        @Override
+                        public void onFinish() {
+
+                        }
+                    }.start();
                     stop();
-                    for (int i = 0; i < maxHP; i++) {
-                        presenter.onSpecClickAreaClicked(v.getX(), v.getY());
-                    }
                     run();
                 } else {
                     mView.setForeground(new ColorDrawable(foregroundColorSet[hp - 1]));
@@ -65,8 +73,8 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
                 int dir = getDirX();
                 float pos = mView.getX();
                 dt = getDX();
-                if (pos + dt*dir > maxX || pos + dt*dir < 0) {
-                    dirX= -dirX;
+                if (pos + dt * dir > maxX || pos + dt * dir < 0) {
+                    dirX = -dirX;
                     dir = -dir;
                     changeDxDy();
                 }
@@ -80,7 +88,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
                 int dir = getDirY();
                 float pos = mView.getY();
                 dt = getDY();
-                if (pos + dt*dir > maxY || pos + dt*dir < 0) {
+                if (pos + dt * dir > maxY || pos + dt * dir < 0) {
                     dirY = -dirY;
                     dir = -dir;
                     changeDxDy();
@@ -109,7 +117,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
             public void onFinish() {
                 mContainer.setForeground(null);
                 changeStartLocation();
-                mView.setForeground(new ColorDrawable(foregroundColorSet[maxHP-1]));
+                mView.setForeground(new ColorDrawable(foregroundColorSet[maxHP - 1]));
                 mView.setVisibility(View.VISIBLE);
                 runTimer.start();
                 objAnimX.start();
@@ -137,6 +145,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
     private float getDX() {
         return dx;
     }
+
     private float getDY() {
         return dy;
     }
@@ -144,6 +153,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
     private int getDirX() {
         return dirX;
     }
+
     private int getDirY() {
         return dirY;
     }
@@ -159,7 +169,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
 
             @Override
             public void onFinish() {
-                for (int i = 0; i < 25*hp; i++) {
+                for (int i = 0; i < 25 * hp; i++) {
                     mPresenter.onBugIsAlive();
                 }
                 stop();
@@ -169,6 +179,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
     }
 
     public void pause() {
+        Log.d(tag, "pause");
         runTimer.cancel();
         runTimerHasBeenPaused = true;
         objAnimX.pause();
@@ -179,15 +190,15 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable{
     public void resume() {
         Log.d(tag, "resume");
         if (runTimerHasBeenPaused) {
-            Log.d(tag, "runWillBePaused.");
+            Log.d(tag, "runWillBePaused");
             runTimerHasBeenPaused = false;
             runTimer = createNewRunTimer(runTimerUntilFinished, 500);
             runTimer.start();
             objAnimX.resume();
             objAnimY.resume();
         }
-        appearanceTimer.cancel();
-        appearanceTimer.start();
+//        appearanceTimer.cancel();
+//        appearanceTimer.start();
     }
 
     private void stop() {

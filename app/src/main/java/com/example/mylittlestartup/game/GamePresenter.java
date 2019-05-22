@@ -20,28 +20,23 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 public class GamePresenter implements GameContract.Presenter {
-    private String mTAG = GamePresenter.class.getName();
+    private String tag = GamePresenter.class.getName();
 
     private GameContract.View mView;
     private GameRepositoryImpl mRepository;
     private PlayerRepository mPlayerRepository;
 
     private List<Integer> itemsIds;
-    private List<CountDownTimer> workTimers;
+    private List<CountDownTimer> workTimers;  // TODO manager
     private List<Upgrade> upgradeItems;
 
     private MediaPlayer gamePlayer;
-
-    private int k;  // clickMultiplier
-    private int spec_k;
-
 
     GamePresenter(GameContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
         mPlayerRepository = ClickerApplication.from(view.getAppContext()).getPlayerRepository();
-        k = 1;  // TODO achievement increasing multiplier
-        spec_k = 100;
+
         workTimers = new ArrayList<>();
         itemsIds = new ArrayList<>();
         if (isMusicSoundState()) {
@@ -144,12 +139,13 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onGameStart() {
-        Log.d(mTAG, "onGameStart");
+        Log.d(tag, "onGameStart");
         getMoney();
         gameFetchUpgrades();
         if (gamePlayer != null) {
             gamePlayer.start();
         }
+        mView.showWorkers();
     }
 
     @Override
@@ -157,7 +153,7 @@ public class GamePresenter implements GameContract.Presenter {
         if (gamePlayer != null) {
             gamePlayer.pause();
         }
-        Log.d(mTAG, "onGamePause");
+        Log.d(tag, "onGamePause");
         for (CountDownTimer timer: workTimers) {
             timer.cancel();
         }
@@ -198,46 +194,69 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onCommonClickLocationClicked(float x, float y) {
-        mView.showAddedMoney(x, y, k);
-        addMoney(k);
+        mView.showAddedMoney(x, y, mPlayerRepository.getK());
+        addMoney(mPlayerRepository.getK());
     }
 
     @Override
     public void onSpecClickAreaClicked(float x, float y) {
-        mView.showAddedMoney(x, y, spec_k);
-        addMoney(spec_k);
+        mView.showAddedMoney(x, y, mPlayerRepository.getKSpec());
+        addMoney(mPlayerRepository.getKSpec());
     }
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-k*20);
+        addMoney(-mPlayerRepository.getK()*20);
         mView.showMoneyPulseAnim();
     }
 
     @Override
+    public void fetchWorkers() {
+        Log.d(tag, "fetchWorkers");
+        mRepository.fetchWorkers(new ShopContract.Repository.FetchCallback() {
+            @Override
+            public void onSuccess(List<Upgrade> upgrades) {
+                mView.createWorkers(upgrades);
+            }
+
+            @Override
+            public void onError() {
+                // todo show some errors?
+            }
+        });
+    }
+
+    @Override
     public void onWorkerPushed(Upgrade upgrade) {
-        // TODO
+        Log.d(tag, "onWorkerPushed: " + "value = " + upgrade.getValue());
+        addMoney(upgrade.getValue());
     }
 
     @Override
     public void onUpgradeWorker(final Upgrade upgrade) {
-        int lvl = upgrade.getCount();
-        /*mPlayerRepository.getScore(new GameContract.Repository.ScoreCallback() {
+        mRepository.buyWorkerUpgrade(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
             @Override
-            public void onSuccess(int score) {
-                if (score >= upgrade.getPrice()) {
-                    mPlayerRepository.setScore();
-                }
+            public void onSuccess(Upgrade upgradedWorker) {
+                mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
+                getMoney();
+                mPlayerRepository.setK(mPlayerRepository.getK() + 1);
+                final Toast toast = Toast.makeText(mView.getViewContext(), "LVL: " + upgradedWorker.getCount(), Toast.LENGTH_SHORT);
+                new CountDownTimer(400, 100) {
+                    public void onTick(long millisUntilFinished) {
+                        toast.show();
+                    } public void onFinish() {
+                        toast.cancel();
+                    }
+                }.start();
             }
 
             @Override
-            public void onError() {  // TODO
-                Toast toast = Toast.makeText(mView.getViewContext(), "Всё плохо", Toast.LENGTH_SHORT);
+            public void onError() {
+                final Toast toast = Toast.makeText(mView.getViewContext(), "Недостаточно средств.\n Стоимость: "
+                        + upgrade.getPrice(), Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
-        upgrade.setCount(lvl+1);*/
-        // TODO
     }
 
     @Override

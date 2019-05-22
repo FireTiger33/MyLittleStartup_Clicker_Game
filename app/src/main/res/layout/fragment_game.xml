@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ViewFlipper
+            <!--<ViewFlipper
                 android:id="@+id/monitor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -107,7 +107,13 @@
                 android:inAnimation="@anim/monitor_flipin"
                 android:outAnimation="@anim/monitor_flipout">
 
-            </ViewFlipper>
+            </ViewFlipper>-->
+            <WebView
+                android:id="@+id/monitor"
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
+
+            </WebView>
             <ImageButton
                 android:id="@+id/issue"
                 android:layout_width="30dp"

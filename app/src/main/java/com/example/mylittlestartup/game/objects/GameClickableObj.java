@@ -1,5 +1,6 @@
 package com.example.mylittlestartup.game.objects;
 
+import android.animation.ValueAnimator;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
@@ -38,10 +39,23 @@ public class GameClickableObj extends BaseGameObj implements Runnable{
             @Override
             public void onFinish() {
                 changeStartLocation();
-                mView.setVisibility(View.VISIBLE);
+                showAnimAppearance();
             }
         };
         timer.start();
+    }
+
+    private void showAnimAppearance() {
+        mView.setAlpha(0);
+        mView.setVisibility(View.VISIBLE);
+        ValueAnimator viewAnimator = ValueAnimator.ofFloat(0, 1).setDuration(1000);
+        viewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mView.setAlpha((float)animation.getAnimatedValue());
+            }
+        });
+        viewAnimator.start();
     }
 
     @Override

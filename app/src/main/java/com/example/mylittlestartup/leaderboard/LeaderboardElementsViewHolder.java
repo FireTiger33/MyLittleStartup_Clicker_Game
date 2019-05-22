@@ -24,6 +24,6 @@ class LeaderboardElementsViewHolder extends RecyclerView.ViewHolder {
     void bind(UserApi.UserPlain leaderboardUser, int i) {
         mPlaceNumber.setText(String.valueOf(i + 1));
         mUsername.setText(leaderboardUser.getUsername());
-        mScore.setText(leaderboardUser.getScore());
+        mScore.setText(String.valueOf(leaderboardUser.getScore()));
     }
 }

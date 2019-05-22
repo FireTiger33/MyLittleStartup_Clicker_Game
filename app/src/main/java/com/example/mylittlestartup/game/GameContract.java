@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
+import com.example.mylittlestartup.shop.ShopContract;
+
+import java.util.List;
 
 
 public interface GameContract {
@@ -15,7 +18,9 @@ public interface GameContract {
         void setMoney(int delta);
         void showAddedMoney(float x, float y, int val);
         void showMoneyPulseAnim();
-        void showAddWorker();
+        void createWorkers(List<Upgrade> upgrades);
+        void showWorkers();
+        void showUpgradeWorker(Upgrade upgradedWorker);
         void showUpgradeWorkerWindow();
 
         // TODO add methods for added game entities
@@ -30,6 +35,7 @@ public interface GameContract {
         void onCommonClickLocationClicked(float x, float y);
         void onSpecClickAreaClicked(float x, float y);
         void onBugIsAlive();
+        void fetchWorkers();
         void onWorkerPushed(Upgrade upgrade);
         void onUpgradeWorker(Upgrade upgrade);
 
@@ -43,7 +49,10 @@ public interface GameContract {
 
             void onError();
         }
-
+        interface WorkerUpgradeCallback {
+            void onSuccess(Upgrade upgradedWorker);
+            void onError();
+        }
         /**
          * Set given score to runtime storage
          *
@@ -73,6 +82,8 @@ public interface GameContract {
          * @param callback
          */
         void saveScore(ScoreCallback callback);
-        void buyWorkerUpgrade(Upgrade upgrade, BaseCallback callback);
+
+        void fetchWorkers(final ShopContract.Repository.FetchCallback callback);
+        void buyWorkerUpgrade(final Upgrade worker, final WorkerUpgradeCallback callback);
     }
 }

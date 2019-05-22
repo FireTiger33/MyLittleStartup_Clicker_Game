@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.GameContract;
+import com.example.mylittlestartup.shop.ShopContract;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -15,11 +16,44 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     private static final String KEY_PREF = "PLAYER_PREF";
     private static final String KEY_PREF_SCORE = "PLAYER_SCORE";
     private static final String KEY_PREF_LOGGED_IN = "PLAYER_LOGGED_IN";
+    private static final String KEY_PREF_ID = "PLAYER_ID";
+
+    private static final String KEY_K = "PLAYER_K";
+    private static final String KEY_K_SPEC = "PLAYER_K_SPEC";
+
     private static final String KEY_PREF_MUSIC_SOUND_STATE = "MUSIC_SOUND_STATE";
 
     private int mRuntimeScore;
+    private int mUserID;
     private boolean mIsLoggedIn;
     private boolean mMusicSoundState;
+
+    private int mK;
+    private int mKSpec;
+
+    public synchronized int getK() {
+        return mK;
+    }
+
+    public synchronized void setK(int k) {
+        mK = k;
+    }
+
+    public synchronized int getKSpec() {
+        return mKSpec;
+    }
+
+    public synchronized void setKSpec(int KSpec) {
+        mKSpec = KSpec;
+    }
+
+    public synchronized int getUserID() {
+        return mUserID;
+    }
+
+    public synchronized void setUserID(int userID) {
+        mUserID = userID;
+    }
 
     private synchronized int getRuntimeScore() {
         return mRuntimeScore;
@@ -47,6 +81,8 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
         setRuntimeScore(mPreferences.getInt(KEY_PREF_SCORE, 0));
         setLoggedIn(mPreferences.getBoolean(KEY_PREF_LOGGED_IN, false));
         setMusicSoundState(mPreferences.getBoolean(KEY_PREF_MUSIC_SOUND_STATE, true));
+        setK(mPreferences.getInt(KEY_K, 1));
+        setKSpec(mPreferences.getInt(KEY_K_SPEC, 100));
     }
 
     @Override
@@ -83,8 +119,9 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }  // new
 
     @Override
-    public void setLoggedIn(final BaseCallback callback) {
+    public void setLoggedIn(int id, final BaseCallback callback) {
         setLoggedIn(true);
+        setUserID(id);
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -92,8 +129,8 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
                 mPreferences
                         .edit()
                         .putBoolean(KEY_PREF_LOGGED_IN, isLoggedIn())
+                        .putInt(KEY_PREF_ID, getUserID())
                         .apply();
-
                 // target thread is on callback provider responsibility
                 callback.onSuccess();
             }
@@ -132,11 +169,7 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
 
     @Override
     public void getScore(ScoreCallback callback) {
-        if (getRuntimeScore() != 0) {
-            callback.onSuccess(getRuntimeScore());
-        } else {
-            callback.onError();
-        }
+        callback.onSuccess(getRuntimeScore());
     }
 
     @Override
@@ -147,6 +180,8 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
                 mPreferences
                         .edit()
                         .putInt(KEY_PREF_SCORE, getRuntimeScore())
+                        .putInt(KEY_K, getK())
+                        .putInt(KEY_K_SPEC, getKSpec())
                         .apply();
 
                 callback.onSuccess(getRuntimeScore());
@@ -155,7 +190,12 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }
 
     @Override
-    public void buyWorkerUpgrade(Upgrade upgrade, BaseCallback callback) {
+    public void fetchWorkers(ShopContract.Repository.FetchCallback callback) {
+        // TODO ???
+    }
+
+    @Override
+    public void buyWorkerUpgrade(Upgrade worker, WorkerUpgradeCallback callback) {
         // TODO ???
     }
 
