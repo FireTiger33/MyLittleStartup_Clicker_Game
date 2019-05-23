@@ -203,7 +203,12 @@ public class GameView extends Fragment implements GameContract.View {
 
     @Override
     public void showUpgradeWorkerWindow() {
-        //  TODO
+        // TODO
+    }
+
+    @Override
+    public void showWorkerPushAnimate() {
+        // TODO
     }
 
     private void createIssueButton() {
