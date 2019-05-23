@@ -106,15 +106,7 @@ public class GameView extends Fragment implements GameContract.View {
 
         monitorView = mView.findViewById(R.id.monitor);
         monitorView.loadUrl("file:///android_asset/monitor_view.html");
-        monitorView.getSettings().setJavaScriptEnabled(true);
-        monitorView.getSettings().setAllowFileAccess(true);
-        monitorView.getSettings().setAllowContentAccess(true);
-        monitorView.getSettings().setAllowFileAccessFromFileURLs(true);
-        monitorView.getSettings().setAllowUniversalAccessFromFileURLs(true);
-        monitorView.getSettings().setUseWideViewPort(true);
-        monitorView.setVerticalScrollBarEnabled(false);
-        monitorView.setHorizontalScrollBarEnabled(false);
-
+        setMonitorWebViewSettings();
         monitorView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -127,6 +119,17 @@ public class GameView extends Fragment implements GameContract.View {
         });
 
         return mView;
+    }
+
+    private void setMonitorWebViewSettings() {
+        monitorView.getSettings().setJavaScriptEnabled(true);
+        monitorView.getSettings().setAllowFileAccess(true);
+        monitorView.getSettings().setAllowContentAccess(true);
+        monitorView.getSettings().setAllowFileAccessFromFileURLs(true);
+        monitorView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        monitorView.getSettings().setUseWideViewPort(true);
+        monitorView.setVerticalScrollBarEnabled(false);
+        monitorView.setHorizontalScrollBarEnabled(false);
     }
 
     @Override
@@ -161,9 +164,13 @@ public class GameView extends Fragment implements GameContract.View {
     public void createWorkers(List<Upgrade> upgrades) {
         Log.d(tag, "createWorkers: " + upgrades.size());
         int i = 0;
+        int[] endAnimCoord = new int[2];
+        moneyValView.getLocationInWindow(endAnimCoord);
+        endAnimCoord[0] += moneyValView.getWidth()/3;
         for (Upgrade worker: upgrades) {
             Log.d(tag, "Create worker");
-            this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]), worker, presenter));
+            this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]),
+                    endAnimCoord, worker, presenter));
         }
     }
 
@@ -188,13 +195,8 @@ public class GameView extends Fragment implements GameContract.View {
         // TODO
     }
 
-    @Override
-    public void showWorkerPushAnimate() {
-        // TODO
-    }
-
     private void createIssueButton() {
-        gameClickableObj = new GameClickableObj(touchLocation/*monitorView*/, presenter,
+        gameClickableObj = new GameClickableObj(touchLocation, presenter,
                 mView.findViewById(R.id.issue), 60);
         gameClickableObj.run();
     }
@@ -207,7 +209,7 @@ public class GameView extends Fragment implements GameContract.View {
                 Color.argb(80, 246, 109, 0),
                 Color.argb(80, 255, 0, 0)
         };
-        runningGameClickableObj = new RunningGameClickableObj(touchLocation/*monitorView*/, presenter,
+        runningGameClickableObj = new RunningGameClickableObj(touchLocation, presenter,
                 mView.findViewById(R.id.bug), 30, 5, 10, colorSet);
         runningGameClickableObj.run();
     }

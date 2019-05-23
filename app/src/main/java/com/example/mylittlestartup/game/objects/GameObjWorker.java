@@ -3,6 +3,9 @@ package com.example.mylittlestartup.game.objects;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 
 import com.example.mylittlestartup.R;
@@ -12,24 +15,27 @@ import com.example.mylittlestartup.game.GameContract;
 public class GameObjWorker extends Upgrade {
     private final String tag = GameObjWorker.class.getName();
 
-    private ImageButton pushButton;
+    private final ImageButton pushButton;
     private Upgrade mUpgrade;
+    private final GameContract.Presenter mPresenter;
     private ImageButton mLogo;
-    private View mItemView;
+    private final View mItemView;
     private CountDownTimer workTimer;
+    private final int[] pushAnimateEndCoordinate;
 
-    public GameObjWorker(View itemView, Upgrade upgrade, final GameContract.Presenter presenter) {
+    public GameObjWorker(View itemView, int[] endCoordinateForPushAnimation, Upgrade upgrade, final GameContract.Presenter presenter) {
+        mPresenter = presenter;
         mItemView = itemView;
         mUpgrade = upgrade;
+        pushAnimateEndCoordinate = endCoordinateForPushAnimation;
         Log.d(tag, "Create worker");
         mLogo = itemView.findViewById(R.id.worker_preview);
         pushButton = itemView.findViewById(R.id.push_button);
         pushButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pushButton.setVisibility(View.INVISIBLE);
                 Log.d(tag, "pushButtonClicked");
-                presenter.onWorkerPushed(getUpgrade());
+                onWorkerPushed();
                 show();
             }
         });
@@ -37,7 +43,7 @@ public class GameObjWorker extends Upgrade {
             @Override
             public void onClick(View v) {
                 Log.d(tag, "onClickItemView");
-                presenter.onUpgradeWorker(getUpgrade());
+                mPresenter.onUpgradeWorker(getUpgrade());
             }
         });
 
@@ -69,11 +75,35 @@ public class GameObjWorker extends Upgrade {
         workTimer.start();
     }
 
-    private Upgrade getUpgrade() {
-        return mUpgrade;
-    }
     public int getWorkerId() {
         return mUpgrade.getId();
+    }
+
+    private void onWorkerPushed() {
+        int[] viewEndPos = new int[2];
+        pushButton.getLocationOnScreen(viewEndPos);
+        viewEndPos[0] -= pushAnimateEndCoordinate[0];
+        viewEndPos[1] -= pushAnimateEndCoordinate[1];
+        TranslateAnimation pushAnimation = new TranslateAnimation(0, -viewEndPos[0], 0, -viewEndPos[1]);
+        pushAnimation.setDuration(1500);
+        pushAnimation.setInterpolator(new AccelerateInterpolator());
+        pushAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) { }
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                pushButton.setVisibility(View.INVISIBLE);
+                mPresenter.onWorkerPushed(mUpgrade);
+            }
+
+        });
+        pushButton.startAnimation(pushAnimation);
+    }
+
+    private Upgrade getUpgrade() {
+        return mUpgrade;
     }
 
 }

@@ -230,7 +230,7 @@ public class GamePresenter implements GameContract.Presenter {
     @Override
     public void onWorkerPushed(Upgrade upgrade) {
         Log.d(tag, "onWorkerPushed: " + "value = " + upgrade.getValue());
-        mView.showWorkerPushAnimate();
+        mView.showMoneyPulseAnim();
         addMoney(upgrade.getValue());
     }
 

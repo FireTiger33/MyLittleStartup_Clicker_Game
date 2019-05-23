@@ -22,7 +22,6 @@ public interface GameContract {
         void showWorkers();
         void showUpgradeWorker(Upgrade upgradedWorker);
         void showUpgradeWorkerWindow();
-        void showWorkerPushAnimate();
 
         // TODO add methods for added game entities
     }

@@ -49,7 +49,8 @@
         android:layout_width="match_parent"
         android:layout_height="260dp"
         android:gravity="center"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:clipChildren="false">
         <include
             android:id="@+id/worker_1"
             android:layout_toStartOf="@+id/worker_2"
