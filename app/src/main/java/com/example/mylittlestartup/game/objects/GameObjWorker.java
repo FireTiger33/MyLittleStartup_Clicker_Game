@@ -68,6 +68,7 @@ public class GameObjWorker extends Upgrade {
         mLogo.setImageResource(mUpgrade.getPicID());
         workTimer.start();
     }
+
     private Upgrade getUpgrade() {
         return mUpgrade;
     }

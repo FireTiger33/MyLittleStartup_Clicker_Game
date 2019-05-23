@@ -11,7 +11,7 @@ import com.example.mylittlestartup.data.PlayerRepository;
 
 
 public class MainPresenter implements MainContract.Presenter {
-    String tag = MainPresenter.class.getName();
+    private final String tag = MainPresenter.class.getName();
 
     private MainContract.View mView;
     private MainContract.Repository mRepository;

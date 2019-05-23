@@ -31,7 +31,7 @@ public class ClickerApplication extends Application {
         mPlayerRepository = new PlayerRepositoryImpl(this);
 
         // TODO: Only for debug!
-        mPlayerRepository.setNotLoggedIn(new BaseCallback() {
+        /*mPlayerRepository.setNotLoggedIn(new BaseCallback() {
             @Override
             public void onSuccess() {
 
@@ -41,7 +41,7 @@ public class ClickerApplication extends Application {
             public void onError() {
 
             }
-        });
+        });*/
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -55,7 +55,7 @@ public class ClickerApplication extends Application {
         UpgradeDao dao = mDbRepository.getUpgradeDao();
 
         // TODO: Only for debug!
-        mDbRepository.clearAllTables();
+        // mDbRepository.clearAllTables();
 
         List<Upgrade> upgrades = dao.all();
         if (upgrades.isEmpty()) {
