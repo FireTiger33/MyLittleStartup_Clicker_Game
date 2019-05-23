@@ -1,6 +1,5 @@
 package com.example.mylittlestartup.main;
 
-import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,8 +24,6 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
     private PlayerRepository playerRepository;
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
-
-    public static String MUSIC_VOLUME_STATE = "musicSoundState";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +104,13 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
                 .addToBackStack(null)
                 .replace(R.id.main_activity, new ShopView())
                 .commit();
+    }
+
+    @Override
+    public void openMainScreen() {
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
+            fragmentManager.popBackStack();
+        }
     }
 
     @Override

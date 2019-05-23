@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.Router;
 import com.example.mylittlestartup.data.UserRepositoryImpl;
 import com.example.mylittlestartup.main.MainActivity;
 
@@ -97,10 +99,12 @@ public class AuthView extends Fragment implements AuthContract.View {
 
     @Override
     public void showMainScreen() {
-        Intent intent = new Intent(Objects.requireNonNull(getActivity()).getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        /*Instrumentation inst = new Instrumentation();
-        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);*/
+        Router router = (Router) getActivity();
+        if (router != null) {
+            router.openMainScreen();
+        } else {
+            Log.e(getTag(), "This activity is not a Router");
+        }
     }
 
     @Override

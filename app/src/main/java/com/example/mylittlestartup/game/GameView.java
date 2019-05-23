@@ -16,14 +16,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
@@ -56,13 +53,7 @@ public class GameView extends Fragment implements GameContract.View {
     private TextView moneyValView;
     private RelativeLayout workersContainer;
     private ValueAnimator moneyViewAnimator;
-//    private ViewFlipper monitorView;
     private WebView monitorView;
-    private final int[] monitorImagesId = {
-            R.drawable.monitor_step_0,
-            R.drawable.monitor_step_1,
-            R.drawable.monitor_step_2
-    };
 
     private GameClickableObj gameClickableObj;
     private RunningGameClickableObj runningGameClickableObj;
@@ -134,15 +125,6 @@ public class GameView extends Fragment implements GameContract.View {
                 return (event.getAction() == MotionEvent.ACTION_MOVE);
             }
         });
-
-        // Add images with code on monitor
-        /*for (int i: monitorImagesId) {
-            ImageView imageView = new ImageView(getContext());
-            imageView.setImageResource(i);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            monitorView.addView(imageView);
-        }
-        monitorView.startFlipping();*/
 
         return mView;
     }
