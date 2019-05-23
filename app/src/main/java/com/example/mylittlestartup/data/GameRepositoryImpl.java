@@ -35,6 +35,12 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
 
     private boolean noApiSyncYet = true; // scores
 
+    final int[] workerPicIds = {
+            R.drawable.worker_avatar,
+            R.drawable.programmer_lvl1,
+            R.drawable.programmer_lvl2
+    };
+
     public GameRepositoryImpl(Context context) {
         mGameApi = ApiRepository.from(context).getGameApi();
         mUserApi = ApiRepository.from(context).getUserApi();
@@ -298,11 +304,6 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
 
     @Override
     public void buyWorkerUpgrade(final Upgrade worker, final WorkerUpgradeCallback callback) {
-        final int[] picIds = {
-                R.drawable.worker_avatar,
-                R.drawable.programmer_lvl1,
-                R.drawable.programmer_lvl2
-        };
         mPlayerRepository.getScore(new ScoreCallback() {
             @Override
             public void onSuccess(final int score) {
@@ -311,8 +312,8 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                     public void run() {
                         if (score >= worker.getPrice()) {
                             int workerPrice = worker.getPrice();
-                            int nextPicId = worker.getCount() >= picIds.length-1? picIds.length-1: worker.getCount()+1;
-                            mUpgradeDao.upgradeWorker(worker.getId(), picIds[nextPicId]);
+                            int nextPicId = worker.getCount() >= workerPicIds.length-1? workerPicIds.length-1: worker.getCount()+1;
+                            mUpgradeDao.upgradeWorker(worker.getId(), workerPicIds[nextPicId]);
                             final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
                             Log.d(tag, "buyWorkerUpgrade: UpgradedWorkerLVL = " + upgradedWorker.get(0).getCount());
                             mPlayerRepository.setScore(score - workerPrice, new BaseCallback() {
@@ -356,7 +357,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mUpgradeDao.upgradeWorker(worker.getId(), picIds[worker.getCount()]);
+                        mUpgradeDao.upgradeWorker(worker.getId(), workerPicIds[worker.getCount()]);
                     }
                 });
                 callback.onSuccess();
@@ -367,5 +368,22 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                 callback.onError();
             }
         });*/
+    }
+
+    @Override
+    public void layOffWorker(final Upgrade worker, final WorkerUpgradeCallback callback) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mUpgradeDao.layOffWorker(worker.getId(), workerPicIds[0]);
+                final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(upgradedWorker.get(0));
+                    }
+                });
+            }
+        });
     }
 }

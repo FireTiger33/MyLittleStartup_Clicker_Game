@@ -204,6 +204,11 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }
 
     @Override
+    public void layOffWorker(Upgrade worker, WorkerUpgradeCallback callback) {
+        // TODO ???
+    }
+
+    @Override
     public void isLoggedIn(BaseCallback callback) {
         if (isLoggedIn()) {
             callback.onSuccess();

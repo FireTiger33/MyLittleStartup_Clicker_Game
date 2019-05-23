@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,8 +17,8 @@
         android:hint="@string/login"
         android:padding="5dp"
         android:id="@+id/login"
-        android:autofillHints="@string/login"
-        android:inputType="text">
+        android:inputType="text"
+        tools:ignore="Autofill">
     </EditText>
 
     <EditText
@@ -27,8 +28,8 @@
         android:hint="@string/password"
         android:layout_height="wrap_content"
         android:id="@+id/pass"
-        android:autofillHints="@string/password"
-        android:inputType="text">
+        android:inputType="textPassword"
+        tools:ignore="Autofill">
     </EditText>
 
     <ProgressBar

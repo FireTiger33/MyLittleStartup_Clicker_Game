@@ -1,14 +1,20 @@
 package com.example.mylittlestartup.game.objects;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.GameContract;
 
@@ -23,12 +29,22 @@ public class GameObjWorker extends Upgrade {
     private CountDownTimer workTimer;
     private final int[] pushAnimateEndCoordinate;
 
-    public GameObjWorker(View itemView, int[] endCoordinateForPushAnimation, Upgrade upgrade, final GameContract.Presenter presenter) {
+    private AlertDialog.Builder upgradeDialog;
+    private View mUpgradeDialogView;
+    private TextView nextLVLTextView;
+    private TextView nextValueTextView;
+    private TextView nextIntervalTextView;
+    private TextView priceView;
+    private boolean enoughMoneyForNextUpgrade;
+
+
+    public GameObjWorker(View itemView, View upgradeDialogView, int[] endCoordinateForPushAnimation, Upgrade upgrade, final GameContract.Presenter presenter) {
+        Log.d(tag, "Create worker");
         mPresenter = presenter;
         mItemView = itemView;
+        mUpgradeDialogView = upgradeDialogView;
         mUpgrade = upgrade;
         pushAnimateEndCoordinate = endCoordinateForPushAnimation;
-        Log.d(tag, "Create worker");
         mLogo = itemView.findViewById(R.id.worker_preview);
         pushButton = itemView.findViewById(R.id.push_button);
         pushButton.setOnClickListener(new View.OnClickListener() {
@@ -43,11 +59,82 @@ public class GameObjWorker extends Upgrade {
             @Override
             public void onClick(View v) {
                 Log.d(tag, "onClickItemView");
-                mPresenter.onUpgradeWorker(getUpgrade());
+                showUpgradeDialog();
             }
         });
 
         onUpgraded(mUpgrade);
+    }
+
+    private void recreateDialogViews() {
+        if (nextLVLTextView == null) {
+            nextLVLTextView = mUpgradeDialogView.findViewById(R.id.next_lvl);
+            nextValueTextView = mUpgradeDialogView.findViewById(R.id.next_value);
+            nextIntervalTextView = mUpgradeDialogView.findViewById(R.id.next_interval);
+            priceView = mUpgradeDialogView.findViewById(R.id.price_worker);
+        }
+        /*if (mUpgradeDialogView.getParent() != null) {
+            ((ViewGroup)mUpgradeDialogView.getParent()).removeView(mUpgradeDialogView);
+        }*/
+        nextLVLTextView.setText(new StringBuilder("lvl: " + mUpgrade.getCount() + " -> " + (mUpgrade.getCount() + 1)));
+        nextValueTextView.setText(new StringBuilder("value: " + mUpgrade.getValue() + " -> " + (mUpgrade.getValue() * 2 + 100)));
+        nextIntervalTextView.setText(new StringBuilder("pushInterval: " + mUpgrade.getInterval() + " -> " + (mUpgrade.getInterval() + 5000)));
+        priceView.setText(new StringBuilder(mUpgrade.getPrice() + " $"));
+        mPresenter.checkEnoughMoney(mUpgrade.getPrice(), new BaseCallback() {
+            @Override
+            public void onSuccess() {
+                enoughMoneyForNextUpgrade = true;
+            }
+
+            @Override
+            public void onError() {
+                enoughMoneyForNextUpgrade = false;
+            }
+        });
+        if (enoughMoneyForNextUpgrade) {
+            priceView.setTextColor(Color.GREEN);
+        }
+    }
+
+    private void showUpgradeDialog() {
+        Log.d(tag, "createUpgradeDialog");
+        if (upgradeDialog == null) {
+            Log.d(tag, "createDialog == null");
+            upgradeDialog = new AlertDialog.Builder(mItemView.getContext());
+            upgradeDialog.setPositiveButton(R.string.promote, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Log.d(tag, "clickUpgradeWorker");
+                    mPresenter.onUpgradeWorker(mUpgrade);
+                }
+            });
+            upgradeDialog.setNeutralButton(R.string.layoff, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Log.d(tag, "clickLayOffWorker");
+                    mPresenter.onLayOffWorker(mUpgrade);
+                }
+            });
+            upgradeDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+            upgradeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    Log.d(tag, "upgradeDialogDismiss");
+                    if (mUpgradeDialogView.getParent() != null) {
+                        ((ViewGroup)mUpgradeDialogView.getParent()).removeView(mUpgradeDialogView);
+                    }
+                    mPresenter.onCloseWorkerUpgradeDialog();
+                }
+            });
+        }
+        recreateDialogViews();
+        upgradeDialog.setView(mUpgradeDialogView);
+        upgradeDialog.create();
+        upgradeDialog.show();
+        mPresenter.onShowWorkerUpgradeDialog();
     }
 
     public void onUpgraded(Upgrade upgrade) {

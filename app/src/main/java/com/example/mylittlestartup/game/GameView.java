@@ -52,6 +52,7 @@ public class GameView extends Fragment implements GameContract.View {
     private FrameLayout touchLocation;  // container for Objects
     private TextView moneyValView;
     private RelativeLayout workersContainer;
+    private View workerUpgradeDialogView;
     private ValueAnimator moneyViewAnimator;
     private WebView monitorView;
 
@@ -78,7 +79,7 @@ public class GameView extends Fragment implements GameContract.View {
         workers = new ArrayList<>();
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "InflateParams"})
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -99,6 +100,7 @@ public class GameView extends Fragment implements GameContract.View {
         moneyValView.setText("0");
 
         workersContainer = mView.findViewById(R.id.workers_container);
+        workerUpgradeDialogView = inflater.inflate(R.layout.window_worker_upgrade_dialog, null);
 
 //        workersContainer.addView(inflater.inflate(R.layout.game_element_worker, null, false));
 
@@ -167,10 +169,11 @@ public class GameView extends Fragment implements GameContract.View {
         int[] endAnimCoord = new int[2];
         moneyValView.getLocationInWindow(endAnimCoord);
         endAnimCoord[0] += moneyValView.getWidth()/3;
+
         for (Upgrade worker: upgrades) {
             Log.d(tag, "Create worker");
             this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]),
-                    endAnimCoord, worker, presenter));
+                    workerUpgradeDialogView, endAnimCoord, worker, presenter));
         }
     }
 
@@ -191,8 +194,15 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showUpgradeWorkerWindow() {
-        // TODO
+    public void pauseGameObjects() {
+        runningGameClickableObj.pause();
+        gameClickableObj.pause();
+    }
+
+    @Override
+    public void resumeGameObjects() {
+        runningGameClickableObj.resume();
+        gameClickableObj.resume();
     }
 
     private void createIssueButton() {
@@ -271,8 +281,7 @@ public class GameView extends Fragment implements GameContract.View {
     public void onPause() {
         Log.d(tag, "onPause");
         presenter.onGamePause();
-        runningGameClickableObj.pause();
-        gameClickableObj.pause();
+        pauseGameObjects();
         super.onPause();
     }
 
@@ -280,8 +289,7 @@ public class GameView extends Fragment implements GameContract.View {
     public void onResume() {
         Log.d(tag, "onResume");
         super.onResume();
-        runningGameClickableObj.resume();
-        gameClickableObj.resume();
+        resumeGameObjects();
         presenter.onGameStart();
     }
 

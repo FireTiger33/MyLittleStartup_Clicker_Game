@@ -66,11 +66,11 @@ public class ClickerApplication extends Application {
                     new Upgrade(10000, "Менеждер", "200$ / 8s", 0, 8000, 200, R.drawable.shop_man),
                     new Upgrade(1000, "Кофемашина", "30$ / 4s", 0, 4000, 30, R.drawable.shop_coffe),
                     new Upgrade(10000, "Менеждер", "300$ / 12s", 0, 12000, 300, R.drawable.shop_man),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar)
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, R.drawable.worker_avatar),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, R.drawable.worker_avatar),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, R.drawable.worker_avatar),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, R.drawable.worker_avatar),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, R.drawable.worker_avatar)
             };
 
             dao.insert(basicUpgrades);

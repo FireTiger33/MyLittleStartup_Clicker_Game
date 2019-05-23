@@ -21,7 +21,8 @@ public interface GameContract {
         void createWorkers(List<Upgrade> upgrades);
         void showWorkers();
         void showUpgradeWorker(Upgrade upgradedWorker);
-        void showUpgradeWorkerWindow();
+        void pauseGameObjects();
+        void resumeGameObjects();
 
         // TODO add methods for added game entities
     }
@@ -38,6 +39,10 @@ public interface GameContract {
         void fetchWorkers();
         void onWorkerPushed(Upgrade upgrade);
         void onUpgradeWorker(Upgrade upgrade);
+        void onLayOffWorker(Upgrade upgrade);
+        void onShowWorkerUpgradeDialog();
+        void onCloseWorkerUpgradeDialog();
+        void checkEnoughMoney(final int price, final BaseCallback callback);
 
         void onFollowingObjDisappeared(int score);
     }
@@ -85,5 +90,6 @@ public interface GameContract {
 
         void fetchWorkers(final ShopContract.Repository.FetchCallback callback);
         void buyWorkerUpgrade(final Upgrade worker, final WorkerUpgradeCallback callback);
+        void layOffWorker(final Upgrade worker, final WorkerUpgradeCallback callback);
     }
 }

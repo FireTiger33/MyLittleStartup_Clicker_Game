@@ -163,14 +163,14 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
-    public void onTouchLocationTouched(float x, float y, int action) {
+    public void onTouchLocationTouched(float x, float y, int action) {  // TODO
 
     }
 
     @Override
     public void onTouchLocationActionUP() {
         addMoney(1000);
-    }
+    } // TODO remove
 
     @Override
     public void onShopButtonClicked() {
@@ -255,9 +255,66 @@ public class GamePresenter implements GameContract.Presenter {
 
             @Override
             public void onError() {
-                final Toast toast = Toast.makeText(mView.getViewContext(), "Недостаточно средств.\n Стоимость: "
-                        + upgrade.getPrice(), Toast.LENGTH_SHORT);
+                final Toast toast = Toast.makeText(mView.getViewContext(),
+                        "Недостаточно средств.\nСтоимость: " + upgrade.getPrice(),
+                        Toast.LENGTH_SHORT);
                 toast.show();
+            }
+        });
+    }
+
+    @Override
+    public void onLayOffWorker(Upgrade upgrade) {
+        mRepository.layOffWorker(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
+            @Override
+            public void onSuccess(Upgrade upgradedWorker) {
+                mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
+                getMoney();
+                mPlayerRepository.setK(mPlayerRepository.getK() - 1);
+                mPlayerRepository.setKSpec(100  + (mPlayerRepository.getK()-1) * 150);
+            }
+
+            @Override
+            public void onError() {
+                final Toast toast = Toast.makeText(mView.getViewContext(),
+                        "Что-то пошло не так",
+                        Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+
+    @Override
+    public void onShowWorkerUpgradeDialog() {
+        mView.pauseGameObjects();
+    }
+
+    @Override
+    public void onCloseWorkerUpgradeDialog() {
+        mView.resumeGameObjects();
+    }
+
+    @Override
+    public void checkEnoughMoney(final int price, final BaseCallback callback) {
+        mRepository.getScore(new GameContract.Repository.ScoreCallback() {
+            @Override
+            public void onSuccess(final int score) {
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (score - price > 0) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError() {
+                Log.wtf(TAG, "onError: callback in getScore");
+                callback.onError();
             }
         });
     }
