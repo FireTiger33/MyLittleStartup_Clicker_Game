@@ -188,5 +188,6 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
     public void musicSoundOn() {
         Log.d(tag, "Music On");
         playerRepository.setMusicSoundStateOn();
+        musicOnMainSound();
     }
 }

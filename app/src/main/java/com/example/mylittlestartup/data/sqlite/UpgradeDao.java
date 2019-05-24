@@ -19,7 +19,7 @@ public interface UpgradeDao {
     @Query("update Upgrade set mCount = mCount + 1," +
             "mValue = mValue * 2 + 100, " +
             "mInterval = mInterval + 5000, " +
-            "mPrice = (mPrice * 5)," +
+            "mPrice = (mPrice * 3)," +
             "mPicID = :picId where mId = :workerId")
     void upgradeWorker(int workerId, int picId);
 

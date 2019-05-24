@@ -24,7 +24,8 @@ public class GamePresenter implements GameContract.Presenter {
     private GameRepositoryImpl mRepository;
     private PlayerRepository mPlayerRepository;
 
-    private List<Integer> itemsIds;
+    private List<Integer> workerItemsIds;
+    private int maxEmploeesLVL = 0;
     private List<CountDownTimer> workTimers;  // TODO manager
     private List<Upgrade> upgradeItems;
 
@@ -35,14 +36,14 @@ public class GamePresenter implements GameContract.Presenter {
         mPlayerRepository = ClickerApplication.from(view.getAppContext()).getPlayerRepository();
 
         workTimers = new ArrayList<>();
-        itemsIds = new ArrayList<>();
+        workerItemsIds = new ArrayList<>();
     }
 
     private void startWorkers(List<Upgrade> upgrades) {
         upgradeItems = upgrades;
         for (Upgrade item: upgradeItems) {
             addWorkTimer(item);
-            itemsIds.add(item.getId());
+            workerItemsIds.add(item.getId());
         }
         startWorkTimers();
     }
@@ -56,8 +57,8 @@ public class GamePresenter implements GameContract.Presenter {
     private void isDoneWork(Upgrade item) {
         addMoney(item.getValue()*item.getCount());
         int itemId = item.getId();
-        for (int i = 0; i < itemsIds.size(); i++) {
-            if (itemsIds.get(i) == itemId) {
+        for (int i = 0; i < workerItemsIds.size(); i++) {
+            if (workerItemsIds.get(i) == itemId) {
                 workTimers.get(i).start();
             }
         }
@@ -136,7 +137,7 @@ public class GamePresenter implements GameContract.Presenter {
             timer.cancel();
         }
         workTimers.clear();
-        itemsIds.clear();
+        workerItemsIds.clear();
         saveMoney();
     }
 
@@ -184,7 +185,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-mPlayerRepository.getK()*10);
+        addMoney(-(int)Math.pow(10, maxEmploeesLVL+1));
         mView.showMoneyPulseAnim();
     }
 
@@ -217,6 +218,9 @@ public class GamePresenter implements GameContract.Presenter {
         mRepository.buyWorkerUpgrade(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
             @Override
             public void onSuccess(Upgrade upgradedWorker) {
+                if (maxEmploeesLVL < upgradedWorker.getCount()) {
+                    maxEmploeesLVL = upgradedWorker.getCount();
+                }
                 mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
                 getMoney();
                 mPlayerRepository.setK(mPlayerRepository.getK() + 1);
