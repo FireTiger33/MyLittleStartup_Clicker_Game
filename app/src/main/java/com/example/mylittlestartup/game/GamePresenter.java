@@ -1,12 +1,10 @@
 package com.example.mylittlestartup.game;
 
-import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.mylittlestartup.ClickerApplication;
-import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
 import com.example.mylittlestartup.data.PlayerRepository;
@@ -30,7 +28,6 @@ public class GamePresenter implements GameContract.Presenter {
     private List<CountDownTimer> workTimers;  // TODO manager
     private List<Upgrade> upgradeItems;
 
-    private MediaPlayer gamePlayer;
 
     GamePresenter(GameContract.View view) {
         mView = view;
@@ -39,19 +36,6 @@ public class GamePresenter implements GameContract.Presenter {
 
         workTimers = new ArrayList<>();
         itemsIds = new ArrayList<>();
-        if (isMusicSoundState()) {
-            musicOn();
-        }
-    }
-
-    private boolean isMusicSoundState() {
-        PlayerRepository playerRepository = ClickerApplication.from(mView.getAppContext()).getPlayerRepository();
-        return playerRepository.isMusicSoundState();
-    }
-
-    private void musicOn() {
-        gamePlayer = MediaPlayer.create(mView.getViewContext(), R.raw.game_sound);
-        gamePlayer.setLooping(true);
     }
 
     private void startWorkers(List<Upgrade> upgrades) {
@@ -142,17 +126,11 @@ public class GamePresenter implements GameContract.Presenter {
         Log.d(tag, "onGameStart");
         getMoney();
         gameFetchUpgrades();
-        if (gamePlayer != null) {
-            gamePlayer.start();
-        }
         mView.showWorkers();
     }
 
     @Override
     public void onGamePause() {
-        if (gamePlayer != null) {
-            gamePlayer.pause();
-        }
         Log.d(tag, "onGamePause");
         for (CountDownTimer timer: workTimers) {
             timer.cancel();
