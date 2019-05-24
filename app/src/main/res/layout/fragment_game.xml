@@ -122,7 +122,7 @@
                 android:contentDescription="@string/bug"
                 android:foreground="#80FF0000"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/spider" />
+                android:src="@drawable/bug" />
         </FrameLayout>
 
         <!--<FrameLayout
