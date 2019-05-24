@@ -12,6 +12,7 @@ public interface AuthContract {
 
         void showProgress();
         void hideProgress();
+        void showAuthorisationError();
 
         void showMainScreen();
 

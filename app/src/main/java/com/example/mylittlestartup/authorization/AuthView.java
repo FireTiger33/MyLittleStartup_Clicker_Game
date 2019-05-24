@@ -1,6 +1,9 @@
 package com.example.mylittlestartup.authorization;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +29,7 @@ public class AuthView extends Fragment implements AuthContract.View {
 
     private TextView titleText;
     private EditText loginField;
+    private Drawable defLoginFieldBackground;
     private EditText passField;
     private Button authButton;
     private ProgressBar progressBar;
@@ -51,7 +55,20 @@ public class AuthView extends Fragment implements AuthContract.View {
         progressBar = view.findViewById(R.id.progress);
         titleText = view.findViewById(R.id.text_authorization_title);
         loginField = view.findViewById(R.id.login);
+        defLoginFieldBackground = loginField.getBackground();
+        loginField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                onFieldsClicked();
+            }
+        });
         passField = view.findViewById(R.id.pass);
+        passField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                onFieldsClicked();
+            }
+        });
 
         authButton = view.findViewById(R.id.button_authorization);
         authButton.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +88,13 @@ public class AuthView extends Fragment implements AuthContract.View {
         }
 
         return view;
+    }
+
+    private void onFieldsClicked() {
+        if (loginField.getBackground() != defLoginFieldBackground) {
+            loginField.setBackground(defLoginFieldBackground);
+            passField.setBackground(defLoginFieldBackground);
+        }
     }
 
     @Override
@@ -95,6 +119,12 @@ public class AuthView extends Fragment implements AuthContract.View {
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showAuthorisationError() {
+        loginField.setBackground(new ColorDrawable(Color.RED));
+        passField.setBackground(new ColorDrawable(Color.RED));
     }
 
     @Override
