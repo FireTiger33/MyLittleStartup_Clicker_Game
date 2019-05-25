@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
             Log.d(tag, "musicOnGameSound: soundOn");
             clearMusicPlayer();
             musicPlayer = MediaPlayer.create(getApplicationContext(), R.raw.game_sound);
+            musicPlayer.setLooping(true);
             musicPlayer.start();
         } else {
             Log.d(tag, "musicOnMainSound: soundOff");
