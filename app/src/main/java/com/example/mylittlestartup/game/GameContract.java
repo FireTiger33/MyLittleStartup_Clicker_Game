@@ -43,6 +43,7 @@ public interface GameContract {
         void onShowWorkerUpgradeDialog();
         void onCloseWorkerUpgradeDialog();
         void checkEnoughMoney(final int price, final BaseCallback callback);
+        void registerPlayerBug(final BaseCallback callback);
 
         void onFollowingObjDisappeared(int score);
     }

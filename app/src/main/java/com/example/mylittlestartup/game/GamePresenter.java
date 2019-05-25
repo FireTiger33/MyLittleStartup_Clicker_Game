@@ -302,6 +302,11 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
+    public void registerPlayerBug(BaseCallback callback) {
+
+    }
+
+    @Override
     public void onFollowingObjDisappeared(int score) {
         addMoney(score*10);
     }

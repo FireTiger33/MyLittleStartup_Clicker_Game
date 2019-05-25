@@ -22,6 +22,7 @@ public class GameObjWorker extends Upgrade {
     private final String tag = GameObjWorker.class.getName();
 
     private final ImageButton pushButton;
+    private boolean readyToPush = false;
     private Upgrade mUpgrade;
     private final GameContract.Presenter mPresenter;
     private ImageButton mLogo;
@@ -51,15 +52,26 @@ public class GameObjWorker extends Upgrade {
             @Override
             public void onClick(View v) {
                 Log.d(tag, "pushButtonClicked");
-                onWorkerPushed();
-                show();
+                if (readyToPush) {
+                    readyToPush = false;
+                    showPushAnimation();
+                    workTimer.start();
+                }
+                //show();
+
             }
         });
         mLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(tag, "onClickItemView");
-                showUpgradeDialog();
+                if (readyToPush) {
+                    readyToPush = false;
+                    showPushAnimation();
+                    workTimer.start();
+                } else {
+                    showUpgradeDialog();
+                }
             }
         });
 
@@ -125,9 +137,9 @@ public class GameObjWorker extends Upgrade {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 Log.d(tag, "upgradeDialogDismiss");
-                if (mUpgradeDialogView.getParent() != null) {
+                /*if (mUpgradeDialogView.getParent() != null) {
                     ((ViewGroup) mUpgradeDialogView.getParent()).removeView(mUpgradeDialogView);
-                }
+                }*/
                 mPresenter.onCloseWorkerUpgradeDialog();
             }
         });
@@ -141,6 +153,9 @@ public class GameObjWorker extends Upgrade {
             createUpgradeDialog();
         }
         recreateDialogViews();
+        if (mUpgradeDialogView.getParent() != null) {
+            ((ViewGroup) mUpgradeDialogView.getParent()).removeView(mUpgradeDialogView);
+        }
         upgradeDialog.setView(mUpgradeDialogView);
         upgradeDialog.create();
         upgradeDialog.show();
@@ -162,6 +177,7 @@ public class GameObjWorker extends Upgrade {
             @Override
             public void onFinish() {
                 if (mUpgrade.getCount() > 0) {
+                    readyToPush = true;
                     pushButton.setVisibility(View.VISIBLE);
                 }
             }
@@ -179,7 +195,8 @@ public class GameObjWorker extends Upgrade {
         return mUpgrade.getId();
     }
 
-    private void onWorkerPushed() {
+    private void showPushAnimation() {
+
         int[] viewEndPos = new int[2];
         pushButton.getLocationOnScreen(viewEndPos);
         viewEndPos[0] -= pushAnimateEndCoordinate[0];
