@@ -35,10 +35,10 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
 
     private boolean noApiSyncYet = true; // scores
 
-    final int[] workerPicIds = {
-            R.drawable.worker_avatar,
-            R.drawable.programmer_lvl1,
-            R.drawable.programmer_lvl2
+    private final String[] workerPicPaths = {
+            "img/worker_avatar.png",
+            "img/programmer_lvl1.svg",
+            "img/programmer_lvl2.svg"
     };
 
     public GameRepositoryImpl(Context context) {
@@ -312,8 +312,8 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                     public void run() {
                         if (score >= worker.getPrice()) {
                             int workerPrice = worker.getPrice();
-                            int nextPicId = worker.getCount() >= workerPicIds.length-1? workerPicIds.length-1: worker.getCount()+1;
-                            mUpgradeDao.upgradeWorker(worker.getId(), workerPicIds[nextPicId]);
+                            int nextPicId = worker.getCount() >= workerPicPaths.length-1? workerPicPaths.length-1: worker.getCount()+1;
+                            mUpgradeDao.upgradeWorker(worker.getId(), workerPicPaths[nextPicId]);
                             final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
                             Log.d(tag, "buyWorkerUpgrade: UpgradedWorkerLVL = " + upgradedWorker.get(0).getCount());
                             mPlayerRepository.setScore(score - workerPrice, new BaseCallback() {
@@ -375,7 +375,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mUpgradeDao.layOffWorker(worker.getId(), workerPicIds[0]);
+                mUpgradeDao.layOffWorker(worker.getId(), workerPicPaths[0]);
                 final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
                     @Override

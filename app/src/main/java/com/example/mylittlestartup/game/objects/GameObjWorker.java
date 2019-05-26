@@ -2,7 +2,12 @@ package com.example.mylittlestartup.game.objects;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Picture;
+import android.graphics.drawable.PictureDrawable;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
@@ -13,10 +18,16 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.GameContract;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 
 public class GameObjWorker extends Upgrade {
     private final String tag = GameObjWorker.class.getName();
@@ -185,9 +196,44 @@ public class GameObjWorker extends Upgrade {
         show();
     }
 
+    private void setLogo() {
+        try {
+            Log.d(tag, "setLogo");
+            AssetManager assetManager = mItemView.getContext().getAssets();
+            Log.d(tag, "setLogo: getAssets");
+            InputStream inputStream = assetManager.open(/*"img/programmer_lvl1.svg"*/mUpgrade.getPicPath());
+            Log.d(tag, "setLogo: openFile");
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            Log.d(tag, "setLogo: decodedStream");
+            if (bitmap == null) {
+                Log.d(tag, "setLogo: bitmapDecodeInputStream == null");
+                inputStream = assetManager.open(/*"img/programmer_lvl1.svg"*/mUpgrade.getPicPath());SVG svg = null;
+                try {
+                    svg = SVG.getFromInputStream(inputStream);
+                    Log.d(tag, "setLogo: SVG decoded");
+                } catch (SVGParseException e) {
+                    e.printStackTrace();
+                }
+                if (svg != null) {
+                    Picture picture = svg.renderToPicture();
+                    PictureDrawable pictureDrawable = new PictureDrawable(picture);
+
+                    mLogo.setImageDrawable(pictureDrawable);
+                } else {
+                    Log.d(tag, "setLogo: SVG == null");
+                }
+            } else {
+                mLogo.setImageBitmap(bitmap);
+            }
+        } catch (IOException e) {
+            Log.d(tag, "setLogo: impossible");
+            e.printStackTrace();
+        }
+    }
+
     public void show() {
         Log.d(tag, "show: " + mUpgrade.getCount());
-        mLogo.setImageResource(mUpgrade.getPicID());
+        setLogo();
         workTimer.start();
     }
 

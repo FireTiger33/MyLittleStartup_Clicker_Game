@@ -20,15 +20,15 @@ public interface UpgradeDao {
             "mValue = mValue * 2 + 100, " +
             "mInterval = mInterval + 5000, " +
             "mPrice = (mPrice * 3)," +
-            "mPicID = :picId where mId = :workerId")
-    void upgradeWorker(int workerId, int picId);
+            "mPicPath = :picPath, mId = :workerId")
+    void upgradeWorker(int workerId, String picPath);
 
     @Query("update Upgrade set mCount = 0," +
             "mValue = 0, " +
             "mInterval = 5000, " +
             "mPrice = 2000," +
-            "mPicID = :picId where mId = :workerId")
-    void layOffWorker(int workerId, int picId);
+            "mPicPath = :picPath where mId = :workerId")
+    void layOffWorker(int workerId, String picPath);
 
     @Query("select * from Upgrade order by mId")
     List<Upgrade> all();

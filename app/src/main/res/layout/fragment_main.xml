@@ -6,23 +6,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_settings"
+            android:background="@drawable/gear"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"/>
 
-    <Button
-        android:id="@+id/button_settings"
-        android:text="@string/settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="30dp"/>
-
-    <TextView
-        android:id="@+id/game_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/name_game"
-        android:textSize="80sp"
-        android:textColor="#0000FF"/>
-
+        <TextView
+            android:id="@+id/game_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/name_game"
+            android:textSize="80sp"
+            android:textColor="#0000FF"/>
+    </FrameLayout>
     <Button
         android:id="@+id/button_start_game"
         android:text="@string/start"

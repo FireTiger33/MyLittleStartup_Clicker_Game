@@ -27,16 +27,16 @@ public class Upgrade {
     private int mCount;
     private int mInterval;
     private int mValue;
-    private int mPicID;
+    private String mPicPath;
 
     @Ignore
-    public Upgrade(int price, String name, String description, int count, int interval, int value, int picID) {
+    public Upgrade(int price, String name, String description, int count, int interval, int value, String picPath) {
         mPrice = price;
         mName = name;
         mDescription = description;
         mCount = count;
         mInterval = interval;
-        mPicID = picID;
+        mPicPath = picPath;
         mValue = value;
     }
 
@@ -90,12 +90,12 @@ public class Upgrade {
         mInterval = interval;
     }
 
-    public int getPicID() {
-        return mPicID;
+    public String getPicPath() {
+        return mPicPath;
     }
 
-    public void setPicID(int picID) {
-        mPicID = picID;
+    public void setPicPath(String picPath) {
+        mPicPath = picPath;
     }
 
     public int getValue() {
