@@ -223,9 +223,6 @@ public class GamePresenter implements GameContract.Presenter {
             public void onSuccess(Upgrade upgradedWorker) {
                 if (maxEmploeesLVL < upgradedWorker.getCount()) {
                     maxEmploeesLVL = upgradedWorker.getCount();
-                    numEmploeesWithMaxLVL = 1;
-                } else if (maxEmploeesLVL == upgrade.getCount()) {
-                    ++numEmploeesWithMaxLVL;
                 }
                 mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
                 getMoney();
