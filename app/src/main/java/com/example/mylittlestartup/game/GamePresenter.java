@@ -41,7 +41,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     private void startWorkers(List<Upgrade> upgrades) {
         upgradeItems = upgrades;
-        for (Upgrade item: upgradeItems) {
+        for (Upgrade item : upgradeItems) {
             addWorkTimer(item);
             workerItemsIds.add(item.getId());
         }
@@ -49,13 +49,13 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     private void startWorkTimers() {
-        for (CountDownTimer timer: workTimers) {
+        for (CountDownTimer timer : workTimers) {
             timer.start();
         }
     }
 
     private void isDoneWork(Upgrade item) {
-        addMoney(item.getValue()*item.getCount());
+        addMoney(item.getValue() * item.getCount());
         int itemId = item.getId();
         for (int i = 0; i < workerItemsIds.size(); i++) {
             if (workerItemsIds.get(i) == itemId) {
@@ -68,7 +68,9 @@ public class GamePresenter implements GameContract.Presenter {
         // TODO replace 1000 with an minInterval
         workTimers.add(new CountDownTimer(upgradeItem.getInterval(), 1000) {
             @Override
-            public void onTick(long millisUntilFinished) { }
+            public void onTick(long millisUntilFinished) {
+            }
+
             @Override
             public void onFinish() {
                 isDoneWork(upgradeItem);
@@ -115,6 +117,7 @@ public class GamePresenter implements GameContract.Presenter {
             public void onSuccess(List<Upgrade> upgrades) {
                 startWorkers(upgrades);
             }
+
             @Override
             public void onError() {
                 Log.wtf(TAG, "Failed to get data on upgrades");
@@ -133,7 +136,7 @@ public class GamePresenter implements GameContract.Presenter {
     @Override
     public void onGamePause() {
         Log.d(tag, "onGamePause");
-        for (CountDownTimer timer: workTimers) {
+        for (CountDownTimer timer : workTimers) {
             timer.cancel();
         }
         workTimers.clear();
@@ -185,7 +188,7 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-(int)Math.pow(10, maxEmploeesLVL+1));
+        addMoney(-(int) Math.pow(10, maxEmploeesLVL + 1));
         mView.showMoneyPulseAnim();
     }
 
@@ -220,16 +223,21 @@ public class GamePresenter implements GameContract.Presenter {
             public void onSuccess(Upgrade upgradedWorker) {
                 if (maxEmploeesLVL < upgradedWorker.getCount()) {
                     maxEmploeesLVL = upgradedWorker.getCount();
+                    numEmploeesWithMaxLVL = 1;
+                } else if (maxEmploeesLVL == upgrade.getCount()) {
+                    ++numEmploeesWithMaxLVL;
                 }
                 mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
                 getMoney();
                 mPlayerRepository.setK(mPlayerRepository.getK() + 1);
-                mPlayerRepository.setKSpec(100  + (mPlayerRepository.getK()-1) * 150);
+                mPlayerRepository.setKSpec(100 + (mPlayerRepository.getK() - 1) * 150);
                 final Toast toast = Toast.makeText(mView.getViewContext(), "LVL: " + upgradedWorker.getCount(), Toast.LENGTH_SHORT);
                 new CountDownTimer(400, 100) {
                     public void onTick(long millisUntilFinished) {
                         toast.show();
-                    } public void onFinish() {
+                    }
+
+                    public void onFinish() {
                         toast.cancel();
                     }
                 }.start();
@@ -246,14 +254,26 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
-    public void onLayOffWorker(Upgrade upgrade) {
+    public void onLayOffWorker(final Upgrade upgrade) {
         mRepository.layOffWorker(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
             @Override
             public void onSuccess(Upgrade upgradedWorker) {
                 mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
-                getMoney();
-                mPlayerRepository.setK(mPlayerRepository.getK() - 1);
-                mPlayerRepository.setKSpec(100  + (mPlayerRepository.getK()-1) * 150);
+                if (upgrade.getCount() == maxEmploeesLVL) {
+                    mRepository.getMaxWorkerLVL(new GameContract.Repository.IntCallback() {
+                        @Override
+                        public void onSuccess(int val) {
+                            maxEmploeesLVL = val;
+                            Log.d(tag, "now MAX Worker LVL = " + maxEmploeesLVL);
+                        }
+
+                        @Override
+                        public void onError() { }
+                    });
+                }
+                Log.d(tag, "Layoff worker lvl " + upgrade.getCount());
+                mPlayerRepository.setK(mPlayerRepository.getK() - upgrade.getCount());
+                mPlayerRepository.setKSpec(100 + (mPlayerRepository.getK() - 1) * 150);
             }
 
             @Override
@@ -302,12 +322,12 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     @Override
-    public void registerPlayerBug(BaseCallback callback) {
+    public void registerPlayerBug(final BaseCallback callback) {
 
     }
 
     @Override
     public void onFollowingObjDisappeared(int score) {
-        addMoney(score*10);
+        addMoney(score * 10);
     }
 }

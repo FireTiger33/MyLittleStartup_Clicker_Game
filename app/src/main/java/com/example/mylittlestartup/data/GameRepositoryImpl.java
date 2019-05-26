@@ -386,4 +386,20 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
             }
         });
     }
+
+    @Override
+    public void getMaxWorkerLVL(final IntCallback callback) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final int maxLVL = mUpgradeDao.getMaxWorkerLVL();
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(maxLVL);
+                    }
+                });
+            }
+        });
+    }
 }

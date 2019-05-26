@@ -59,6 +59,11 @@ public interface GameContract {
             void onSuccess(Upgrade upgradedWorker);
             void onError();
         }
+
+        interface IntCallback {
+            void onSuccess(int lvl);
+            void onError();
+        }
         /**
          * Set given score to runtime storage
          *
@@ -92,5 +97,6 @@ public interface GameContract {
         void fetchWorkers(final ShopContract.Repository.FetchCallback callback);
         void buyWorkerUpgrade(final Upgrade worker, final WorkerUpgradeCallback callback);
         void layOffWorker(final Upgrade worker, final WorkerUpgradeCallback callback);
+        void getMaxWorkerLVL(final IntCallback callback);
     }
 }

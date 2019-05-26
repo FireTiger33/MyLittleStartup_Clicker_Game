@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
+import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.objects.GameClickableObj;
 import com.example.mylittlestartup.game.objects.GameObjWorker;
@@ -141,6 +142,17 @@ public class GameView extends Fragment implements GameContract.View {
         presenter.onGameStart();
         createIssueButton();
         createBugButton();
+        presenter.registerPlayerBug(new BaseCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     @Override

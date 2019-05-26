@@ -41,4 +41,7 @@ public interface UpgradeDao {
 
     @Query("select * from Upgrade where mName == 'worker' order by mId")
     List<Upgrade> allWorkers();
+
+    @Query("select MAX(mCount) from Upgrade where mName  = 'worker'")
+    int getMaxWorkerLVL();
 }

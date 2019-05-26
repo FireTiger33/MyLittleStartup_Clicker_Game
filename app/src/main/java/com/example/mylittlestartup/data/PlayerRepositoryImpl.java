@@ -209,6 +209,11 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }
 
     @Override
+    public void getMaxWorkerLVL(IntCallback callback) {
+        // TODO ???
+    }
+
+    @Override
     public void isLoggedIn(BaseCallback callback) {
         if (isLoggedIn()) {
             callback.onSuccess();
