@@ -177,7 +177,7 @@ public class GamePresenter implements GameContract.Presenter {
     @Override
     public void onCommonClickLocationClicked(float x, float y) {
         mView.showAddedMoney(x, y, mPlayerRepository.getK());
-        addMoney(mPlayerRepository.getK()+100);
+        addMoney(mPlayerRepository.getK());
     }
 
     @Override
