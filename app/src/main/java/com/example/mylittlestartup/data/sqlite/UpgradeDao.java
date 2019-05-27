@@ -5,6 +5,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import java.util.List;
 
@@ -22,6 +23,9 @@ public interface UpgradeDao {
             "mPrice = (mPrice * 3)," +
             "mPicPath = :picPath, mId = :workerId")
     void upgradeWorker(int workerId, String picPath);
+
+    @Update
+    void upgradeWorker(Upgrade upgrade);
 
     @Query("update Upgrade set mCount = 0," +
             "mValue = 0, " +

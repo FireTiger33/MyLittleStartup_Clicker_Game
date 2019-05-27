@@ -313,7 +313,20 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                         if (score >= worker.getPrice()) {
                             int workerPrice = worker.getPrice();
                             int nextPicId = worker.getCount() >= workerPicPaths.length-1? workerPicPaths.length-1: worker.getCount()+1;
-                            mUpgradeDao.upgradeWorker(worker.getId(), workerPicPaths[nextPicId]);
+
+                            Upgrade upgrade = new Upgrade(
+                                    worker.getPrice() * 3,
+                                    worker.getName(),
+                                    worker.getDescription(),
+                                    worker.getCount() + 1,
+                                    worker.getInterval() + 5000,
+                                    worker.getValue() * 2 + 100,
+                                    workerPicPaths[nextPicId]
+                            );
+
+                            upgrade.setId(worker.getId());
+                            mUpgradeDao.upgradeWorker(upgrade);
+
                             final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
                             Log.d(tag, "buyWorkerUpgrade: UpgradedWorkerLVL = " + upgradedWorker.get(0).getCount());
                             mPlayerRepository.setScore(score - workerPrice, new BaseCallback() {
