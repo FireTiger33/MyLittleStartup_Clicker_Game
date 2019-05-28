@@ -3,6 +3,7 @@ package com.example.mylittlestartup.shop;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Picture;
 import android.graphics.drawable.PictureDrawable;
 import android.support.annotation.NonNull;
@@ -82,11 +83,16 @@ class ShopElementsViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    void bind(Upgrade upgrade) {
+    void bind(Upgrade upgrade, boolean enoughMoney) {
         mUpgrade = upgrade;
         setLogo();
+        if (enoughMoney) {
+            mPriceView.setTextColor(Color.GREEN);
+        } else {
+            mPriceView.setTextColor(Color.RED);
+        }
         mDescriptionView.setText(upgrade.getDescription());
-        mPriceView.setText(String.valueOf(upgrade.getPrice()));
-        mGoodsQuantity.setText(String.valueOf(upgrade.getCount()));
+        mPriceView.setText(new StringBuilder("$ " + upgrade.getPrice()));
+        mGoodsQuantity.setText(new StringBuilder("x " + upgrade.getCount()));
     }
 }

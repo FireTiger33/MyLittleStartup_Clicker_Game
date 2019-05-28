@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 
 import java.util.List;
@@ -31,8 +32,19 @@ public class ShopElementsAdapter extends RecyclerView.Adapter<ShopElementsViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ShopElementsViewHolder shopElementsViewHolder, int i) {
-        shopElementsViewHolder.bind(mUpgrades.get(i));
+    public void onBindViewHolder(@NonNull final ShopElementsViewHolder shopElementsViewHolder, int i) {
+        final Upgrade upgrade = mUpgrades.get(i);
+        mPresenter.checkEnoughMoney(mUpgrades.get(i).getPrice(), new BaseCallback() {
+            @Override
+            public void onSuccess() {
+                shopElementsViewHolder.bind(upgrade, true);
+            }
+
+            @Override
+            public void onError() {
+                shopElementsViewHolder.bind(upgrade, false);
+            }
+        });
     }
 
     @Override
