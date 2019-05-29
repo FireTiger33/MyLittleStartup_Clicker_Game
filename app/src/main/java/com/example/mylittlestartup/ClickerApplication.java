@@ -93,8 +93,8 @@ public class ClickerApplication extends Application {
                 new Upgrade(10000, "upgrade", "100$ / 5s", 0, 5000, 100, "img/shop_man.jpg"),
                 new Upgrade(2000, "upgrade", "12$ / 2s", 0, 2000, 12, "img/shop_coffee.svg"),
                 new Upgrade(20000, "upgrade", "220$ / 8s", 0, 8000, 220, "img/shop_man.jpg"),
-                new Upgrade(4000, "upgrade", "20$ / 3s", 0, 3000, 20, "img/shop_coffee.svg"),
-                new Upgrade(30000, "upgrade", "400$ / 12s", 0, 12000, 400, "img/shop_man.jpg"),
+                new Upgrade(4000, "upgrade", "20$ / 3s", 0, 3000, 20, "img/telegram.svg"),
+                new Upgrade(30000, "upgrade", "400$ / 12s", 0, 12000, 400, "img/github.svg"),
         };
         Upgrade[] basicSpeeders = {
                 new Upgrade(20000, "speeder", "2", 0, 0, 2, "img/telegram.svg"),
