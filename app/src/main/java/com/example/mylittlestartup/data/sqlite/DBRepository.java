@@ -1,6 +1,5 @@
 package com.example.mylittlestartup.data.sqlite;
 
-import android.app.Application;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;

@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.ToggleButton;
 
 import com.example.mylittlestartup.ClickerApplication;
+import com.example.mylittlestartup.achievements.AchievementsManager;
 import com.example.mylittlestartup.data.PlayerRepository;
 
 public class SettingsPresenter implements SettingsContract.Presenter {
@@ -19,8 +20,10 @@ public class SettingsPresenter implements SettingsContract.Presenter {
     public void onSoundsSettingButtonClicked(ToggleButton button) {
         if (button.isChecked()) {
             view.musicSoundOn();
+            AchievementsManager.getInstance().IncProgress("sound", 1, view.getAppContext());
         } else {
             view.musicSoundOff();
+            AchievementsManager.getInstance().IncProgress("sound", 1, view.getAppContext());
         }
     }
 
