@@ -1,6 +1,5 @@
 package com.example.mylittlestartup.game;
 
-import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,59 +26,41 @@ public class GamePresenter implements GameContract.Presenter {
     private GameRepositoryImpl mRepository;
     private PlayerRepository mPlayerRepository;
 
-    private List<Integer> itemsIds;
+    private List<Integer> workerItemsIds;
+    private int maxEmploeesLVL = 0;
     private List<CountDownTimer> workTimers;  // TODO manager
     private List<Upgrade> upgradeItems;
-
-    private MediaPlayer gamePlayer;
-
-    private int k;  // clickMultiplier  // TODO add to PlayerRepository
-    private int spec_k;  // TODO add to PlayerRepository
 
 
     GamePresenter(GameContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
         mPlayerRepository = ClickerApplication.from(view.getAppContext()).getPlayerRepository();
-        k = 1;  // TODO achievement increasing multiplier
-        spec_k = 100;
+
         workTimers = new ArrayList<>();
-        itemsIds = new ArrayList<>();
-        if (isMusicSoundState()) {
-            musicOn();
-        }
-    }
-
-    private boolean isMusicSoundState() {
-        PlayerRepository playerRepository = ClickerApplication.from(mView.getAppContext()).getPlayerRepository();
-        return playerRepository.isMusicSoundState();
-    }
-
-    private void musicOn() {
-        gamePlayer = MediaPlayer.create(mView.getViewContext(), R.raw.game_sound);
-        gamePlayer.setLooping(true);
+        workerItemsIds = new ArrayList<>();
     }
 
     private void startWorkers(List<Upgrade> upgrades) {
         upgradeItems = upgrades;
-        for (Upgrade item: upgradeItems) {
+        for (Upgrade item : upgradeItems) {
             addWorkTimer(item);
-            itemsIds.add(item.getId());
+            workerItemsIds.add(item.getId());
         }
         startWorkTimers();
     }
 
     private void startWorkTimers() {
-        for (CountDownTimer timer: workTimers) {
+        for (CountDownTimer timer : workTimers) {
             timer.start();
         }
     }
 
     private void isDoneWork(Upgrade item) {
-        addMoney(item.getValue()*item.getCount());
+        addMoney(item.getValue() * item.getCount());
         int itemId = item.getId();
-        for (int i = 0; i < itemsIds.size(); i++) {
-            if (itemsIds.get(i) == itemId) {
+        for (int i = 0; i < workerItemsIds.size(); i++) {
+            if (workerItemsIds.get(i) == itemId) {
                 workTimers.get(i).start();
             }
         }
@@ -89,7 +70,9 @@ public class GamePresenter implements GameContract.Presenter {
         // TODO replace 1000 with an minInterval
         workTimers.add(new CountDownTimer(upgradeItem.getInterval(), 1000) {
             @Override
-            public void onTick(long millisUntilFinished) { }
+            public void onTick(long millisUntilFinished) {
+            }
+
             @Override
             public void onFinish() {
                 isDoneWork(upgradeItem);
@@ -136,6 +119,7 @@ public class GamePresenter implements GameContract.Presenter {
             public void onSuccess(List<Upgrade> upgrades) {
                 startWorkers(upgrades);
             }
+
             @Override
             public void onError() {
                 Log.wtf(TAG, "Failed to get data on upgrades");
@@ -148,35 +132,29 @@ public class GamePresenter implements GameContract.Presenter {
         Log.d(tag, "onGameStart");
         getMoney();
         gameFetchUpgrades();
-        if (gamePlayer != null) {
-            gamePlayer.start();
-        }
         mView.showWorkers();
     }
 
     @Override
     public void onGamePause() {
-        if (gamePlayer != null) {
-            gamePlayer.pause();
-        }
         Log.d(tag, "onGamePause");
-        for (CountDownTimer timer: workTimers) {
+        for (CountDownTimer timer : workTimers) {
             timer.cancel();
         }
         workTimers.clear();
-        itemsIds.clear();
+        workerItemsIds.clear();
         saveMoney();
     }
 
     @Override
-    public void onTouchLocationTouched(float x, float y, int action) {
+    public void onTouchLocationTouched(float x, float y, int action) {  // TODO
 
     }
 
     @Override
     public void onTouchLocationActionUP() {
         addMoney(1000);
-    }
+    } // TODO remove
 
     @Override
     public void onShopButtonClicked() {
@@ -203,21 +181,21 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onCommonClickLocationClicked(float x, float y) {
-        mView.showAddedMoney(x, y, k);
-        addMoney(k);
+        mView.showAddedMoney(x, y, mPlayerRepository.getK());
+        addMoney(mPlayerRepository.getK());
         AchievementsManager.getInstance().IncProgress("click", 1, mView.getViewContext());
     }
 
     @Override
     public void onSpecClickAreaClicked(float x, float y) {
-        mView.showAddedMoney(x, y, spec_k);
-        addMoney(spec_k);
+        mView.showAddedMoney(x, y, mPlayerRepository.getKSpec());
+        addMoney(mPlayerRepository.getKSpec());
         AchievementsManager.getInstance().IncProgress("click", 1, mView.getViewContext());
     }
 
     @Override
     public void onBugIsAlive() {
-        addMoney(-k*20);
+        addMoney(-(int) Math.pow(10, maxEmploeesLVL + 1));
         mView.showMoneyPulseAnim();
     }
 
@@ -227,6 +205,7 @@ public class GamePresenter implements GameContract.Presenter {
         mRepository.fetchWorkers(new ShopContract.Repository.FetchCallback() {
             @Override
             public void onSuccess(List<Upgrade> upgrades) {
+                Log.d(tag, "fetchedWorkersSuccess: " + upgrades.size());
                 mView.createWorkers(upgrades);
             }
 
@@ -240,6 +219,7 @@ public class GamePresenter implements GameContract.Presenter {
     @Override
     public void onWorkerPushed(Upgrade upgrade) {
         Log.d(tag, "onWorkerPushed: " + "value = " + upgrade.getValue());
+        mView.showMoneyPulseAnim();
         addMoney(upgrade.getValue());
     }
 
@@ -248,14 +228,20 @@ public class GamePresenter implements GameContract.Presenter {
         mRepository.buyWorkerUpgrade(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
             @Override
             public void onSuccess(Upgrade upgradedWorker) {
+                if (maxEmploeesLVL < upgradedWorker.getCount()) {
+                    maxEmploeesLVL = upgradedWorker.getCount();
+                }
                 mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
                 getMoney();
-                k++;
+                mPlayerRepository.setK(mPlayerRepository.getK() + 1);
+                mPlayerRepository.setKSpec(100 + (mPlayerRepository.getK() - 1) * 150);
                 final Toast toast = Toast.makeText(mView.getViewContext(), "LVL: " + upgradedWorker.getCount(), Toast.LENGTH_SHORT);
                 new CountDownTimer(400, 100) {
                     public void onTick(long millisUntilFinished) {
                         toast.show();
-                    } public void onFinish() {
+                    }
+
+                    public void onFinish() {
                         toast.cancel();
                     }
                 }.start();
@@ -263,15 +249,89 @@ public class GamePresenter implements GameContract.Presenter {
 
             @Override
             public void onError() {
-                final Toast toast = Toast.makeText(mView.getViewContext(), "Недостаточно средств.\n Стоимость: "
-                        + upgrade.getPrice(), Toast.LENGTH_SHORT);
+                final Toast toast = Toast.makeText(mView.getViewContext(),
+                        "Недостаточно средств.\nСтоимость: " + upgrade.getPrice(),
+                        Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
     }
 
     @Override
+    public void onLayOffWorker(final Upgrade upgrade) {
+        mRepository.layOffWorker(upgrade, new GameContract.Repository.WorkerUpgradeCallback() {
+            @Override
+            public void onSuccess(Upgrade upgradedWorker) {
+                mView.showUpgradeWorker(upgradedWorker);  // difference of array and database indexing
+                if (upgrade.getCount() == maxEmploeesLVL) {
+                    mRepository.getMaxWorkerLVL(new GameContract.Repository.IntCallback() {
+                        @Override
+                        public void onSuccess(int val) {
+                            maxEmploeesLVL = val;
+                            Log.d(tag, "now MAX Worker LVL = " + maxEmploeesLVL);
+                        }
+
+                        @Override
+                        public void onError() { }
+                    });
+                }
+                Log.d(tag, "Layoff worker lvl " + upgrade.getCount());
+                mPlayerRepository.setK(mPlayerRepository.getK() - upgrade.getCount());
+                mPlayerRepository.setKSpec(100 + (mPlayerRepository.getK() - 1) * 150);
+            }
+
+            @Override
+            public void onError() {
+                final Toast toast = Toast.makeText(mView.getViewContext(),
+                        "Что-то пошло не так",
+                        Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+
+    @Override
+    public void onShowWorkerUpgradeDialog() {
+        mView.pauseGameObjects();
+    }
+
+    @Override
+    public void onCloseWorkerUpgradeDialog() {
+        mView.resumeGameObjects();
+    }
+
+    @Override
+    public void checkEnoughMoney(final int price, final BaseCallback callback) {
+        mRepository.getScore(new GameContract.Repository.ScoreCallback() {
+            @Override
+            public void onSuccess(final int score) {
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (score - price > 0) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError() {
+                Log.wtf(TAG, "onError: callback in getScore");
+                callback.onError();
+            }
+        });
+    }
+
+    @Override
+    public void registerPlayerBug(final BaseCallback callback) {
+
+    }
+
+    @Override
     public void onFollowingObjDisappeared(int score) {
-        addMoney(score*10);
+        addMoney(score * 10);
     }
 }

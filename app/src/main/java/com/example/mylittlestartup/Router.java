@@ -8,4 +8,5 @@ public interface Router {
     void openLeaderboardScreen();
     void openGameScreen();
     void openShopScreen();
+    void openMainScreen();
 }

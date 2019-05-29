@@ -43,19 +43,16 @@ public class MainFragment extends Fragment implements MainContract.View {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        presenter.onViewShowed();
     }
 
     @Override
     public void onPause() {
-        presenter.onViewClosed();
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        presenter.onViewShowed();
     }
 
     @Nullable

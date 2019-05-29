@@ -16,17 +16,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
+import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.objects.GameClickableObj;
 import com.example.mylittlestartup.game.objects.GameObjWorker;
@@ -55,14 +53,9 @@ public class GameView extends Fragment implements GameContract.View {
     private FrameLayout touchLocation;  // container for Objects
     private TextView moneyValView;
     private RelativeLayout workersContainer;
+    private View workerUpgradeDialogView;
     private ValueAnimator moneyViewAnimator;
-//    private ViewFlipper monitorView;
     private WebView monitorView;
-    private final int[] monitorImagesId = {
-            R.drawable.monitor_step_0,
-            R.drawable.monitor_step_1,
-            R.drawable.monitor_step_2
-    };
 
     private GameClickableObj gameClickableObj;
     private RunningGameClickableObj runningGameClickableObj;
@@ -87,14 +80,14 @@ public class GameView extends Fragment implements GameContract.View {
         workers = new ArrayList<>();
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "InflateParams"})
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(tag, "onCreateView");
 
-        presenter.fetchWorkers();
         mView = inflater.inflate(R.layout.fragment_game, container, false);
+        presenter.fetchWorkers();
 
         shopButton = mView.findViewById(R.id.button_shop);
         shopButton.setOnClickListener(new View.OnClickListener() {
@@ -108,33 +101,15 @@ public class GameView extends Fragment implements GameContract.View {
         moneyValView.setText("0");
 
         workersContainer = mView.findViewById(R.id.workers_container);
+        workerUpgradeDialogView = inflater.inflate(R.layout.window_worker_upgrade_dialog, null);
 
 //        workersContainer.addView(inflater.inflate(R.layout.game_element_worker, null, false));
 
         touchLocation = mView.findViewById(R.id.touch_location);
 
         monitorView = mView.findViewById(R.id.monitor);
-        /*monitorView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    presenter.onCommonClickLocationClicked(event.getX(), event.getY());
-                }
-
-                return true;
-            }
-        });*/
-        InputMethodManager imm = (InputMethodManager) monitorView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInputFromWindow(monitorView.getWindowToken() , InputMethodManager.SHOW_FORCED, 0);
-        monitorView.getSettings().setJavaScriptEnabled(true);
-        monitorView.getSettings().setAllowFileAccess(true);
-        monitorView.getSettings().setAllowContentAccess(true);
-        monitorView.getSettings().setAllowFileAccessFromFileURLs(true);
-        monitorView.getSettings().setAllowUniversalAccessFromFileURLs(true);
-        monitorView.getSettings().setUseWideViewPort(true);
-        monitorView.setVerticalScrollBarEnabled(false);
-        monitorView.setHorizontalScrollBarEnabled(false);
-
+        monitorView.loadUrl("file:///android_asset/monitor_view.html");
+        setMonitorWebViewSettings();
         monitorView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -145,19 +120,19 @@ public class GameView extends Fragment implements GameContract.View {
                 return (event.getAction() == MotionEvent.ACTION_MOVE);
             }
         });
-        
-        monitorView.loadUrl(/*"http://geektyper.com/studio/"*/"file:///android_asset/monitor_view.html");
-
-        // Add images with code on monitor
-        /*for (int i: monitorImagesId) {
-            ImageView imageView = new ImageView(getContext());
-            imageView.setImageResource(i);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            monitorView.addView(imageView);
-        }
-        monitorView.startFlipping();*/
 
         return mView;
+    }
+
+    private void setMonitorWebViewSettings() {
+        monitorView.getSettings().setJavaScriptEnabled(true);
+        monitorView.getSettings().setAllowFileAccess(true);
+        monitorView.getSettings().setAllowContentAccess(true);
+        monitorView.getSettings().setAllowFileAccessFromFileURLs(true);
+        monitorView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        monitorView.getSettings().setUseWideViewPort(true);
+        monitorView.setVerticalScrollBarEnabled(false);
+        monitorView.setHorizontalScrollBarEnabled(false);
     }
 
     @Override
@@ -167,6 +142,17 @@ public class GameView extends Fragment implements GameContract.View {
         presenter.onGameStart();
         createIssueButton();
         createBugButton();
+        presenter.registerPlayerBug(new BaseCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     @Override
@@ -190,10 +176,16 @@ public class GameView extends Fragment implements GameContract.View {
 
     @Override
     public void createWorkers(List<Upgrade> upgrades) {
-        Log.d(tag, "createWorkers");
+        Log.d(tag, "createWorkers: " + upgrades.size());
         int i = 0;
+        int[] endAnimCoord = new int[2];
+        moneyValView.getLocationInWindow(endAnimCoord);
+        endAnimCoord[0] += moneyValView.getWidth()/3;
+
         for (Upgrade worker: upgrades) {
-            this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]), worker, presenter));
+            Log.d(tag, "Create worker");
+            this.workers.add(new GameObjWorker(workersContainer.findViewById(workerViewIds[i++]),
+                    workerUpgradeDialogView, endAnimCoord, worker, presenter));
         }
     }
 
@@ -214,12 +206,19 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showUpgradeWorkerWindow() {
-        //  TODO
+    public void pauseGameObjects() {
+        runningGameClickableObj.pause();
+        gameClickableObj.pause();
+    }
+
+    @Override
+    public void resumeGameObjects() {
+        runningGameClickableObj.resume();
+        gameClickableObj.resume();
     }
 
     private void createIssueButton() {
-        gameClickableObj = new GameClickableObj(touchLocation/*monitorView*/, presenter,
+        gameClickableObj = new GameClickableObj(touchLocation, presenter,
                 mView.findViewById(R.id.issue), 60);
         gameClickableObj.run();
     }
@@ -232,7 +231,7 @@ public class GameView extends Fragment implements GameContract.View {
                 Color.argb(80, 246, 109, 0),
                 Color.argb(80, 255, 0, 0)
         };
-        runningGameClickableObj = new RunningGameClickableObj(touchLocation/*monitorView*/, presenter,
+        runningGameClickableObj = new RunningGameClickableObj(touchLocation, presenter,
                 mView.findViewById(R.id.bug), 30, 5, 10, colorSet);
         runningGameClickableObj.run();
     }
@@ -294,8 +293,7 @@ public class GameView extends Fragment implements GameContract.View {
     public void onPause() {
         Log.d(tag, "onPause");
         presenter.onGamePause();
-        runningGameClickableObj.pause();
-        gameClickableObj.pause();
+        pauseGameObjects();
         super.onPause();
     }
 
@@ -303,8 +301,7 @@ public class GameView extends Fragment implements GameContract.View {
     public void onResume() {
         Log.d(tag, "onResume");
         super.onResume();
-        runningGameClickableObj.resume();
-        gameClickableObj.resume();
+        resumeGameObjects();
         presenter.onGameStart();
     }
 

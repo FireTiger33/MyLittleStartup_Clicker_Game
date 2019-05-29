@@ -1,10 +1,14 @@
 package com.example.mylittlestartup.authorization;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.Router;
 import com.example.mylittlestartup.data.UserRepositoryImpl;
 import com.example.mylittlestartup.main.MainActivity;
 
@@ -24,6 +29,7 @@ public class AuthView extends Fragment implements AuthContract.View {
 
     private TextView titleText;
     private EditText loginField;
+    private Drawable defLoginFieldBackground;
     private EditText passField;
     private Button authButton;
     private ProgressBar progressBar;
@@ -49,7 +55,20 @@ public class AuthView extends Fragment implements AuthContract.View {
         progressBar = view.findViewById(R.id.progress);
         titleText = view.findViewById(R.id.text_authorization_title);
         loginField = view.findViewById(R.id.login);
+        defLoginFieldBackground = loginField.getBackground();
+        loginField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                onFieldsClicked();
+            }
+        });
         passField = view.findViewById(R.id.pass);
+        passField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                onFieldsClicked();
+            }
+        });
 
         authButton = view.findViewById(R.id.button_authorization);
         authButton.setOnClickListener(new View.OnClickListener() {
@@ -71,15 +90,24 @@ public class AuthView extends Fragment implements AuthContract.View {
         return view;
     }
 
+    private void onFieldsClicked() {
+        if (loginField.getBackground() != defLoginFieldBackground) {
+            loginField.setBackground(defLoginFieldBackground);
+            passField.setBackground(defLoginFieldBackground);
+        }
+    }
+
     @Override
     public void showLoginScreen() {
         // TODO edit titleText
+        authMethod = AuthContract.authMethodLogin;
         authButton.setText(R.string.login);
     }
 
     @Override
     public void showSignUpScreen() {
         // TODO edit titleText
+        authMethod = AuthContract.authMethodSignUp;
         authButton.setText(R.string.signup);
     }
 
@@ -94,11 +122,19 @@ public class AuthView extends Fragment implements AuthContract.View {
     }
 
     @Override
+    public void showAuthorisationError() {
+        loginField.setBackground(new ColorDrawable(Color.RED));
+        passField.setBackground(new ColorDrawable(Color.RED));
+    }
+
+    @Override
     public void showMainScreen() {
-        Intent intent = new Intent(Objects.requireNonNull(getActivity()).getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        /*Instrumentation inst = new Instrumentation();
-        inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);*/
+        Router router = (Router) getActivity();
+        if (router != null) {
+            router.openMainScreen();
+        } else {
+            Log.e(getTag(), "This activity is not a Router");
+        }
     }
 
     @Override

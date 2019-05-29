@@ -8,6 +8,7 @@ import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.achievements.AchievementsContract;
 import com.example.mylittlestartup.data.api.ApiRepository;
 import com.example.mylittlestartup.data.api.GameApi;
+import com.example.mylittlestartup.data.api.UserApi;
 import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Achievement;
 import com.example.mylittlestartup.data.sqlite.AchievementDao;
@@ -27,12 +28,22 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     final private String tag = GameRepositoryImpl.class.getName();
 
     private GameApi mGameApi;
+    private UserApi mUserApi;
     private UpgradeDao mUpgradeDao;
     private AchievementDao mAchievementDao;
     private PlayerRepository mPlayerRepository;
 
+    private boolean noApiSyncYet = true; // scores
+
+    private final String[] workerPicPaths = {
+            "img/worker_avatar.png",
+            "img/programmer_lvl1.svg",
+            "img/programmer_lvl2.svg"
+    };
+
     public GameRepositoryImpl(Context context) {
         mGameApi = ApiRepository.from(context).getGameApi();
+        mUserApi = ApiRepository.from(context).getUserApi();
         mUpgradeDao = DBRepository.from(context).getUpgradeDao();
         mPlayerRepository = ClickerApplication.from(context).getPlayerRepository();
     }
@@ -82,8 +93,66 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     }
 
     @Override
-    public void getScore(ScoreCallback callback) {
-        mPlayerRepository.getScore(callback);
+    public void getScore(final ScoreCallback callback) {
+        mPlayerRepository.getScore(new ScoreCallback() {
+            @Override
+            public void onSuccess(int score) {
+                if (score == 0 && noApiSyncYet) {
+                    mUserApi.get(mPlayerRepository.getUserID()).enqueue(new Callback<UserApi.UserPlain>() {
+                        @Override
+                        public void onResponse(Call<UserApi.UserPlain> call, Response<UserApi.UserPlain> response) {
+                            final UserApi.UserPlain user = response.body();
+
+                            if (response.code() == 200 && user != null) { // if user is logged in
+                                mPlayerRepository.setScore(user.score, new BaseCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                callback.onSuccess(user.score);
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        Log.wtf("GameRepositoryImpl", "getScore: ScoreCallback onSuccess: mUserApi.get: onResponse: setScore: onError");
+                                    }
+                                });
+                            } else { // if no login
+                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onError();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<UserApi.UserPlain> call, Throwable t) {
+                            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onError();
+                                }
+                            });
+                        }
+                    });
+
+                    noApiSyncYet = false;
+                } else {
+                    callback.onSuccess(score);
+                }
+            }
+
+            @Override
+            public void onError() {
+                // never get here
+                Log.wtf("GameRepositoryImpl", "getScore: ScoreCallback: onError");
+            }
+        });
     }
 
     @Override
@@ -217,11 +286,6 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
 
     @Override
     public void buyWorkerUpgrade(final Upgrade worker, final WorkerUpgradeCallback callback) {
-        final int[] picIds = {
-                R.drawable.worker_avatar,
-                R.drawable.programmer_lvl1,
-                R.drawable.programmer_lvl2
-        };
         mPlayerRepository.getScore(new ScoreCallback() {
             @Override
             public void onSuccess(final int score) {
@@ -230,8 +294,21 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                     public void run() {
                         if (score >= worker.getPrice()) {
                             int workerPrice = worker.getPrice();
-                            int nextPicId = worker.getCount() >= picIds.length-1? picIds.length-1: worker.getCount()+1;
-                            mUpgradeDao.upgradeWorker(worker.getId(), picIds[nextPicId]);
+                            int nextPicId = worker.getCount() >= workerPicPaths.length-1? workerPicPaths.length-1: worker.getCount()+1;
+
+                            Upgrade upgrade = new Upgrade(
+                                    worker.getPrice() * 3,
+                                    worker.getName(),
+                                    worker.getDescription(),
+                                    worker.getCount() + 1,
+                                    worker.getInterval() + 5000,
+                                    worker.getValue() * 2 + 100,
+                                    workerPicPaths[nextPicId]
+                            );
+
+                            upgrade.setId(worker.getId());
+                            mUpgradeDao.upgradeWorker(upgrade);
+
                             final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
                             Log.d(tag, "buyWorkerUpgrade: UpgradedWorkerLVL = " + upgradedWorker.get(0).getCount());
                             mPlayerRepository.setScore(score - workerPrice, new BaseCallback() {
@@ -275,7 +352,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mUpgradeDao.upgradeWorker(worker.getId(), picIds[worker.getCount()]);
+                        mUpgradeDao.upgradeWorker(worker.getId(), workerPicIds[worker.getCount()]);
                     }
                 });
                 callback.onSuccess();
@@ -286,5 +363,38 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
                 callback.onError();
             }
         });*/
+    }
+
+    @Override
+    public void layOffWorker(final Upgrade worker, final WorkerUpgradeCallback callback) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mUpgradeDao.layOffWorker(worker.getId(), workerPicPaths[0]);
+                final List<Upgrade> upgradedWorker = mUpgradeDao.worker(worker.getId());
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(upgradedWorker.get(0));
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void getMaxWorkerLVL(final IntCallback callback) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final int maxLVL = mUpgradeDao.getMaxWorkerLVL();
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(maxLVL);
+                    }
+                });
+            }
+        });
     }
 }

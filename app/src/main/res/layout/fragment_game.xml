@@ -49,7 +49,8 @@
         android:layout_width="match_parent"
         android:layout_height="260dp"
         android:gravity="center"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:clipChildren="false">
         <include
             android:id="@+id/worker_1"
             android:layout_toStartOf="@+id/worker_2"
@@ -98,20 +99,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!--<ViewFlipper
-                android:id="@+id/monitor"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:autoStart="true"
-                android:flipInterval="10000"
-                android:inAnimation="@anim/monitor_flipin"
-                android:outAnimation="@anim/monitor_flipout">
-
-            </ViewFlipper>-->
             <WebView
                 android:id="@+id/monitor"
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
+                android:layout_height="match_parent">
 
             </WebView>
             <ImageButton
@@ -125,13 +116,13 @@
 
             <ImageButton
                 android:id="@+id/bug"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:background="@null"
                 android:contentDescription="@string/bug"
                 android:foreground="#80FF0000"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/spider" />
+                android:src="@drawable/bug" />
         </FrameLayout>
 
         <!--<FrameLayout

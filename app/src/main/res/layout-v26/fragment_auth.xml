@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/pass"
         android:autofillHints="@string/password"
-        android:inputType="text">
+        android:inputType="textPassword">
     </EditText>
 
     <ProgressBar

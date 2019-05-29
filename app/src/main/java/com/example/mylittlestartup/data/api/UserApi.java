@@ -13,17 +13,17 @@ public interface UserApi {
     class UserPlain {
         public int id;
         public String username;
-        public String score;
+        public int score;
 
         public String getUsername() {
             return username;
         }
 
-        public String getScore() {
+        public int getScore() {
             return score;
         }
 
-        public UserPlain(int id, String username, String score) {
+        public UserPlain(int id, String username, int score) {
             this.id = id;
             this.username = username;
             this.score = score;
@@ -34,8 +34,8 @@ public interface UserApi {
         @Override
         public int compare(UserPlain o1, UserPlain o2) {
 
-            int score1 = Integer.parseInt(o1.score);
-            int score2 = Integer.parseInt(o2.score);
+            int score1 = o1.score;
+            int score2 = o2.score;
 
             return score2 - score1;
         }

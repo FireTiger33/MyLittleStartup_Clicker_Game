@@ -25,7 +25,7 @@ public class AuthPresenter implements AuthContract.Presenter {
                 @Override
                 public void onError() {
                     mView.hideProgress();
-                    // todo show message
+                    mView.showAuthorisationError();
                 }
 
                 @Override
@@ -44,7 +44,7 @@ public class AuthPresenter implements AuthContract.Presenter {
                 @Override
                 public void onError() {
                     mView.hideProgress();
-                    // todo show message
+                    mView.showAuthorisationError();
                 }
 
                 @Override

@@ -21,7 +21,9 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
     private int maxDxDy;
     private CountDownTimer runTimer;
     private boolean runTimerHasBeenPaused = false;
-    private long runTimerUntilFinished;
+    final private long lifetime = 10000;
+    private long appearanceTimerUntilFinished;
+    private long runTimerUntilFinished = lifetime;
     final private int[] foregroundColorSet;
 
     public RunningGameClickableObj(FrameLayout container, final GamePresenter presenter,
@@ -37,6 +39,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
             public void onClick(final View v) {
                 hp--;
                 if (hp == 0) {
+                    appearanceTimerUntilFinished = random.nextInt(maxInterval);
                     new CountDownTimer(1000, 1000 / maxHP) {
                         @Override
                         public void onTick(long millisUntilFinished) {
@@ -55,17 +58,21 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
                 }
             }
         });
+
         dirX = 1;
         dirY = 1;
         changeDxDy();
+        appearanceTimerUntilFinished = random.nextInt(maxInterval);
 
-        runTimer = createNewRunTimer(10000, 500);
+        runTimer = createNewRunTimer(lifetime, 500);
+
         objAnimX = ValueAnimator.ofInt(0, 10);
         objAnimX.setRepeatCount(ValueAnimator.INFINITE);
         objAnimX.setDuration(100L);
         objAnimY = ValueAnimator.ofInt(0, 10);
         objAnimY.setRepeatCount(ValueAnimator.INFINITE);
         objAnimY.setDuration(30L);
+
         objAnimX.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -101,9 +108,10 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
     @Override
     public void run() {
         hp = maxHP;
-        appearanceTimer = new CountDownTimer(random.nextInt(maxInterval), 100) {
+        appearanceTimer = new CountDownTimer(appearanceTimerUntilFinished, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
+                appearanceTimerUntilFinished = millisUntilFinished;
                 if (millisUntilFinished <= 1000) {
                     if (mContainer.getForeground() != null) {
                         mContainer.setForeground(null);
@@ -119,6 +127,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
                 changeStartLocation();
                 mView.setForeground(new ColorDrawable(foregroundColorSet[maxHP - 1]));
                 mView.setVisibility(View.VISIBLE);
+                runTimer = createNewRunTimer(lifetime, 500);
                 runTimer.start();
                 objAnimX.start();
                 objAnimY.start();
@@ -158,7 +167,7 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
         return dirY;
     }
 
-    private CountDownTimer createNewRunTimer(long duration, long downInterval) {
+    private CountDownTimer createNewRunTimer(final long duration, long downInterval) {
         return new CountDownTimer(duration, downInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -172,7 +181,9 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
                 for (int i = 0; i < 25 * hp; i++) {
                     mPresenter.onBugIsAlive();
                 }
+                runTimerUntilFinished = duration;
                 stop();
+                appearanceTimerUntilFinished = random.nextInt(maxInterval);
                 run();
             }
         };
@@ -180,25 +191,29 @@ public class RunningGameClickableObj extends BaseGameObj implements Runnable {
 
     public void pause() {
         Log.d(tag, "pause");
-        runTimer.cancel();
         runTimerHasBeenPaused = true;
-        objAnimX.pause();
-        objAnimY.pause();
+        if (objAnimX.isStarted()) {
+            runTimer.cancel();
+            objAnimX.pause();
+            objAnimY.pause();
+        }
         appearanceTimer.cancel();
     }
 
     public void resume() {
         Log.d(tag, "resume");
         if (runTimerHasBeenPaused) {
-            Log.d(tag, "runWillBePaused");
+            Log.d(tag, "runHasBeenPaused and now Resume");
             runTimerHasBeenPaused = false;
             runTimer = createNewRunTimer(runTimerUntilFinished, 500);
-            runTimer.start();
-            objAnimX.resume();
-            objAnimY.resume();
+            if (objAnimX.isPaused()) {
+                runTimer.start();
+                objAnimX.resume();
+                objAnimY.resume();
+            } else {
+                run();
+            }
         }
-//        appearanceTimer.cancel();
-//        appearanceTimer.start();
     }
 
     private void stop() {

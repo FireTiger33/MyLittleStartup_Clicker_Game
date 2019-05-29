@@ -42,7 +42,7 @@ public class ClickerApplication extends Application {
         AchievementsManager.getInstance().initAM(mAchievementsRepository);
 
         // TODO: Only for debug!
-        mPlayerRepository.setNotLoggedIn(new BaseCallback() {
+        /*mPlayerRepository.setNotLoggedIn(new BaseCallback() {
             @Override
             public void onSuccess() {
 
@@ -52,7 +52,7 @@ public class ClickerApplication extends Application {
             public void onError() {
 
             }
-        });
+        });*/
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -78,17 +78,17 @@ public class ClickerApplication extends Application {
         List<Upgrade> upgrades = upgradeDao.all();
         if (upgrades.isEmpty()) {
             Upgrade[] basicUpgrades = {
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, 10, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, 20, R.drawable.shop_man),
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, 30, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, 40, R.drawable.shop_man),
-                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, 50, R.drawable.shop_coffe),
-                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, 60, R.drawable.shop_man),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar),
-                    new Upgrade(2000, "worker", "ничего", 0, 10000, 0, R.drawable.worker_avatar)
+                    new Upgrade(1000, "Кофемашина", "10$ / 2s", 0, 2000, 10, "img/shop_coffee.svg"),
+                    new Upgrade(10000, "Менеждер", "100$ / 5s", 0, 5000, 100, "img/shop_man.jpg"),
+                    new Upgrade(1000, "Кофемашина", "20$ / 3s", 0, 3000, 20, "img/shop_coffee.svg"),
+                    new Upgrade(10000, "Менеждер", "200$ / 8s", 0, 8000, 200, "img/shop_man.jpg"),
+                    new Upgrade(1000, "Кофемашина", "30$ / 4s", 0, 4000, 30, "img/shop_coffee.svg"),
+                    new Upgrade(10000, "Менеждер", "300$ / 12s", 0, 12000, 300, "img/shop_man.jpg"),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, "img/worker_avatar.png"),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, "img/worker_avatar.png"),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, "img/worker_avatar.png"),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, "img/worker_avatar.png"),
+                    new Upgrade(2000, "worker", "ничего", 0, 5000, 0, "img/worker_avatar.png")
             };
 
             upgradeDao.insert(basicUpgrades);

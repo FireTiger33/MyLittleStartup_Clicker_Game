@@ -26,8 +26,6 @@ public interface MainContract {
         void onAchievementsButtonClicked();
         void onLeaderboardButtonClicked();
         void checkIsLoggedIn();
-        void onViewShowed();
-        void onViewClosed();
     }
 
     interface Repository {
