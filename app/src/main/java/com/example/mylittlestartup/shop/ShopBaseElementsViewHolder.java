@@ -10,6 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,33 +24,35 @@ import com.example.mylittlestartup.data.sqlite.Upgrade;
 import java.io.IOException;
 import java.io.InputStream;
 
-class ShopElementsViewHolder extends RecyclerView.ViewHolder {
-    private final String tag = ShopElementsViewHolder.class.getName();
+class ShopBaseElementsViewHolder extends RecyclerView.ViewHolder {
+    final private String tag = ShopBaseElementsViewHolder.class.getName();
 
-    private ImageView mLogo;
-    private TextView mDescriptionView;
-    private TextView mPriceView;
-    private TextView mGoodsQuantity;
+    ImageView mLogo;
+    TextView mDescriptionView;
+    TextView mPriceView;
+    Button mBuyButton;
 
-    private Upgrade mUpgrade;
+    Upgrade mUpgrade;
 
-    ShopElementsViewHolder(@NonNull View itemView, final ShopContract.Presenter presenter) {
+    ShopBaseElementsViewHolder(@NonNull final View itemView, final ShopContract.Presenter presenter) {
         super(itemView);
 
         mLogo = itemView.findViewById(R.id.logo);
         mDescriptionView = itemView.findViewById(R.id.description);
         mPriceView = itemView.findViewById(R.id.price);
-        mGoodsQuantity = itemView.findViewById(R.id.goods_quantity);
+        mBuyButton = itemView.findViewById(R.id.buy_button);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
+        mBuyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation animation = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.button_click_anim);
+                v.startAnimation(animation);
                 presenter.onBuyUpgrade(mUpgrade);
             }
         });
     }
 
-    private void setLogo() {
+    void setLogo() {
         try {
             Log.d(tag, "setLogo");
             AssetManager assetManager = mPriceView.getContext().getAssets();
@@ -91,8 +96,5 @@ class ShopElementsViewHolder extends RecyclerView.ViewHolder {
         } else {
             mPriceView.setTextColor(Color.RED);
         }
-        mDescriptionView.setText(upgrade.getDescription());
-        mPriceView.setText(new StringBuilder("$ " + upgrade.getPrice()));
-        mGoodsQuantity.setText(new StringBuilder("x " + upgrade.getCount()));
     }
 }

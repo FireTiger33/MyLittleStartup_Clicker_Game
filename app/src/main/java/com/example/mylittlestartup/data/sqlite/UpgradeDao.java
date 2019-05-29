@@ -30,8 +30,11 @@ public interface UpgradeDao {
     @Query("select * from Upgrade order by mId")
     List<Upgrade> all();
 
-    @Query("select * from Upgrade where mName != 'worker' order by mId")  // TODO
+    @Query("select * from Upgrade where mName == 'upgrade' order by mId")
     List<Upgrade> allUpgrades();
+
+    @Query("select * from Upgrade where mName == 'speeder' order by mId")
+    List<Upgrade> allSpeeders();
 
     @Query("select * from Upgrade where mId = :id")
     List<Upgrade> worker(int id);

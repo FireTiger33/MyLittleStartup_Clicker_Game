@@ -235,6 +235,22 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
         });
     }
 
+    @Override
+    public void fetchSpeeders(final FetchCallback callback) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<Upgrade> all = mUpgradeDao.allSpeeders();
+
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onSuccess(all);
+                    }
+                });
+            }
+        });
+    }
 
 
     @Override

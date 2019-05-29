@@ -199,6 +199,11 @@ public class PlayerRepositoryImpl implements PlayerRepository, GameContract.Repo
     }
 
     @Override
+    public void fetchSpeeders(ShopContract.Repository.FetchCallback callback) {
+        // TODO ???
+    }
+
+    @Override
     public void buyWorkerUpgrade(Upgrade worker, WorkerUpgradeCallback callback) {
         // TODO ???
     }
