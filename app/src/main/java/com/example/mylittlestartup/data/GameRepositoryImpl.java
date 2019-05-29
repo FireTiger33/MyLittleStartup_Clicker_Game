@@ -23,7 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GameRepositoryImpl implements GameContract.Repository, ShopContract.Repository, AchievementsContract.Repository {
+public class GameRepositoryImpl implements GameContract.Repository, ShopContract.Repository {
     final private String tag = GameRepositoryImpl.class.getName();
 
     private GameApi mGameApi;
@@ -34,25 +34,7 @@ public class GameRepositoryImpl implements GameContract.Repository, ShopContract
     public GameRepositoryImpl(Context context) {
         mGameApi = ApiRepository.from(context).getGameApi();
         mUpgradeDao = DBRepository.from(context).getUpgradeDao();
-        mAchievementDao = DBRepository.from(context).geAchievementDao();
         mPlayerRepository = ClickerApplication.from(context).getPlayerRepository();
-    }
-
-    @Override
-    public void getAchievements(final AchievementCallback callback) {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                final List<Achievement> all = mAchievementDao.all();
-
-                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onSuccess(all);
-                    }
-                });
-            }
-        });
     }
 
     /*@Override

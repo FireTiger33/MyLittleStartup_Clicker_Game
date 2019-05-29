@@ -1,6 +1,5 @@
 package com.example.mylittlestartup.data.sqlite;
 
-import android.app.Application;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
@@ -8,7 +7,7 @@ import android.content.Context;
 
 import com.example.mylittlestartup.ClickerApplication;
 
-@Database(entities = {Achievement.class, Upgrade.class}, version = 3)
+@Database(entities = {Achievement.class, Upgrade.class}, version = 3, exportSchema = false)
 public abstract class DBRepository extends RoomDatabase {
     public abstract UpgradeDao getUpgradeDao();
     public abstract AchievementDao geAchievementDao();

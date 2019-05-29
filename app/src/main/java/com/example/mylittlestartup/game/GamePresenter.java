@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.example.mylittlestartup.ClickerApplication;
 import com.example.mylittlestartup.R;
+import com.example.mylittlestartup.achievements.AchievementsManager;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
 import com.example.mylittlestartup.data.PlayerRepository;
@@ -184,6 +185,9 @@ public class GamePresenter implements GameContract.Presenter {
     }
 
     private void addMoney(int delta) {
+        if (delta > 0) {
+            AchievementsManager.getInstance().IncProgress("money", delta, mView.getViewContext());
+        }
         mRepository.incrementScore(delta, new BaseCallback() {
             @Override
             public void onSuccess() {
@@ -201,12 +205,14 @@ public class GamePresenter implements GameContract.Presenter {
     public void onCommonClickLocationClicked(float x, float y) {
         mView.showAddedMoney(x, y, k);
         addMoney(k);
+        AchievementsManager.getInstance().IncProgress("click", 1, mView.getViewContext());
     }
 
     @Override
     public void onSpecClickAreaClicked(float x, float y) {
         mView.showAddedMoney(x, y, spec_k);
         addMoney(spec_k);
+        AchievementsManager.getInstance().IncProgress("click", 1, mView.getViewContext());
     }
 
     @Override
