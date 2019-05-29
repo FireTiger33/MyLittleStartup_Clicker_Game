@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
+    private GameView gameView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
                 .commit();
 
         musicOnMainSound();
+
+        gameView = new GameView();
     }
 
     private void clearMusicPlayer() {
@@ -67,6 +71,18 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
             Log.d(tag, "musicOnGameSound: soundOn");
             clearMusicPlayer();
             musicPlayer = MediaPlayer.create(getApplicationContext(), R.raw.game_sound);
+            musicPlayer.setLooping(true);
+            musicPlayer.start();
+        } else {
+            Log.d(tag, "musicOnMainSound: soundOff");
+        }
+    }
+
+    private void musicOnShopSound() {
+        if (playerRepository.isMusicSoundState()) {
+            Log.d(tag, "musicOnGameSound: soundOn");
+            clearMusicPlayer();
+            musicPlayer = MediaPlayer.create(getApplicationContext(), R.raw.shop_sound);
             musicPlayer.setLooping(true);
             musicPlayer.start();
         } else {
@@ -130,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
     public void openGameScreen() {
         fragmentManager.beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.main_activity, new GameView())
+                .replace(R.id.main_activity, gameView, "Game")
                 .commit();
         musicOnGameSound();
         isGameScreenStarted = true;
@@ -140,8 +156,9 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
     public void openShopScreen() {
         fragmentManager.beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.main_activity, new ShopView())
+                .replace(R.id.main_activity, new ShopView(), "Shop")
                 .commit();
+        musicOnShopSound();
     }
 
     @Override
@@ -167,6 +184,9 @@ public class MainActivity extends AppCompatActivity implements Router, AppAction
             isGameScreenStarted = false;
         } else {
             super.onBackPressed();
+            if (gameView.isVisible()) {
+                musicOnGameSound();
+            }
         }
     }
 

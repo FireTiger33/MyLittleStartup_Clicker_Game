@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.mylittlestartup"
+        applicationId "com.stacktivity.mylittlestartup"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 3
-        versionName "0.4.7"
+        versionCode 4
+        versionName "0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

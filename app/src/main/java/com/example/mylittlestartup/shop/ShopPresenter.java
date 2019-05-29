@@ -9,10 +9,13 @@ import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
 import com.example.mylittlestartup.data.PlayerRepository;
+import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.GameContract;
 
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 class ShopPresenter implements ShopContract.Presenter {
     private MediaPlayer player;
@@ -71,6 +74,31 @@ class ShopPresenter implements ShopContract.Presenter {
             @Override
             public void onError() {
                 // todo show some errors?
+            }
+        });
+    }
+
+    @Override
+    public void checkEnoughMoney(final int price, final BaseCallback callback) {
+        mRepository.getScore(new GameContract.Repository.ScoreCallback() {
+            @Override
+            public void onSuccess(final int score) {
+                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (score - price > 0) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError() {
+                Log.wtf(TAG, "onError: callback in getScore");
+                callback.onError();
             }
         });
     }

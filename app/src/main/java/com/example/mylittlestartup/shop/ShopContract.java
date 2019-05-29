@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
+import com.example.mylittlestartup.game.GameContract;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public interface ShopContract {
         void getMoney();
         void fetchUpgrades();
         void onViewClosed();
+        void checkEnoughMoney(final int price, final BaseCallback callback);
     }
 
     interface Repository {
@@ -42,5 +44,6 @@ public interface ShopContract {
         void fetchUpgrades(FetchCallback callback);
 
         void buyUpgrade(Upgrade upgrade, BaseCallback callback);
+        void getScore(final GameContract.Repository.ScoreCallback scoreCallback);
     }
 }
