@@ -95,6 +95,7 @@ public interface GameContract {
         void saveScore(ScoreCallback callback);
 
         void fetchWorkers(final ShopContract.Repository.FetchCallback callback);
+        void fetchSpeeders(final ShopContract.Repository.FetchCallback callback);
         void buyWorkerUpgrade(final Upgrade worker, final WorkerUpgradeCallback callback);
         void layOffWorker(final Upgrade worker, final WorkerUpgradeCallback callback);
         void getMaxWorkerLVL(final IntCallback callback);

@@ -13,7 +13,7 @@ import com.example.mylittlestartup.data.sqlite.Upgrade;
 import java.util.List;
 
 
-public class ShopElementsAdapter extends RecyclerView.Adapter<ShopElementsViewHolder> {
+public class ShopElementsAdapter extends RecyclerView.Adapter<ShopBaseElementsViewHolder> {
     private List<Upgrade> mUpgrades;
     private ShopContract.Presenter mPresenter;
 
@@ -24,25 +24,32 @@ public class ShopElementsAdapter extends RecyclerView.Adapter<ShopElementsViewHo
 
     @NonNull
     @Override
-    public ShopElementsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ShopBaseElementsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View view = inflater.inflate(R.layout.shop_element, viewGroup, false);
+        View view = null;
+        if (mUpgrades.get(i).getName().equals("upgrade")) {
+            view = inflater.inflate(R.layout.shop_element_upgrade, viewGroup, false);
+            return new ShopUpgradeElementsViewHolder(view, mPresenter);
+        } else if (mUpgrades.get(i).getName().equals("speeder")) {
+            view = inflater.inflate(R.layout.shop_element_speeder, viewGroup, false);
+            return new ShopSpeederElementsViewHolder(view, mPresenter);
+        }
 
-        return new ShopElementsViewHolder(view, mPresenter);
+        return new ShopBaseElementsViewHolder(view, mPresenter);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ShopElementsViewHolder shopElementsViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ShopBaseElementsViewHolder shopBaseElementsViewHolder, int i) {
         final Upgrade upgrade = mUpgrades.get(i);
         mPresenter.checkEnoughMoney(mUpgrades.get(i).getPrice(), new BaseCallback() {
             @Override
             public void onSuccess() {
-                shopElementsViewHolder.bind(upgrade, true);
+                shopBaseElementsViewHolder.bind(upgrade, true);
             }
 
             @Override
             public void onError() {
-                shopElementsViewHolder.bind(upgrade, false);
+                shopBaseElementsViewHolder.bind(upgrade, false);
             }
         });
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="148dp"
     android:background="@android:color/white"
     android:foreground="#30AAAAAA"
     android:orientation="horizontal">
@@ -11,7 +11,7 @@
         android:layout_width="130dp"
         android:layout_height="130dp"
         android:layout_gravity="center_vertical"
-        android:layout_margin="10dp"
+        android:layout_margin="8dp"
         android:contentDescription="@null" />
 
     <TextView
@@ -39,7 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="4dp">
 
         <TextView
             android:id="@+id/goods_quantity"
@@ -54,10 +55,17 @@
             android:id="@+id/buy_button"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@android:color/holo_green_light"
+            android:background="@drawable/button_add"
             android:foreground="@drawable/plus"
             />
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/logo"
+        android:background="@android:color/black" />
 
 </RelativeLayout>
