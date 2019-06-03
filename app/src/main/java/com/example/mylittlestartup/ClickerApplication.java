@@ -96,8 +96,8 @@ public class ClickerApplication extends Application {
                 new Upgrade(30000, "upgrade", "400$ / 12s", 0, 12000, 400, "img/shop_man.jpg"),
         };
         Upgrade[] basicSpeeders = {
-                new Upgrade(20000, "speeder", "Inc. skill 2 times", 0, 0, 2, "img/telegram.svg"),
-                new Upgrade(50000, "speeder", "Inc. skill 3 times", 0, 0, 3, "img/github.svg"),
+                new Upgrade(50000, "speeder", "Inc. skill 2 times", 0, 0, 2, "img/telegram.svg"),
+                new Upgrade(200000, "speeder", "Inc. skill 3 times", 0, 0, 3, "img/github.svg"),
         };
         Upgrade[] basicWorkers = {
                 new Upgrade(2000, "worker", "ничего", 0, 5000, 0, "img/worker_avatar.png"),

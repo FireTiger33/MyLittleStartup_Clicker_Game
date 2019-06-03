@@ -217,6 +217,11 @@ public class GamePresenter implements GameContract.Presenter {
             @Override
             public void onSuccess(List<Upgrade> upgrades) {
                 Log.d(tag, "fetchedWorkersSuccess: " + upgrades.size());
+                int totalCount = 1;
+                for (Upgrade worker: upgrades) {
+                    totalCount += worker.getCount();
+                }
+                mPlayerRepository.setK(totalCount);
                 mView.createWorkers(upgrades);
             }
 
