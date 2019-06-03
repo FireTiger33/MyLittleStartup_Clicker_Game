@@ -87,18 +87,17 @@ public class ClickerApplication extends Application {
 
     public void addBasicUpgradesAndAchievements() {
         UpgradeDao dao = mDbRepository.getUpgradeDao();
-        boolean refreshDB = false;
         Upgrade[] basicUpgrades = {
                 new Upgrade(1000, "upgrade", "5$ / 1s", 0, 1000, 5, "img/shop_coffee.svg"),
                 new Upgrade(10000, "upgrade", "100$ / 5s", 0, 5000, 100, "img/shop_man.jpg"),
                 new Upgrade(2000, "upgrade", "12$ / 2s", 0, 2000, 12, "img/shop_coffee.svg"),
                 new Upgrade(20000, "upgrade", "220$ / 8s", 0, 8000, 220, "img/shop_man.jpg"),
-                new Upgrade(4000, "upgrade", "20$ / 3s", 0, 3000, 20, "img/telegram.svg"),
-                new Upgrade(30000, "upgrade", "400$ / 12s", 0, 12000, 400, "img/github.svg"),
+                new Upgrade(4000, "upgrade", "20$ / 3s", 0, 3000, 20, "img/shop_coffee.svg"),
+                new Upgrade(30000, "upgrade", "400$ / 12s", 0, 12000, 400, "img/shop_man.jpg"),
         };
         Upgrade[] basicSpeeders = {
-                new Upgrade(20000, "speeder", "2", 0, 0, 2, "img/telegram.svg"),
-                new Upgrade(50000, "speeder", "3", 0, 0, 3, "img/github.svg"),
+                new Upgrade(20000, "speeder", "Inc. skill 2 times", 0, 0, 2, "img/telegram.svg"),
+                new Upgrade(50000, "speeder", "Inc. skill 3 times", 0, 0, 3, "img/github.svg"),
         };
         Upgrade[] basicWorkers = {
                 new Upgrade(2000, "worker", "ничего", 0, 5000, 0, "img/worker_avatar.png"),
@@ -111,38 +110,19 @@ public class ClickerApplication extends Application {
         // TODO: Only for debug!
         // mDbRepository.clearAllTables();
 
-        Upgrade[] all = new Upgrade[0];
-
         List<Upgrade> upgrades = dao.allUpgrades();
         if (upgrades.isEmpty()) {
-            refreshDB = true;
-            all = concat(all, basicUpgrades);
-        } else {
-            all = concat(all, basicUpgrades);
-//            all.addAll(upgrades);
+            dao.insert(basicUpgrades);
         }
 
         List<Upgrade> speeders = dao.allSpeeders();
         if (speeders.isEmpty()) {
-            refreshDB = true;
-            all = concat(all, basicSpeeders);
-        } else {
-            all = concat(all, basicSpeeders);
-//            all.addAll(speeders);
+            dao.insert(basicSpeeders);
         }
 
         List<Upgrade> workers = dao.allWorkers();
         if (workers.isEmpty()) {
-            refreshDB = true;
-            all = concat(all, basicWorkers);
-        } else {
-            all = concat(all, basicWorkers);
-//            all.addAll(workers);
-        }
-
-        if (refreshDB) {
-
-            dao.insert(all);
+            dao.insert(basicWorkers);
         }
 
 

@@ -22,7 +22,6 @@ public class ShopView extends Fragment implements ShopContract.View {
 
     private RecyclerView shopView;
     private RecyclerView.LayoutManager layoutManager;
-    private ShopElementsAdapter shopElementsAdapter;
 
     private ShopContract.Presenter mPresenter;
 
@@ -46,17 +45,16 @@ public class ShopView extends Fragment implements ShopContract.View {
 
         layoutManager = new LinearLayoutManager(this.getContext());
 
-        mPresenter.fetchUpgrades();
+        showUpgradeList();
+//        mPresenter.fetchUpgrades();
 
         return mView;
     }
 
     @Override
-    public void showUpgradeList(List<Upgrade> upgrades) {
-        shopElementsAdapter = new ShopElementsAdapter(upgrades, mPresenter);
-
+    public void showUpgradeList() {
         shopView = mView.findViewById(R.id.shop_view);
-        shopView.setAdapter(shopElementsAdapter);
+        shopView.setAdapter(mPresenter.getShopElementsAdapter());
         shopView.setLayoutManager(layoutManager);
     }
 
@@ -83,6 +81,6 @@ public class ShopView extends Fragment implements ShopContract.View {
 
     @Override
     public void incrementUpgradeCounter(int upgradeID) {
-        shopElementsAdapter.incrementUpgradeCounter(upgradeID);
+        mPresenter.getShopElementsAdapter().incrementUpgradeCounter(upgradeID);
     }
 }

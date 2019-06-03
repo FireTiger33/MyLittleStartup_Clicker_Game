@@ -13,6 +13,7 @@ import com.example.mylittlestartup.data.executors.AppExecutors;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.GameContract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -22,11 +23,15 @@ class ShopPresenter implements ShopContract.Presenter {
     private ShopContract.View mView;
     private ShopContract.Repository mRepository;
     private PlayerRepository mPlayerRepository;
+    private ShopElementsAdapter shopElementsAdapter;
 
-    public ShopPresenter(ShopContract.View view) {
+    ShopPresenter(ShopContract.View view) {
         mView = view;
         mRepository = new GameRepositoryImpl(view.getAppContext());
         mPlayerRepository = ClickerApplication.from(view.getAppContext()).getPlayerRepository();
+        shopElementsAdapter = new ShopElementsAdapter(this);
+        fetchUpgrades();
+        fetchSpeeders();
     }
 
     @Override
@@ -63,17 +68,30 @@ class ShopPresenter implements ShopContract.Presenter {
         });
     }
 
-    @Override
-    public void fetchUpgrades() {
+    private void fetchUpgrades() {
         mRepository.fetchUpgrades(new ShopContract.Repository.FetchCallback() {
             @Override
             public void onSuccess(List<Upgrade> upgrades) {
-                mView.showUpgradeList(upgrades);
+                shopElementsAdapter.addElementsToShop(upgrades);
             }
 
             @Override
             public void onError() {
                 // todo show some errors?
+            }
+        });
+    }
+
+    private void fetchSpeeders() {
+        mRepository.fetchSpeeders(new ShopContract.Repository.FetchCallback() {
+            @Override
+            public void onSuccess(List<Upgrade> upgrades) {
+                shopElementsAdapter.addElementsToShop(upgrades);
+            }
+
+            @Override
+            public void onError() {
+
             }
         });
     }
@@ -101,6 +119,11 @@ class ShopPresenter implements ShopContract.Presenter {
                 callback.onError();
             }
         });
+    }
+
+    @Override
+    public ShopElementsAdapter getShopElementsAdapter() {
+        return shopElementsAdapter;
     }
 
     @Override

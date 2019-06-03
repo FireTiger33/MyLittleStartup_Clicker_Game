@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ShopContract {
     interface View {
-        void showUpgradeList(List<Upgrade> upgrades);
+        void showUpgradeList();
         Context getAppContext();
         Context getViewContext();
         void showMoney(int money);
@@ -22,9 +22,10 @@ public interface ShopContract {
     interface Presenter {
         void onBuyUpgrade(Upgrade upgrade);
         void getMoney();
-        void fetchUpgrades();
+//        void fetchUpgrades();
         void onViewClosed();
         void checkEnoughMoney(final int price, final BaseCallback callback);
+        ShopElementsAdapter getShopElementsAdapter();
     }
 
     interface Repository {
@@ -42,6 +43,8 @@ public interface ShopContract {
          * @param callback
          */
         void fetchUpgrades(FetchCallback callback);
+
+        void fetchSpeeders(FetchCallback callback);
 
         void buyUpgrade(Upgrade upgrade, BaseCallback callback);
         void getScore(final GameContract.Repository.ScoreCallback scoreCallback);

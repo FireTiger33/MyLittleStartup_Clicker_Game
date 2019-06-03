@@ -34,9 +34,11 @@ public interface GameContract {
         void onTouchLocationTouched(float x, float y, int action);
         void onTouchLocationActionUP();
         void onCommonClickLocationClicked(float x, float y);
+        void onCommonClickLocationClickPaused();
         void onSpecClickAreaClicked(float x, float y);
         void onBugIsAlive();
         void fetchWorkers();
+        void fetchSpeeders(Repository.IntCallback callback);
         void onWorkerPushed(Upgrade upgrade);
         void onUpgradeWorker(Upgrade upgrade);
         void onLayOffWorker(Upgrade upgrade);

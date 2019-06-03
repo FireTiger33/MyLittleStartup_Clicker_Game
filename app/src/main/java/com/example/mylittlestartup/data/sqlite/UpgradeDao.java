@@ -44,4 +44,10 @@ public interface UpgradeDao {
 
     @Query("select MAX(mCount) from Upgrade where mName  = 'worker'")
     int getMaxWorkerLVL();
+
+    @Query("delete from Upgrade where mName  = 'worker'")
+    void deleteAllWorkers();
+
+    @Query("delete from Upgrade where mName  = 'speeder'")
+    void deleteAllSpeeders();
 }

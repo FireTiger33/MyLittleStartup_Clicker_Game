@@ -1,6 +1,5 @@
 package com.example.mylittlestartup.authorization;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,9 +19,7 @@ import android.widget.TextView;
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
 import com.example.mylittlestartup.data.UserRepositoryImpl;
-import com.example.mylittlestartup.main.MainActivity;
 
-import java.util.Objects;
 
 public class AuthView extends Fragment implements AuthContract.View {
     private String authMethod;

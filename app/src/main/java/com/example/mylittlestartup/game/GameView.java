@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.Router;
-import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.sqlite.Upgrade;
 import com.example.mylittlestartup.game.objects.GameClickableObj;
 import com.example.mylittlestartup.game.objects.GameObjWorker;
@@ -56,6 +55,7 @@ public class GameView extends Fragment implements GameContract.View {
     private View workerUpgradeDialogView;
     private ValueAnimator moneyViewAnimator;
     private WebView monitorView;
+    private CountDownTimer timerWorkUpgrades;
 
     private GameClickableObj gameClickableObj;
     private RunningGameClickableObj runningGameClickableObj;
@@ -78,6 +78,15 @@ public class GameView extends Fragment implements GameContract.View {
 
         presenter = new GamePresenter(this);
         workers = new ArrayList<>();
+        timerWorkUpgrades = new CountDownTimer(1000, 200) {
+            @Override
+            public void onTick(long millisUntilFinished) { }
+
+            @Override
+            public void onFinish() {
+                presenter.onCommonClickLocationClickPaused();
+            }
+        }.start();
     }
 
     @SuppressLint({"ClickableViewAccessibility", "InflateParams"})
@@ -114,6 +123,7 @@ public class GameView extends Fragment implements GameContract.View {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    timerWorkUpgrades.start();
                     presenter.onCommonClickLocationClicked(event.getX(), event.getY());
                 }
 
@@ -142,7 +152,7 @@ public class GameView extends Fragment implements GameContract.View {
         presenter.onGameStart();
         createIssueButton();
         createBugButton();
-        presenter.registerPlayerBug(new BaseCallback() {
+        /*presenter.registerPlayerBug(new BaseCallback() {
             @Override
             public void onSuccess() {
 
@@ -152,7 +162,7 @@ public class GameView extends Fragment implements GameContract.View {
             public void onError() {
 
             }
-        });
+        });*/
     }
 
     @Override

@@ -39,6 +39,7 @@ public class GameObjWorker extends Upgrade {
     private ImageButton mLogo;
     private final View mItemView;
     private CountDownTimer workTimer;
+    private int mSpeed = 1;
     private final int[] pushAnimateEndCoordinate;
 
     private AlertDialog.Builder upgradeDialog;
@@ -86,6 +87,20 @@ public class GameObjWorker extends Upgrade {
             }
         });
 
+        mPresenter.fetchSpeeders(new GameContract.Repository.IntCallback() {
+            @Override
+            public void onSuccess(int lvl) {
+                Log.d(tag, "newSpeed = " + lvl);
+                if (lvl != 0) {
+                    mSpeed = lvl;
+                    onUpgraded(mUpgrade);
+                }
+            }
+
+            @Override
+            public void onError() { }
+        });
+
         onUpgraded(mUpgrade);
     }
 
@@ -98,7 +113,7 @@ public class GameObjWorker extends Upgrade {
         }
         nextLVLTextView.setText(new StringBuilder("lvl: " + mUpgrade.getCount() + " -> " + (mUpgrade.getCount() + 1)));
         nextValueTextView.setText(new StringBuilder("value: " + mUpgrade.getValue() + " -> " + (mUpgrade.getValue() * 2 + 100)));
-        nextIntervalTextView.setText(new StringBuilder("pushInterval: " + mUpgrade.getInterval() + " -> " + (mUpgrade.getInterval() + 5000)));
+        nextIntervalTextView.setText(new StringBuilder("pushInterval: " + mUpgrade.getInterval()/1000 + "s -> " + (mUpgrade.getInterval()/1000 + 5 + "s")));
         priceView.setText(new StringBuilder(mUpgrade.getPrice() + " $"));
         mPresenter.checkEnoughMoney(mUpgrade.getPrice(), new BaseCallback() {
             @Override
@@ -179,7 +194,7 @@ public class GameObjWorker extends Upgrade {
         if (mUpgrade.getCount() == 1) {
             needRecreateUpgradeDialog = true;
         }
-        workTimer = new CountDownTimer(mUpgrade.getInterval(), mUpgrade.getInterval()) {
+        workTimer = new CountDownTimer(mUpgrade.getInterval() / mSpeed, mUpgrade.getInterval()) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.d(tag, "worker: " + mUpgrade.getId() + "pushUntilFinished = " + millisUntilFinished);

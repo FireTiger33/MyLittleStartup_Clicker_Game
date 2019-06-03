@@ -20,10 +20,16 @@ class ShopSpeederElementsViewHolder extends ShopBaseElementsViewHolder {
     void bind(Upgrade upgrade, boolean enoughMoney) {
         super.bind(upgrade, enoughMoney);
         Log.d(tag, "bind");
-//        mDescriptionView.setText(upgrade.getDescription());
+        mDescriptionView.setText(upgrade.getDescription());
         mPriceView.setText(new StringBuilder("$ " + upgrade.getPrice()));
         if (mUpgrade.getCount() > 0) {
-            mBuyButton = null;
+            mBuyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            mPriceView.setTextColor(Color.RED);
             itemView.setForeground(new ColorDrawable(Color.argb(80, 128, 128, 128)));
         }
     }

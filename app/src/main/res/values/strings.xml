@@ -28,4 +28,5 @@
     <string name="layoff">Lay off</string>
     <string name="hire">Hire</string>
     <string name="cancel">Cancel</string>
+    <string name="defaultdescription">defaultDescription</string>
 </resources>

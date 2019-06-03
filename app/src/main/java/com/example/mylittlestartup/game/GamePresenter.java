@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.mylittlestartup.ClickerApplication;
-import com.example.mylittlestartup.R;
 import com.example.mylittlestartup.achievements.AchievementsManager;
 import com.example.mylittlestartup.data.BaseCallback;
 import com.example.mylittlestartup.data.GameRepositoryImpl;
@@ -29,6 +28,7 @@ public class GamePresenter implements GameContract.Presenter {
     private List<Integer> workerItemsIds;
     private int maxEmploeesLVL = 0;
     private List<CountDownTimer> workTimers;  // TODO manager
+    private boolean workTimersIsPaused = false;
     private List<Upgrade> upgradeItems;
 
 
@@ -159,7 +159,6 @@ public class GamePresenter implements GameContract.Presenter {
     @Override
     public void onShopButtonClicked() {
         mView.showShopScreen();
-
     }
 
     private void addMoney(int delta) {
@@ -181,9 +180,21 @@ public class GamePresenter implements GameContract.Presenter {
 
     @Override
     public void onCommonClickLocationClicked(float x, float y) {
+        if (workTimersIsPaused) {
+            workTimersIsPaused = false;
+            startWorkTimers();
+        }
         mView.showAddedMoney(x, y, mPlayerRepository.getK());
         addMoney(mPlayerRepository.getK());
         AchievementsManager.getInstance().IncProgress("click", 1, mView.getViewContext());
+    }
+
+    @Override
+    public void onCommonClickLocationClickPaused() {
+        for (CountDownTimer timer: workTimers) {
+            timer.cancel();
+        }
+        workTimersIsPaused = true;
     }
 
     @Override
@@ -215,6 +226,28 @@ public class GamePresenter implements GameContract.Presenter {
             }
         });
     }
+
+    @Override
+    public void fetchSpeeders(final GameContract.Repository.IntCallback callback) {
+        Log.d(tag, "fetchSpeeders");
+        mRepository.fetchSpeeders(new ShopContract.Repository.FetchCallback() {
+            @Override
+            public void onSuccess(List<Upgrade> upgrades) {
+                Log.d(tag, "fetchedSpeedersSuccess: " + upgrades.size());
+                int totalSpeed = 0;
+                for (Upgrade upgrade : upgrades) {
+                    totalSpeed += upgrade.getCount() * upgrade.getValue();
+                }
+                callback.onSuccess(totalSpeed);
+            }
+
+            @Override
+            public void onError() {
+                callback.onError();
+            }
+        });
+    }
+
 
     @Override
     public void onWorkerPushed(Upgrade upgrade) {
@@ -272,7 +305,8 @@ public class GamePresenter implements GameContract.Presenter {
                         }
 
                         @Override
-                        public void onError() { }
+                        public void onError() {
+                        }
                     });
                 }
                 Log.d(tag, "Layoff worker lvl " + upgrade.getCount());
