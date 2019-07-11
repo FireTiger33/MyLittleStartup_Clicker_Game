@@ -2,8 +2,6 @@ package com.example.mylittlestartup.shop;
 
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.example.mylittlestartup.R;
@@ -18,15 +16,6 @@ class ShopUpgradeElementsViewHolder extends ShopBaseElementsViewHolder {
         super(itemView, presenter);
 
         mGoodsQuantity = itemView.findViewById(R.id.goods_quantity);
-
-        mBuyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation animation = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.button_click_anim);
-                v.startAnimation(animation);
-                presenter.onBuyUpgrade(mUpgrade);
-            }
-        });
     }
 
     void bind(Upgrade upgrade, boolean enoughMoney) {

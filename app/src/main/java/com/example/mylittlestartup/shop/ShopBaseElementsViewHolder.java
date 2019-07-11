@@ -46,7 +46,9 @@ class ShopBaseElementsViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
                 Animation animation = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.button_click_anim);
                 v.startAnimation(animation);
-                presenter.onBuyUpgrade(mUpgrade);
+                if (mUpgrade != null) {
+                    presenter.onBuyUpgrade(mUpgrade);
+                }
             }
         });
     }

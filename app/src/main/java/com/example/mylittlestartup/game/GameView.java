@@ -189,7 +189,7 @@ public class GameView extends Fragment implements GameContract.View {
         Log.d(tag, "createWorkers: " + upgrades.size());
         int i = 0;
         int[] endAnimCoord = new int[2];
-        moneyValView.getLocationInWindow(endAnimCoord);
+        moneyValView.getLocationInWindow(endAnimCoord);   // TODO save
         endAnimCoord[0] += moneyValView.getWidth()/3;
 
         for (Upgrade worker: upgrades) {
@@ -207,7 +207,7 @@ public class GameView extends Fragment implements GameContract.View {
     }
 
     @Override
-    public void showUpgradeWorker(Upgrade upgradedWorker) {
+    public void showUpgradeWorker(Upgrade upgradedWorker) {  // TODO optimisation
         for (GameObjWorker worker: workers) {
             if (worker.getWorkerId() == upgradedWorker.getId()) {
                 worker.onUpgraded(upgradedWorker);
