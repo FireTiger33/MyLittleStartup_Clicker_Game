@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings"
+        android:textSize="40sp"
+        android:background="@android:color/holo_red_light"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:text="@string/sound"
+            android:textSize="35sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="50dp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ToggleButton
+            android:id="@+id/sound_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textOn=""
+            android:textOff=""
+            android:layout_marginStart="100dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/speaker_on"
+            android:contentDescription="@string/sound" />
+        <!--<ToggleButton
+            android:id="@+id/sound_button"
+            android:textOn="@string/on"
+            android:textOff="@string/off"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="20dp"/>-->
+
+    </LinearLayout>
+
+    <!--TODO Buttons-->
+
+</LinearLayout>

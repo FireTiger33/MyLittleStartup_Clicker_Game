@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/text_authorization_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/login"
+        android:padding="5dp"
+        android:id="@+id/login"
+        android:autofillHints="@string/login"
+        android:inputType="text">
+    </EditText>
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:hint="@string/password"
+        android:layout_height="wrap_content"
+        android:id="@+id/pass"
+        android:autofillHints="@string/password"
+        android:inputType="textPassword">
+    </EditText>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_authorization" />
+
+</LinearLayout>
